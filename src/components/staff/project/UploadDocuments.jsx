@@ -243,7 +243,7 @@ const UploadDocument = () => {
               />
             )}
             {checkTab === "resubmit" && (
-              <Tooltip title="Làm mới thời hạn nộp ">
+              <Tooltip title=" Gia hạn thời hạn nộp ">
                 <ClockCircleOutlined
                   style={{ fontSize: "20px", color: "red", margin: "0 10px" }}
                 />
@@ -261,7 +261,7 @@ const UploadDocument = () => {
                 <Popconfirm
                   placement="topRight"
                   title="Xác nhận"
-                  description="Xác nhận kết thúc giai đoạn này?"
+                  description="Xác nhận kết thúc giai đoạn này ?"
                   onConfirm={confirm}
                   onCancel={cancel}
                   okText="Đồng ý"

@@ -229,7 +229,7 @@ const AddMemberApprove = () => {
     getUserAPI();
   }, []);
   useEffect(() => {
-    if (current === 1 && newData.length > 1 ) setUser(newData);
+    if (current === 1 && newData.length > 1) setUser(newData);
   }, [current]);
   const navigate = useNavigate();
 
@@ -296,56 +296,56 @@ const AddMemberApprove = () => {
   };
   const renderFooter = () => (
     <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          shape="round"
-          type="primary"
-          danger
-          onClick={() => navigate("/staff/manager")}
-          style={{margin: "0 10px"}}
-        >
-          Quay về
-        </Button>
-        <ConfigProvider
-          theme={{
-            token: {
-              colorPrimary: "#55E6A0",
-            },
-          }}
-        >
-          {" "}
-          {path === "add-council" &&
-            (setMaxSelectedMembers(7),
-            (
-              <Button
-                disabled={
-                  selectedUser.length < 2 || selectedUser.length % 2 === 0
-                }
-                shape="round"
-                type="primary"
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
-              >
-                Thêm thành viên đánh giá
-              </Button>
-            ))}
-          {path === "add-member" &&
-            (setMaxSelectedMembers(5),
-            (
-              <Button
-                disabled={
-                  selectedUser.length < 2 || selectedUser.length % 2 === 0
-                }
-                shape="round"
-                type="primary"
-                onClick={() => {
-                  setModalVisible(true);
-                }}
-              >
-                Thêm thành viên phê duyệt
-              </Button>
-            ))}
-        </ConfigProvider>
+      <Button
+        shape="round"
+        type="primary"
+        danger
+        onClick={() => navigate("/staff/manager")}
+        style={{ margin: "0 10px" }}
+      >
+        Quay về
+      </Button>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: "#55E6A0",
+          },
+        }}
+      >
+        {" "}
+        {path === "add-council" &&
+          (setMaxSelectedMembers(7),
+          (
+            <Button
+              disabled={
+                selectedUser.length < 2 || selectedUser.length % 2 === 0
+              }
+              shape="round"
+              type="primary"
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+            >
+              Thêm thành viên đánh giá
+            </Button>
+          ))}
+        {path === "add-member" &&
+          (setMaxSelectedMembers(5),
+          (
+            <Button
+              disabled={
+                selectedUser.length < 2 || selectedUser.length % 2 === 0
+              }
+              shape="round"
+              type="primary"
+              onClick={() => {
+                setModalVisible(true);
+              }}
+            >
+              Thêm thành viên phê duyệt
+            </Button>
+          ))}
+      </ConfigProvider>
     </div>
   );
   const listUser = (
@@ -363,32 +363,56 @@ const AddMemberApprove = () => {
   );
   return (
     <div>
-      <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
-        Danh sách nhà khoa học
-      </h2>
-      <p style={{ color: "red" }}>
-        Lưu ý khi chọn thành viên đánh giá là số lẻ vd 3, 5, 7
-      </p>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ marginRight: "20px" }}>
+          <h2
+            style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}
+          >
+            Danh sách nhà khoa học
+          </h2>
+          <p style={{ color: "red" }}>
+            Lưu ý khi chọn thành viên đánh giá là số lẻ vd 3, 5, 7
+          </p>
+          {hasSelected ? (
+            <div>
+              <Space direction="" size={"middle"}>
+                <p style={{ fontWeight: "bold" }}>
+                  Đã chọn {selectedUser.length} thành viên
+                </p>
+              </Space>
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
+        {hasSelected ? (
+          <div style={{ maxWidth: "400px" }}>
+            <List
+              grid={{
+                sm: 2,
+                md: 2,
+                column: 2,
+              }}
+              bordered
+              dataSource={selectedUser}
+              renderItem={(selectedUser) => (
+                <List.Item style={{ minWidth: "300px" }}>
+                  {selectedUser.fullName} - {selectedUser.position}
+                </List.Item>
+              )}
+            />
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+
       <span
         style={{
           marginLeft: 8,
         }}
       >
         {" "}
-        {hasSelected ? (
-          <div>
-            <Space direction="" size={"middle"}>
-              <Popover content={listUser} title="Nhà khoa học đã chọn">
-                <Badge count={selectedUser.length}>
-                  <GroupOutlined style={{ fontSize: "20px", color: "#08c" }} />
-                </Badge>
-              </Popover>
-              <p>Đã chọn {selectedUser.length} nhà khoa học</p>
-            </Space>
-          </div>
-        ) : (
-          ""
-        )}
       </span>
       <div>
         <Table

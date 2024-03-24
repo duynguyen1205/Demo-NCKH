@@ -147,8 +147,13 @@ export const getTopicWaitingResubmit = (param) => {
 };
 
 // reset deadline for resubmit
-
 export const setResubmitTime = (data) => {
   return axios.post("api/review/edit-deadline-for-early-review", data);
 };
+
+// get topic on-going
+export const getTopicOngoing = () => {
+  return axios.get("api/topic/active-topic")
+};
+
 

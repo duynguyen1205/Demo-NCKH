@@ -1,17 +1,21 @@
-import { Col, Form, Input, Row, Table, Space, Button } from "antd";
+import { Table, Space } from "antd";
 import "./table.scss";
 import {
   CheckOutlined,
   CloseOutlined,
+  EditOutlined,
+  FileSyncOutlined,
   InfoCircleOutlined,
+  ScheduleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
-import utc from "dayjs/plugin/utc";
-dayjs.extend(utc);
+import { getReviewDocuments } from "../../../services/api";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useLocation, useNavigate } from "react-router-dom";
 dayjs.extend(customParseFormat);
+const dateFormat = "DD/MM/YYYY";
 
 const ResubmitProject = () => {
   const [current, setCurrent] = useState(1);
@@ -19,183 +23,127 @@ const ResubmitProject = () => {
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [topicLink, setTopicLink] = useState([]);
   const [data, setDataUser] = useState({});
-  const [dataPro, setDataPro] = useState({});
   const [status, setStatus] = useState(false);
-  const [dataTopicForCouncil, setdataTopicForCouncil] = useState([]);
-  const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div
-        style={{
-          padding: 8,
-        }}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{
-            marginBottom: 8,
-            display: "block",
-          }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{
-          color: filtered ? "#1677ff" : undefined,
-        }}
-      />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-    render: (text) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{
-            backgroundColor: "#ffc069",
-            padding: 0,
-          }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
+  const userId = "3d0b8c68-5e1f-46d6-96a4-71b0229a1e95";
+  const [dataReviewDocument, setDataReviewDocument] = useState([]);
+
+  const location = useLocation();
+  let topicId = location.pathname.split("/");
+  topicId = topicId[4];
+
   const columns = [
     {
       title: "Giai đoạn",
       key: "giaidoan",
-      dataIndex: "code",
+      dataIndex: "state",
       width: "10%",
     },
     {
       title: "Góp ý của hội đồng",
-      dataIndex: "gopy",
-      key: "gopy",
-      width: "30%",
+      dataIndex: "resultFileLink",
+      key: "resultFileLink",
+      width: "20%",
     },
     {
       title: "File chỉnh sửa",
-      dataIndex: "File",
-      key: "file",
+      dataIndex: "documents",
+      key: "documents",
+      width: "30%",
+      render: () => {
+        <div>aaaaaaaaa</div>
+      }
     },
+
     {
       title: "Hạn nộp",
-      render: (text, record, index) => {
-        return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
-      },
-      key: "date",
+      dataIndex: "deadline",
+      key: "deadline",
       width: "10%",
     },
     {
       title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
+      dataIndex: "decisionOfCouncil",
+      key: "decisionOfCouncil",
       width: "10%",
     },
 
     {
       title: "Chi tiết",
-      width: "10%",
+      width: "20%",
       render: (text, record, index) => {
         const style1 = {
           color: "blue",
           fontSize: "1.5em",
-          margin: "0 20",
           cursor: "pointer",
-        };
-        const style2 = {
+      };
+      const style2 = {
           color: "green",
           fontSize: "1.5em",
-          margin: "0 20",
+          margin: "0 10px",
           cursor: "pointer",
-        };
-        const style3 = {
+      };
+      const style3 = {
           color: "red",
           fontSize: "1.5em",
-          margin: "0 20",
           cursor: "pointer",
-        };
+      };
         return (
-          <div>
-            <Space size={"middle"}>
-              <InfoCircleOutlined
-                style={style1}
-                onClick={() => {
-                  setIsModalOpen(true);
-                  setDataUser(record);
-                }}
-              />
-            </Space>
+          <div style={{ textAlign: "center" }}>
+            <EditOutlined 
+              style={style1}
+              onClick={() => {
+
+              }}
+            />
+            <CheckOutlined 
+              onClick={() => {
+
+
+              }}
+              style={style2}
+            />
+            <CloseOutlined 
+              onClick={() => {
+                
+              }}
+              style={style2}
+            />
           </div>
         );
       },
       align: "center",
     },
   ];
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const searchInput = useRef(null);
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
+
+
+  const getReviewDoc = async () => {
+    const res = await getReviewDocuments({
+      userId: userId, // Nguyen Thanh B-chairman
+      topicId: topicId,
+
+    });
+    if (res && res?.data) {
+      const data = [{
+        role: res.data.role,
+        state: res.data?.reviewEarlyDocument ? "Đăng ký đề tài" : "Giai đoạn tiếp theo",
+        deadline: dayjs(res.data.reviewEarlyDocument.deadline).format(dateFormat),
+        decisionOfCouncil: res.data.reviewEarlyDocument.decisionOfCouncil,
+        resultFileLink: res.data.reviewEarlyDocument.resultFileLink,
+        documents: res.data.reviewEarlyDocument.documents.length > 0 ? res.data.reviewEarlyDocument.documents : null
+
+      }]
+      console.log("bbbbbbbb", res.data.reviewEarlyDocument.documents.length > 0 ? res.data.reviewEarlyDocument.documents : []);
+      console.log("đây là res data", res.data);
+      console.log("đây là data", data);
+      setDataReviewDocument(data);
+    }
   };
-  const handleReset = (clearFilters) => {
-    clearFilters();
-    setSearchText("");
-  };
+  useEffect(() => {
+    getReviewDoc();
+  }, [status]);
+
   const onChange = (pagination, filters, sorter, extra) => {
     if (pagination.current !== current) {
       setCurrent(pagination.current);
@@ -206,7 +154,6 @@ const ResubmitProject = () => {
     }
     console.log("parms: ", pagination, filters, sorter, extra);
   };
-  const [form] = Form.useForm();
   return (
     <>
       <h2
@@ -219,60 +166,31 @@ const ResubmitProject = () => {
       >
         Bổ sung tài liệu
       </h2>
-      <Form form={form} name="basic">
-        <Row gutter={20}>
-          <Col span={16}>
-            <Form.Item
-              name="topicName"
-              label="Tên đề tài"
-              labelCol={{ span: 24 }}
-            >
-              <Input disabled />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              name="categoryName"
-              label="Lĩnh vực nghiên cứu"
-              labelCol={{ span: 24 }}
-            >
-              <Input disabled />
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item
-              name="document"
-              label="Bảng góp ý của đề tài"
-              labelCol={{ span: 24 }}
-            ></Form.Item>
-          </Col>
-        </Row>
-        <Table
-          rowClassName={(record, index) =>
-            index % 2 === 0 ? "table-row-light" : "table-row-dark"
-          }
-          bordered={true}
-          columns={columns}
-          dataSource={dataTopicForCouncil}
-          onChange={onChange}
-          rowKey={"_id"}
-          pagination={{
-            current: current,
-            pageSize: pageSize,
-            showSizeChanger: true,
-            total: total,
-            pageSizeOptions: ["5", "10", "15"],
-            showTotal: (total, range) => {
-              return (
-                <div>
-                  {range[0]} - {range[1]} on {total} rows
-                </div>
-              );
-            },
-          }}
-          loading={isLoading}
-        />
-      </Form>
+      <Table
+        rowClassName={(record, index) =>
+          index % 2 === 0 ? "table-row-light" : "table-row-dark"
+        }
+        bordered={true}
+        columns={columns}
+        dataSource={dataReviewDocument}
+        onChange={onChange}
+        rowKey={"_id"}
+        pagination={{
+          current: current,
+          pageSize: pageSize,
+          showSizeChanger: true,
+          total: total,
+          pageSizeOptions: ["5", "10", "15"],
+          showTotal: (total, range) => {
+            return (
+              <div>
+                {range[0]} - {range[1]} on {total} rows
+              </div>
+            );
+          },
+        }}
+        loading={isLoading}
+      />
     </>
   );
 };

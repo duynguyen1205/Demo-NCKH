@@ -42,11 +42,6 @@ const items = [
     icon: <FileSearchOutlined />,
   },
   {
-    label: <Link to="/user/coucil-infor">Thông tin cuộc họp</Link>,
-    key: "coucil-infor",
-    icon: <ScheduleOutlined /> ,
-  },
-  {
     label: <Link to="/user/track">Theo dõi tiến độ</Link>,
     key: "track",
     icon: <FileDoneOutlined />,

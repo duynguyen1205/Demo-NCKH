@@ -3,6 +3,7 @@ import {
   CloseOutlined,
   FundViewOutlined,
   InfoCircleOutlined,
+  ScheduleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Button, Input, Space, Table, Tabs } from "antd";
@@ -14,6 +15,7 @@ import "./table.scss";
 import { getTopicByUserId } from "../../../services/api";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import ModalInforMeetingForMember from "./ModalMeetingForMem";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 // import ModalInfor from "../../modalInfor.jsx";
@@ -22,6 +24,8 @@ const ProjectForTrack = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [dataTopicForMember, setdataTopicForMember] = useState([]);
+  const [isModalInforOpen, setIsModalInforOpen] = useState(false);
+  const [data, setDataUser] = useState({});
 
   const getProjectProcess = async () => {
     try {
@@ -165,9 +169,16 @@ const ProjectForTrack = () => {
         };
         return (
           <div>
-            <FundViewOutlined 
-               onClick={() => {
+            <FundViewOutlined
+              onClick={() => {
                 navigate(`/user/track/track-topic/${record.topicId}`);
+              }}
+              style={style2}
+            />
+
+            <ScheduleOutlined
+              onClick={() => {
+
               }}
               style={style2}
             />

@@ -138,7 +138,7 @@ export const getTopicByUserId = (param) => {
 
 //  get topic for council meeting
 export const getTopicForCouncilMeeting = (param) => {
-  return axios.get(`/api/topic/early-topic-waiting-council-meeting-for-council?${qs.stringify(param)}`);
+  return axios.get(`/api/topic/ongoing-topic-for-council?${qs.stringify(param)}`);
 };
 
 // get topic waiting for resubmit
@@ -156,4 +156,13 @@ export const getTopicOngoing = () => {
   return axios.get("api/topic/active-topic")
 };
 
+// get info meeting
+export const getInforMeetingForCouncil = (param) => {
+  return  axios.get(`api/topic/meeting-infor?${qs.stringify(param)}`)
+}
+
+// get reviewcouncil and member documents
+export const getReviewDocuments = (param) => {
+  return  axios.get(`api/topic/all-review-documents?${qs.stringify(param)}`)
+}
 

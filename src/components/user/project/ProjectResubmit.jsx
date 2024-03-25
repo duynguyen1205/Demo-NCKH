@@ -17,6 +17,7 @@ import {getTopicForCouncilMeeting } from "../../../services/api";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import ModalInfor from "./ModalInfor";
+import ModalInforMeeting from "./ModalMeeting";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 // import ModalInfor from "../../modalInfor.jsx";
@@ -27,6 +28,7 @@ const ProjectResubmit = () => {
     const [data, setDataUser] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalInforOpen, setIsModalInforOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("notyet");
     const [status, setStatus] = useState(false);
     const [dataTopicForCouncil, setdataTopicForCouncil] = useState([]);
@@ -135,8 +137,8 @@ const ProjectResubmit = () => {
     const columns = [
         {
             title: "ID",
-            key: "index",
-            render: (text, record, index) => index + 1,
+            dataIndex: "code",
+            key: "code",
             color: "red",
             width: "10%",
         },
@@ -190,7 +192,9 @@ const ProjectResubmit = () => {
                         />
                         <ScheduleOutlined 
                         onClick={() => {
-                            navigate(`/user/coucil-infor`);
+                            setIsModalInforOpen(true);
+                            setDataUser(record);
+                           
                         }}
                         style={style2}
                         />
@@ -292,6 +296,11 @@ const ProjectResubmit = () => {
                 data={data}
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
+            />
+            <ModalInforMeeting
+                data={data}
+                isModalOpen={isModalInforOpen}
+                setIsModalOpen={setIsModalInforOpen}
             />
         </div>
     );

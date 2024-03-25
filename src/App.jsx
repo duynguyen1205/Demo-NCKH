@@ -15,7 +15,6 @@ import ProjectUserReview from "./pages/projectMangerUserReview/index.jsx";
 import TrackProject from "./components/user/project/TrackProject.jsx";
 import TrackProjectStaff from "./components/staff/project/TrackProject.jsx";
 import ProjectForTrack from "./components/user/project/ProjectForTrack.jsx";
-import InforMeeting from "./components/user/project/InforMeeting.jsx";
 import ResubmitProject from "./components/user/project/ResubmitProject.jsx";
 import ProjectResubmit from "./components/user/project/ProjectResubmit.jsx";
 import ProjectForTrackStaff from "./components/staff/project/ProjectForTrackStaff.jsx";
@@ -112,10 +111,6 @@ function App() {
               element: <ProjectUser />,
             },
           ],
-        },
-        {
-          path: "coucil-infor",
-          element: <InforMeeting />,
         },
         {
           path: "track",

@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "./project.scss";
 import { useNavigate } from "react-router-dom";
-import "./table.scss";
+import "../../user/project/table.scss";
 import {  getTopicOngoing } from "../../../services/api";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -162,7 +162,7 @@ const ProjectForTrackStaff = () => {
           <div>
             <FundViewOutlined 
                onClick={() => {
-                // navigate(`/user/track/track-topic/${record.topicId}`);
+                navigate(`/staff/track/track-topic/${record.topicId}`);
               }}
               style={style2}
             />

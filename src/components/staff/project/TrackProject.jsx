@@ -1,22 +1,23 @@
 import {
   CheckOutlined,
-  LoadingOutlined,
-  SmileOutlined,
+  CloudUploadOutlined,
+  ContactsOutlined,
+  FileDoneOutlined,
+  FileProtectOutlined,
   SolutionOutlined,
-  UserOutlined,
+  UserAddOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
-import { Collapse, Spin, Space, Steps } from "antd";
+import { Collapse, Spin, Space, Steps, Button } from "antd";
 import "./track.scss";
-
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
+import { useLocation, useNavigate } from "react-router-dom";
+import {trackReseach } from "../../../services/api";
 
 const TrackProjectStaff = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [dataProcess, setDataProcess] = useState({});
   const renderExtra = (step) => {
     if (step === currentStep) {
       return <Spin />;
@@ -30,7 +31,26 @@ const TrackProjectStaff = () => {
       return "disabled";
     } else return "header";
   };
-
+  const location = useLocation();
+  let topicId = location.pathname.split("/");
+  topicId = topicId[4];
+  const getProjectProcess = async () => {
+    try {
+      const res = await trackReseach({
+        topicId: topicId,
+      });
+      if (res && res.isSuccess) {
+        setDataProcess(res.data);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("Có lỗi tại theo dõi đề tài: " + error.message);
+      console.log("====================================");
+    }
+  };
+  useEffect(() => {
+    getProjectProcess();
+  }, []);
   return (
     <div>
       <h2
@@ -52,51 +72,69 @@ const TrackProjectStaff = () => {
               label: "Đăng kí đề tài",
               children: (
                 <>
-                  <h3>Tên đề tài : ABC</h3>
-                  <h5>Ngày tạo : 25/3/2015</h5>
-                  <p>Trạng thái : cần tải lại tài liệu</p>
+                  <p>Trạng thái: </p>
                   <Steps
                     size="small"
+                    labelPlacement="vertical"
                     items={[
                       {
-                        title: "Login",
-                        status: "finish",
-                        icon: <UserOutlined />,
+                        title: "Nộp đề tài",
+                        status: "finished",
+                        icon: <FileProtectOutlined />,
                       },
                       {
-                        title: "Verification",
-                        status: "finish",
+                        title: "Trưởng khoa duyệt",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForDean === "Accept"
+                            ? "finished"
+                            : "wait",
                         icon: <SolutionOutlined />,
                       },
                       {
-                        title: "Pay",
-                        status: "process",
-                        icon: <LoadingOutlined />,
+                        title: "Staff thêm thành viên sơ duyệt",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "finished"
+                            : "wait",
+                        icon: <UserAddOutlined />,
                       },
                       {
-                        title: "Done",
-                        status: "wait",
-                        icon: <SmileOutlined />,
+                        title: "Thành viên sơ duyệt đánh giá",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "finished"
+                            : "wait",
+                        icon: <FileDoneOutlined />,
                       },
                       {
-                        title: "Login",
-                        status: "finish",
-                        icon: <UserOutlined />,
+                        title: "Staff tạo hội đồng đánh giá",
+                        status:
+                          dataProcess?.earlyTermReportProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "finished"
+                            : "wait",
+                        icon: <UsergroupAddOutlined />,
                       },
                       {
-                        title: "Verification",
-                        status: "finish",
-                        icon: <SolutionOutlined />,
+                        title: "Staff tải lên quyết định",
+                        status:
+                          dataProcess?.earlyTermReportProcess
+                            ?.waitingForCouncilMeeting === "Accept"
+                            ? "finished"
+                            : "wait",
+                        icon: <CloudUploadOutlined />,
                       },
                       {
-                        title: "Pay",
-                        status: "process",
-                        icon: <LoadingOutlined />,
-                      },
-                      {
-                        title: "Done",
-                        status: "wait",
-                        icon: <SmileOutlined />,
+                        title: "Staff tải hợp đồng lên",
+                        status:
+                          dataProcess?.earlyTermReportProcess
+                            ?.waitingForContractSigning === "Accept"
+                            ? "finished"
+                            : "wait",
+                        icon: <ContactsOutlined />,
                       },
                     ]}
                   />
@@ -112,7 +150,7 @@ const TrackProjectStaff = () => {
             {
               key: "2",
               label: "Báo cáo giữa kì",
-              children: <p>{text}</p>,
+
               extra: renderExtra(2),
             },
           ]}
@@ -123,7 +161,7 @@ const TrackProjectStaff = () => {
             {
               key: "3",
               label: "Báo cáo cuối kì",
-              children: <p>{text}</p>,
+
               extra: renderExtra(3),
             },
           ]}
@@ -134,12 +172,21 @@ const TrackProjectStaff = () => {
             {
               key: "4",
               label: "Tổng kết",
-              children: <p>{text}</p>,
+
               extra: renderExtra(4),
             },
           ]}
         />
       </Space>
+      <Button
+        shape="round"
+        type="primary"
+        danger
+        onClick={() => navigate("/staff/track")}
+        style={{ margin: "10px 0" }}
+      >
+        Quay về
+      </Button>
     </div>
   );
 };

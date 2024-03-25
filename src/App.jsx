@@ -18,6 +18,7 @@ import ProjectForTrack from "./components/user/project/ProjectForTrack.jsx";
 import InforMeeting from "./components/user/project/InforMeeting.jsx";
 import ResubmitProject from "./components/user/project/ResubmitProject.jsx";
 import ProjectResubmit from "./components/user/project/ProjectResubmit.jsx";
+import ProjectForTrackStaff from "./components/staff/project/ProjectForTrackStaff.jsx";
 const Layout = () => {
   return <>Main Page</>;
 };
@@ -65,7 +66,17 @@ function App() {
         },
         {
           path: "track",
-          element: <TrackProjectStaff />,
+          element: <Outlet />,
+          children: [
+            {
+              index: true,
+              element: <ProjectForTrackStaff />,
+            },
+            {
+              path: "track-topic/:projectId",
+              element: <TrackProjectStaff />,
+            },
+          ],
         },
         {
           path: "profile",
@@ -104,7 +115,7 @@ function App() {
         },
         {
           path: "coucil-infor",
-          element: <InforMeeting/>,
+          element: <InforMeeting />,
         },
         {
           path: "track",
@@ -122,15 +133,15 @@ function App() {
         },
         {
           path: "upload",
-          element: <Outlet/>,
+          element: <Outlet />,
           children: [
             {
               index: true,
-              element: <ProjectResubmit/>,
+              element: <ProjectResubmit />,
             },
             {
               path: "upload-document/:projectId",
-              element: <ResubmitProject/>,
+              element: <ResubmitProject />,
             },
           ],
         },

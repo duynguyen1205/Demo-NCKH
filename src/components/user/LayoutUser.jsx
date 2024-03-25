@@ -57,7 +57,7 @@ const items = [
     icon: <FileSyncOutlined />,
   },
   {
-    label: <Link to="/user/profile">Hồ sơ cá nhân</Link>,
+    label: <Link to="/user/profile">Hồ sơ cá nhân 1</Link>,
     key: "profile",
     icon: <UserOutlined />,
   },

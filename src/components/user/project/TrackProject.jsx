@@ -12,15 +12,10 @@ import {
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
-import { Collapse, theme, Spin, Space, Steps, Button, Popover } from "antd";
+import { Collapse, Spin, Space, Steps, Button } from "antd";
 import "./track.scss";
-import { getTopicByUserId, trackReseach } from "../../../services/api";
+import {trackReseach } from "../../../services/api";
 import { useLocation, useNavigate } from "react-router-dom";
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
 
 const TrackProject = () => {
   const navigate = useNavigate();
@@ -134,7 +129,7 @@ const TrackProject = () => {
             {
               key: "2",
               label: "Báo cáo giữa kì",
-              children: <p>{text}</p>,
+              
               extra: renderExtra(2),
             },
           ]}
@@ -145,7 +140,7 @@ const TrackProject = () => {
             {
               key: "3",
               label: "Báo cáo cuối kì",
-              children: <p>{text}</p>,
+              
               extra: renderExtra(3),
             },
           ]}
@@ -156,7 +151,7 @@ const TrackProject = () => {
             {
               key: "4",
               label: "Tổng kết",
-              children: <p>{text}</p>,
+              
               extra: renderExtra(4),
             },
           ]}

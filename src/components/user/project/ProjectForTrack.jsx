@@ -6,7 +6,7 @@ import {
   ScheduleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Space, Table, Tabs } from "antd";
+import { Badge, Button, Input, Space, Table, Tabs } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "../../staff/project/project.scss";
@@ -16,6 +16,7 @@ import { getTopicByUserId } from "../../../services/api";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import ModalInforMeetingForMember from "./ModalMeetingForMem";
+import ModalMeetingInfor from "./ModalMeetingInfor";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 // import ModalInfor from "../../modalInfor.jsx";
@@ -181,8 +182,15 @@ const ProjectForTrack = () => {
               }}
               style={style1}
             />
-
-            <ScheduleOutlined onClick={() => {}} style={style2} />
+            <Badge dot offset={[-10, 0]}>
+              <ScheduleOutlined
+                onClick={() => {
+                  setDataUser(record);
+                  setIsModalInforOpen(true)
+                }}
+                style={style2}
+              />
+            </Badge>
           </div>
         );
       },
@@ -217,7 +225,7 @@ const ProjectForTrack = () => {
     getProjectProcess();
   }, []);
   return (
-    <div>
+    <>
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
         Theo dõi tiến độ đề tài
       </h2>
@@ -244,7 +252,12 @@ const ProjectForTrack = () => {
           },
         }}
       />
-    </div>
+      <ModalMeetingInfor
+        data={data}
+        isModalOpen={isModalInforOpen}
+        setIsModalOpen={setIsModalInforOpen}
+      />
+    </>
   );
 };
 

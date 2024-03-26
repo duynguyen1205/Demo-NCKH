@@ -1,13 +1,29 @@
-import { Button, Col, Divider, Form, Input, Modal, Row } from "antd";
+import {
+  Button,
+  Col,
+  ConfigProvider,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  Row,
+  message,
+} from "antd";
 import { useEffect, useState } from "react";
-import { getTopicDetailAPI } from "../../../services/api";
+import {
+  createDeanMakeDecesion,
+  createMemberDecision,
+  getTopicDetailAPI,
+} from "../../../services/api";
+import { useLocation } from "react-router-dom";
 
 const ModalInfor = (props) => {
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
   const [topicLink, setTopicLink] = useState([]);
-  const data = props.data;
+  const [reason, setReason] = useState(null);
   const topicId = props.data.topicId;
+  const location = useLocation();
   const handleCancel = () => {
     props.setIsModalOpen(false);
   };
@@ -29,6 +45,128 @@ const ModalInfor = (props) => {
       console.log("Error getting topic detail: ", error);
     }
   };
+  // member approval accept
+  const handleOnClickApprove = () => {
+    if (location.pathname === "/user/manager") {
+      const param = {
+        memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
+        topicId: topicId,
+        isApproved: true,
+        reason: reason,
+      };
+      createMemberDecision(param)
+        .then((data) => {
+          if (data) {
+            setStatus(true);
+          } else {
+            setStatus(false);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      const param = {
+        diciderId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87",
+        topicId: topicId,
+        deanDecision: true,
+        reason: reason,
+      };
+      createDeanMakeDecesion(param).then((data) => {
+        if (props.status === true) {
+          setStatus(false);
+        } else {
+          setStatus(true);
+        }
+      });
+      handleCancel().catch((error) => {
+        console.log(error);
+      });
+    }
+  };
+  // member approval rejected
+  const handleOnClickRejected = () => {
+    if (reason === null) {
+      message.error("Vui lòng nhập lí do từ chối");
+      return;
+    } else {
+      if (location.pathname === "/user/manager") {
+        const param = {
+          memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
+          topicId: topicId,
+          isApproved: false,
+          reason: reason,
+        };
+        createMemberDecision(param)
+          .then((data) => {
+            message.success("Tạo đánh giá thành công");
+            if (props.status === true) {
+              props.setStatus(false);
+            } else {
+              props.setStatus(true);
+            }
+            handleCancel();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        const param = {
+          diciderId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87",
+          topicId: topicId,
+          deanDecision: false,
+          rejectReason: reason,
+        };
+        createDeanMakeDecesion(param)
+          .then((data) => {
+            message.success("Tạo đánh giá thành công");
+            if (props.status === true) {
+              props.setStatus(false);
+            } else {
+              props.setStatus(true);
+            }
+            handleCancel();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+  };
+  const renderFooter = () => (
+    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <Button shape="round" type="primary" onClick={handleCancel}>
+        Quay về
+      </Button>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: "#55E6A0",
+          },
+        }}
+      >
+        <Button
+          // disabled={"false"}
+          shape="round"
+          type="primary"
+          danger
+          onClick={() => handleOnClickRejected()}
+          style={{ margin: "0 10px" }}
+        >
+          Từ chối
+        </Button>
+        <Button
+          // disabled={"true"}
+          shape="round"
+          type="primary"
+          onClick={() => handleOnClickApprove()}
+        >
+          Thông qua
+        </Button>
+      </ConfigProvider>
+    </div>
+  );
+
   // set up initial value for the form
   useEffect(() => {
     getTopicDetail();
@@ -42,11 +180,7 @@ const ModalInfor = (props) => {
         onCancel={handleCancel}
         maskClosable={false}
         forceRender
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Thoát
-          </Button>,
-        ]}
+        footer={renderFooter}
       >
         <Divider />
         <Form form={form} name="basic">
@@ -115,6 +249,11 @@ const ModalInfor = (props) => {
                     <br />
                   </span>
                 ))}
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item name="reason" label="Ghi chú" labelCol={{ span: 24 }}>
+                <Input onChange={(value) => setReason(value)} />
               </Form.Item>
             </Col>
           </Row>

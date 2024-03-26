@@ -94,9 +94,6 @@ const ResubmitProject = () => {
         };
         const isChairMan =
           dataReviewDocument[0]?.role === "Chairman" ? true : false;
-        console.log("====================================");
-        console.log(dataReviewDocument[0]?.role === "chairman" ? true : false);
-        console.log("====================================");
         return (
           <div>
             <EditOutlined style={style1} onClick={() => {}} />

@@ -69,7 +69,7 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
                     <AutoComplete options={options} filterOption={true}>
                       <Input
                         style={{ width: 210 }}
-                        placeholder="Tìm nhà khoa học"
+                        placeholder="Tìm thành viên"
                       />
                     </AutoComplete>
                   </Form.Item>

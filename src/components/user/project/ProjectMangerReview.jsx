@@ -25,12 +25,8 @@ import {
 const ProjectManagerUserReview = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [total, setTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalRejOpen, setIsModalRejOpen] = useState(false);
   const [data, setDataUser] = useState({});
-  const [dataPro, setDataPro] = useState({});
   const [status, setStatus] = useState(false);
   const [dataTopicForDean, setdataTopicForDean] = useState([]);
   const [currentTab, setCurrentTab] = useState("notpassyet");
@@ -135,25 +131,6 @@ const ProjectManagerUserReview = () => {
         text
       ),
   });
-  const handleOnClickApprove = (id) => {
-    const param = {
-      diciderId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87",
-      topicId: id,
-      deanDecision: true,
-      rejectReason: null,
-    };
-    createDeanMakeDecesion(param)
-      .then((data) => {
-        if (status === true) {
-          setStatus(false);
-        } else {
-          setStatus(true);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const columns = [
     {
       title: "ID",
@@ -188,17 +165,6 @@ const ProjectManagerUserReview = () => {
           fontSize: "1.5em",
           cursor: "pointer",
         };
-        const style2 = {
-          color: "green",
-          fontSize: "1.5em",
-          margin: "0 20px",
-          cursor: "pointer",
-        };
-        const style3 = {
-          color: "red",
-          fontSize: "1.5em",
-          cursor: "pointer",
-        };
         return (
           <div style={{ textAlign: "center" }}>
                 <InfoCircleOutlined
@@ -227,22 +193,6 @@ const ProjectManagerUserReview = () => {
                     </p>
                   </>
                 )}
-
-              {currentTab == "notpassyet" && (
-                <>
-                  <CheckOutlined
-                    onClick={() => handleOnClickApprove(record.topicId)}
-                    style={style2}
-                  />
-                  <CloseOutlined
-                    style={style3}
-                    onClick={() => {
-                      setDataPro(record);
-                      setIsModalRejOpen(true);
-                    }}
-                  />
-                </>
-              )}
           </div>
         );
       },
@@ -327,7 +277,6 @@ const ProjectManagerUserReview = () => {
           current: current,
           pageSize: pageSize,
           showSizeChanger: true,
-          total: total,
           pageSizeOptions: ["5", "10", "15"],
           showTotal: (total, range) => {
             return (
@@ -338,18 +287,11 @@ const ProjectManagerUserReview = () => {
           },
         }}
         title={renderHeader}
-        loading={isLoading}
       />
       <ModalInfor
         data={data}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-      />
-      <ModalReject
-        userId = "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87"
-        data={dataPro}
-        isModalRejOpen={isModalRejOpen}
-        setIsModalRejOpen={setIsModalRejOpen}
         status = {status}
         setStatus={setStatus}
       />

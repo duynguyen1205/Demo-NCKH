@@ -348,19 +348,6 @@ const AddMemberApprove = () => {
       </ConfigProvider>
     </div>
   );
-  const listUser = (
-    <div>
-      <List
-        bordered
-        dataSource={selectedUser}
-        renderItem={(selectedUser) => (
-          <List.Item>
-            {selectedUser.fullName} - {selectedUser.position}
-          </List.Item>
-        )}
-      />
-    </div>
-  );
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -407,13 +394,6 @@ const AddMemberApprove = () => {
         )}
       </div>
 
-      <span
-        style={{
-          marginLeft: 8,
-        }}
-      >
-        {" "}
-      </span>
       <div>
         <Table
           rowClassName={(record, index) =>
@@ -422,6 +402,9 @@ const AddMemberApprove = () => {
           bordered={true}
           rowSelection={{
             ...rowSelection,
+          }}
+          scroll={{
+            y: 340,
           }}
           columns={columns}
           dataSource={showFullData ? user : maskedData}

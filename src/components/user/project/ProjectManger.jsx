@@ -8,14 +8,11 @@ import { Button, ConfigProvider, Input, Space, Table, Tabs } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "../../staff/project/project.scss";
-import { useNavigate } from "react-router-dom";
 import ModalInfor from "./ModalInfor";
 import "./table.scss";
-import ModalReject from "./ModalReject";
 // sơ duyệt
 import {
   getTopicReviewerAPI,
-  createMemberDecision,
   getReviewedByMember,
 } from "../../../services/api";
 import dayjs from "dayjs";
@@ -26,11 +23,8 @@ const dateFormat = "DD/MM/YYYY";
 const ProjectManagerUser = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalRejOpen, setIsModalRejOpen] = useState(false);
   const [data, setDataUser] = useState({});
-  const [dataPro, setDataPro] = useState({});
   const [status, setStatus] = useState(false);
   const [activeTab, setActiveTab] = useState("notyet");
   const [dataTopicForMember, setdataTopicForMember] = useState([]);
@@ -166,25 +160,6 @@ const ProjectManagerUser = () => {
         text
       ),
   });
-  const handleOnClickApprove = (id) => {
-    const param = {
-      memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
-      topicId: id,
-      isApproved: true,
-      reason: null,
-    };
-    createMemberDecision(param)
-      .then((data) => {
-        if (data) {
-          setStatus(true);
-        } else {
-          setStatus(false);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const columns = [
     {
       title: "ID",
@@ -240,22 +215,6 @@ const ProjectManagerUser = () => {
                 setDataUser(record);
               }}
             />
-            {activeTab === "notyet" && (
-              <>
-                {" "}
-                <CheckOutlined
-                  onClick={() => handleOnClickApprove(record.topicId)}
-                  style={style2}
-                />
-                <CloseOutlined
-                  style={style3}
-                  onClick={() => {
-                    setDataPro(record);
-                    setIsModalRejOpen(true);
-                  }}
-                />
-              </>
-            )}
             {activeTab === "done" && (
               <>
                 <p
@@ -348,18 +307,11 @@ const ProjectManagerUser = () => {
           },
         }}
         title={renderHeader}
-        loading={isLoading}
       />
       <ModalInfor
         data={data}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-      />
-      <ModalReject
-        userId="31C63D57-EEB2-4E03-BC8D-1689D5FB3D87"
-        data={dataPro}
-        isModalRejOpen={isModalRejOpen}
-        setIsModalRejOpen={setIsModalRejOpen}
         status={status}
         setStatus={setStatus}
       />

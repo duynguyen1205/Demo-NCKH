@@ -201,7 +201,7 @@ const RegisterProject = () => {
               ]}
               labelCol={{ span: 24 }}
             >
-              <Input />
+              <Input maxLength={"100"} />
             </Form.Item>
           </Col>
           <Col span={24}>
@@ -216,7 +216,7 @@ const RegisterProject = () => {
               ]}
               labelCol={{ span: 24 }}
             >
-              <TextEditor />
+              <TextEditor/>
             </Form.Item>
           </Col>
           <Col span={12}>

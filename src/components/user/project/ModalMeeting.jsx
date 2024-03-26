@@ -14,7 +14,6 @@ const ModalInforMeeting = (props) => {
   const handleCancel = () => {
     props.setIsModalOpen(false);
   };
-  console.log("day la props",props);
   const getTopicDetail = async () => {
     try {
       const res = await getInforMeetingForCouncil({

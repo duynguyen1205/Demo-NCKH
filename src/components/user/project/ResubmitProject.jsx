@@ -26,7 +26,7 @@ const ResubmitProject = () => {
   const [topicLink, setTopicLink] = useState([]);
   const [data, setDataUser] = useState({});
   const [status, setStatus] = useState(false);
-  const userId = "3d0b8c68-5e1f-46d6-96a4-71b0229a1e95";
+  const userId = "5b5e31b2-cb63-47c7-b92a-129e15a2b2e3";
   const [dataReviewDocument, setDataReviewDocument] = useState([]);
 
   const location = useLocation();
@@ -45,15 +45,18 @@ const ResubmitProject = () => {
       dataIndex: "resultFileLink",
       key: "resultFileLink",
       width: "20%",
+      render: (text, record, index) => {
+        return <a href={text}>File chỉnh sửa</a>;
+      },
     },
     {
       title: "File chỉnh sửa",
       dataIndex: "documents",
       key: "documents",
       width: "30%",
-      render: () => {
-        <div>aaaaaaaaa</div>
-      }
+      render: (text) => {
+        <link href={text}>â</link>;
+      },
     },
 
     {
@@ -77,39 +80,32 @@ const ResubmitProject = () => {
           color: "blue",
           fontSize: "1.5em",
           cursor: "pointer",
-      };
-      const style2 = {
+        };
+        const style2 = {
           color: "green",
           fontSize: "1.5em",
           margin: "0 10px",
           cursor: "pointer",
-      };
-      const style3 = {
+        };
+        const style3 = {
           color: "red",
           fontSize: "1.5em",
           cursor: "pointer",
-      };
+        };
+        const isChairMan =
+          dataReviewDocument[0]?.role === "Chairman" ? true : false;
+        console.log("====================================");
+        console.log(dataReviewDocument[0]?.role === "chairman" ? true : false);
+        console.log("====================================");
         return (
-          <div style={{ textAlign: "center" }}>
-            <EditOutlined 
-              style={style1}
-              onClick={() => {
-
-              }}
-            />
-            <CheckOutlined 
-              onClick={() => {
-
-
-              }}
-              style={style2}
-            />
-            <CloseOutlined 
-              onClick={() => {
-                
-              }}
-              style={style2}
-            />
+          <div>
+            <EditOutlined style={style1} onClick={() => {}} />
+            {isChairMan && (
+              <>
+                <CheckOutlined onClick={() => {}} style={style2} />
+                <CloseOutlined onClick={() => {}} style={style3} />
+              </>
+            )}
           </div>
         );
       },
@@ -117,24 +113,29 @@ const ResubmitProject = () => {
     },
   ];
 
-
   const getReviewDoc = async () => {
     const res = await getReviewDocuments({
       userId: userId, // Nguyen Thanh B-chairman
       topicId: topicId,
-
     });
     if (res && res?.data) {
-      const data = [{
-        role: res.data.role,
-        state: res.data?.reviewEarlyDocument ? "Đăng ký đề tài" : "Giai đoạn tiếp theo",
-        deadline: dayjs(res.data.reviewEarlyDocument.deadline).format(dateFormat),
-        decisionOfCouncil: res.data.reviewEarlyDocument.decisionOfCouncil,
-        resultFileLink: res.data.reviewEarlyDocument.resultFileLink,
-        documents: res.data.reviewEarlyDocument.documents.length > 0 ? res.data.reviewEarlyDocument.documents : null
-
-      }]
-      console.log("bbbbbbbb", res.data.reviewEarlyDocument.documents.length > 0 ? res.data.reviewEarlyDocument.documents : []);
+      const data = [
+        {
+          role: res.data.role,
+          state: res.data?.reviewEarlyDocument
+            ? "Đăng ký đề tài"
+            : "Giai đoạn tiếp theo",
+          deadline: dayjs(res.data.reviewEarlyDocument.deadline).format(
+            dateFormat
+          ),
+          decisionOfCouncil: res.data.reviewEarlyDocument.decisionOfCouncil,
+          resultFileLink: res.data.reviewEarlyDocument.resultFileLink,
+          documents:
+            res.data.reviewEarlyDocument.documents.length > 0
+              ? res.data.reviewEarlyDocument.documents
+              : null,
+        },
+      ];
       console.log("đây là res data", res.data);
       console.log("đây là data", data);
       setDataReviewDocument(data);

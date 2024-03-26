@@ -47,8 +47,8 @@ const items = [
     icon: <FileDoneOutlined />,
   },
   {
-    label: <Link to="/user/upload">Xem đề tài</Link>,
-    key: "upload-document",
+    label: <Link to="/user/review">Xem đề tài</Link>,
+    key: "review",
     icon: <FileSyncOutlined />,
   },
   {

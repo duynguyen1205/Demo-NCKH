@@ -127,7 +127,7 @@ function App() {
           ],
         },
         {
-          path: "upload",
+          path: "review",
           element: <Outlet />,
           children: [
             {
@@ -135,7 +135,7 @@ function App() {
               element: <ProjectResubmit />,
             },
             {
-              path: "upload-document/:projectId",
+              path: "review-topic/:projectId",
               element: <ResubmitProject />,
             },
           ],

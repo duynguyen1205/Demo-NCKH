@@ -163,9 +163,15 @@ const ProjectForTrack = () => {
       render: (text, record, index) => {
         const style2 = {
           color: "green",
-          fontSize: "1.5em",
-          margin: "0 20",
+          fontSize: "20px",
+          margin: "0 10px",
           cursor: "pointer",
+        };
+        const style1 = {
+          color: "black",
+          fontSize: "20px",
+          cursor: "pointer",
+          paddingTop: "2px",
         };
         return (
           <div>
@@ -173,15 +179,10 @@ const ProjectForTrack = () => {
               onClick={() => {
                 navigate(`/user/track/track-topic/${record.topicId}`);
               }}
-              style={style2}
+              style={style1}
             />
 
-            <ScheduleOutlined
-              onClick={() => {
-
-              }}
-              style={style2}
-            />
+            <ScheduleOutlined onClick={() => {}} style={style2} />
           </div>
         );
       },

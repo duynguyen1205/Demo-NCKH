@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Collapse, Spin, Space, Steps, Button } from "antd";
 import "./track.scss";
 import { useLocation, useNavigate } from "react-router-dom";
-import {trackReseach } from "../../../services/api";
+import { trackReseach } from "../../../services/api";
 
 const TrackProjectStaff = () => {
   const navigate = useNavigate();
@@ -83,16 +83,30 @@ const TrackProjectStaff = () => {
                         icon: <FileProtectOutlined />,
                       },
                       {
-                        title: "Trưởng khoa duyệt",
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForDean === "Accept"
+                            ? "Trưởng khoa đã duyệt"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "Trưởng khoa đã từ chối"
+                            : "Trưởng khoa duyệt",
                         status:
                           dataProcess?.preliminaryReviewProcess
                             ?.waitingForDean === "Accept"
                             ? "finished"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "error"
                             : "wait",
                         icon: <SolutionOutlined />,
                       },
                       {
-                        title: "Staff thêm thành viên sơ duyệt",
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "Staff đã thêm thành viên sơ duyệt"
+                            : "Staff thêm thành viên sơ duyệt",
                         status:
                           dataProcess?.preliminaryReviewProcess
                             ?.waitingForCouncilFormation === "Done"
@@ -101,7 +115,11 @@ const TrackProjectStaff = () => {
                         icon: <UserAddOutlined />,
                       },
                       {
-                        title: "Thành viên sơ duyệt đánh giá",
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "Thông qua"
+                            : "Thành viên sơ duyệt đánh giá",
                         status:
                           dataProcess?.preliminaryReviewProcess
                             ?.waitingForCouncilDecision === "Accept"
@@ -110,7 +128,11 @@ const TrackProjectStaff = () => {
                         icon: <FileDoneOutlined />,
                       },
                       {
-                        title: "Staff tạo hội đồng đánh giá",
+                        title:
+                          dataProcess?.earlyTermReportProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "Staff đã tạo hội đồng đánh giá"
+                            : "Staff tạo hội đồng đánh giá",
                         status:
                           dataProcess?.earlyTermReportProcess
                             ?.waitingForCouncilFormation === "Done"
@@ -127,6 +149,16 @@ const TrackProjectStaff = () => {
                             : "wait",
                         icon: <CloudUploadOutlined />,
                       },
+                      // nếu resubmit thì mới hiện
+                      // {
+                      //   title: "Staff tải hợp đồng lên",
+                      //   status:
+                      //     dataProcess?.earlyTermReportProcess
+                      //       ?.waitingForContractSigning === "Accept"
+                      //       ? "finished"
+                      //       : "wait",
+                      //   icon: <ContactsOutlined />,
+                      // },
                       {
                         title: "Staff tải hợp đồng lên",
                         status:

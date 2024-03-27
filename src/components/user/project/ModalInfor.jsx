@@ -21,6 +21,7 @@ const ModalInfor = (props) => {
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
   const [topicLink, setTopicLink] = useState([]);
+  const [checked, setChecked] = useState(true);
   const [reason, setReason] = useState(null);
   const topicId = props.data.topicId;
   const location = useLocation();
@@ -56,10 +57,10 @@ const ModalInfor = (props) => {
       };
       createMemberDecision(param)
         .then((data) => {
-          if (data) {
-            setStatus(true);
-          } else {
+          if (props.status === true) {
             setStatus(false);
+          } else {
+            setStatus(true);
           }
         })
         .catch((error) => {
@@ -138,32 +139,34 @@ const ModalInfor = (props) => {
       <Button shape="round" type="primary" onClick={handleCancel}>
         Quay về
       </Button>
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: "#55E6A0",
-          },
-        }}
-      >
-        <Button
-          // disabled={"false"}
-          shape="round"
-          type="primary"
-          danger
-          onClick={() => handleOnClickRejected()}
-          style={{ margin: "0 10px" }}
+      {props.currentTab === "notpassyet" && (
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#55E6A0",
+            },
+          }}
         >
-          Từ chối
-        </Button>
-        <Button
-          // disabled={"true"}
-          shape="round"
-          type="primary"
-          onClick={() => handleOnClickApprove()}
-        >
-          Thông qua
-        </Button>
-      </ConfigProvider>
+          <Button
+            disabled={checked}
+            shape="round"
+            type="primary"
+            danger
+            onClick={() => handleOnClickRejected()}
+            style={{ margin: "0 10px" }}
+          >
+            Từ chối
+          </Button>
+          <Button
+            disabled={checked}
+            shape="round"
+            type="primary"
+            onClick={() => handleOnClickApprove()}
+          >
+            Thông qua
+          </Button>
+        </ConfigProvider>
+      )}
     </div>
   );
 
@@ -240,9 +243,10 @@ const ModalInfor = (props) => {
                   <span key={index}>
                     <a
                       key={index}
-                      href={item.link}
+                      href={`https://view.officeapps.live.com/op/view.aspx?src=`+item.link}
                       target="_blank"
                       rel={item.name}
+                      onClick={() => setChecked(false)}
                     >
                       {item.name}
                     </a>
@@ -251,11 +255,17 @@ const ModalInfor = (props) => {
                 ))}
               </Form.Item>
             </Col>
-            <Col span={24}>
-              <Form.Item name="reason" label="Ghi chú" labelCol={{ span: 24 }}>
-                <Input onChange={(value) => setReason(value)} />
-              </Form.Item>
-            </Col>
+            {props.currentTab === "notpassyet" && (
+              <Col span={24}>
+                <Form.Item
+                  name="reason"
+                  label="Ghi chú"
+                  labelCol={{ span: 24 }}
+                >
+                  <Input onChange={(value) => setReason(value)} />
+                </Form.Item>
+              </Col>
+            )}
           </Row>
         </Form>
       </Modal>

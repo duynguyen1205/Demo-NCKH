@@ -8,20 +8,13 @@ import { Button, ConfigProvider, Input, Space, Table, Tabs } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "../../staff/project/project.scss";
-import { useNavigate } from "react-router-dom";
 import ModalInfor from "./ModalInfor";
 import "./table.scss";
-import ModalReject from "./ModalReject";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
-import {
-  createDeanMakeDecesion,
-  getTopicForDean,
-  viewDeanDecesion,
-} from "../../../services/api";
-// import ModalInfor from "../../modalInfor.jsx";
+import { getTopicForDean, viewDeanDecesion } from "../../../services/api";
 const ProjectManagerUserReview = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -167,32 +160,32 @@ const ProjectManagerUserReview = () => {
         };
         return (
           <div style={{ textAlign: "center" }}>
-                <InfoCircleOutlined
-                  style={style1}
-                  onClick={() => {
-                    setIsModalOpen(true);
-                    setDataUser(record);
-                  }}
-                />
-              {currentTab == "passed" &&
-                dataTopicForDean &&
-                dataTopicForDean.length > 0 && (
-                  <>
-                    <p
-                      style={{
-                        backgroundColor: record.deanDecision ? "green" : "red",
-                        color: "white",
-                        display: "inline-block",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        marginTop: "8px",
-                        margin: "0 10px",
-                      }}
-                    >
-                      {record.deanDecision ? "Đồng ý" : "Từ chối"}
-                    </p>
-                  </>
-                )}
+            <InfoCircleOutlined
+              style={style1}
+              onClick={() => {
+                setIsModalOpen(true);
+                setDataUser(record);
+              }}
+            />
+            {currentTab == "passed" &&
+              dataTopicForDean &&
+              dataTopicForDean.length > 0 && (
+                <>
+                  <p
+                    style={{
+                      backgroundColor: record.deanDecision ? "green" : "red",
+                      color: "white",
+                      display: "inline-block",
+                      padding: "5px 10px",
+                      borderRadius: "5px",
+                      marginTop: "8px",
+                      margin: "0 10px",
+                    }}
+                  >
+                    {record.deanDecision ? "Đồng ý" : "Từ chối"}
+                  </p>
+                </>
+              )}
           </div>
         );
       },
@@ -289,10 +282,11 @@ const ProjectManagerUserReview = () => {
         title={renderHeader}
       />
       <ModalInfor
+        currentTab={currentTab}
         data={data}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        status = {status}
+        status={status}
         setStatus={setStatus}
       />
     </div>

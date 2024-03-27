@@ -26,14 +26,14 @@ const ProjectManagerUser = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [data, setDataUser] = useState({});
   const [status, setStatus] = useState(false);
-  const [activeTab, setActiveTab] = useState("notyet");
+  const [activeTab, setActiveTab] = useState("notpassyet");
   const [dataTopicForMember, setdataTopicForMember] = useState([]);
   useEffect(() => {
     getTopicReviewer();
   }, [status]);
   const items = [
     {
-      key: "notyet",
+      key: "notpassyet",
       label: `Chưa duyệt`,
       children: <></>,
     },
@@ -192,17 +192,6 @@ const ProjectManagerUser = () => {
       render: (text, record, index) => {
         const style1 = {
           color: "blue",
-          fontSize: "1.5em",
-          cursor: "pointer",
-        };
-        const style2 = {
-          color: "green",
-          fontSize: "1.5em",
-          margin: "0 10px",
-          cursor: "pointer",
-        };
-        const style3 = {
-          color: "red",
           fontSize: "1.5em",
           cursor: "pointer",
         };

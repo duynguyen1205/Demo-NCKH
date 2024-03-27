@@ -140,7 +140,7 @@ const LayoutUser = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <p>Duy Nguyễn</p>
+                  <p>Quang Anh</p>
                   <Avatar />
                 </Space>
               </a>

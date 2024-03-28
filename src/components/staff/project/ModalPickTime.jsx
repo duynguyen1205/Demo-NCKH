@@ -1,5 +1,5 @@
-import { Col, Divider, List, Modal, Row, Select, message } from "antd";
-import { useEffect, useState } from "react";
+import {  Divider, List, Modal,  Select, message } from "antd";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { memberReviewAPI } from "../../../services/api";
 const ModalPickTime = ({ visible, onCancel, dataUser }) => {

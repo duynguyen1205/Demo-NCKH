@@ -18,6 +18,7 @@ import ProjectForTrack from "./components/user/project/ProjectForTrack.jsx";
 import ResubmitProject from "./components/user/project/ResubmitProject.jsx";
 import ProjectResubmit from "./components/user/project/ProjectResubmit.jsx";
 import ProjectForTrackStaff from "./components/staff/project/ProjectForTrackStaff.jsx";
+import MidtermProject from "./pages/projectMangerStaff/midterm.jsx";
 const Layout = () => {
   return <>Main Page</>;
 };
@@ -42,7 +43,35 @@ function App() {
           element: <StaffPage />,
         },
         {
-          path: "manager",
+          path: "earlytearm",
+          element: <Outlet />,
+          children: [
+            {
+              index: true,
+              element: <Project />,
+            },
+            {
+              path: "add-member/:projectId",
+              element: <AddMemberApprove />,
+            },
+            {
+              path: "add-council/:projectId",
+              element: <AddMemberApprove />,
+            },
+          ],
+        },
+        {
+          path: "midtearm",
+          element: <Outlet />,
+          children: [
+            {
+              index: true,
+              element: <MidtermProject />,
+            },
+          ],
+        },
+        {
+          path: "finaltearm",
           element: <Outlet />,
           children: [
             {

@@ -27,22 +27,22 @@ const items = [
     icon: <HomeOutlined />,
   },
   {
-    label: <Link to="/staff/manager">Quản lý đề tài</Link>,
+    label: <span>Quản lý đề tài</span>,
     key: "manager",
     icon: <UnorderedListOutlined />,
     children: [
       {
-        label: <Link to="/staff/earlytearm">Đề tài đầu kì</Link>,
+        label: <Link to="/staff/earlytearm">Đầu kì</Link>,
         key: "earlytearm",
         icon: <UnorderedListOutlined />,
       },
       {
-        label: <Link to="/staff/midtearm">Đề tài giữa kì</Link>,
+        label: <Link to="/staff/midtearm">Giữa kì</Link>,
         key: "midtearm",
         icon: <UnorderedListOutlined />,
       },
       {
-        label: <Link to="/staff/finaltearm">Đề tài cuối kì</Link>,
+        label: <Link to="/staff/finaltearm">Cuối kì</Link>,
         key: "finaltearm",
         icon: <UnorderedListOutlined />,
       },

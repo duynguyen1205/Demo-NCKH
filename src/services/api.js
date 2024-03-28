@@ -171,3 +171,10 @@ export const moveToMiddleReport = (param) => {
   return axios.post(`api/topic/move-to-middle-term?${qs.stringify(param)}`)
 }
 
+// mid-term report
+
+// get topic mid-term report
+export const getMidTermReport = (param) => {
+  return axios.get("api/topic/middle-topic-waiting-config")
+}
+

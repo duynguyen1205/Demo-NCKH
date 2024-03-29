@@ -1,6 +1,9 @@
 import {
+  CalendarOutlined,
   FileDoneOutlined,
+  FlagOutlined,
   HomeOutlined,
+  HourglassOutlined,
   UnorderedListOutlined,
   UploadOutlined,
   UserOutlined,
@@ -34,17 +37,17 @@ const items = [
       {
         label: <Link to="/staff/earlytearm">Đầu kì</Link>,
         key: "earlytearm",
-        icon: <UnorderedListOutlined />,
+        icon: <CalendarOutlined />,
       },
       {
         label: <Link to="/staff/midtearm">Giữa kì</Link>,
         key: "midtearm",
-        icon: <UnorderedListOutlined />,
+        icon: <HourglassOutlined />,
       },
       {
         label: <Link to="/staff/finaltearm">Cuối kì</Link>,
         key: "finaltearm",
-        icon: <UnorderedListOutlined />,
+        icon: <FlagOutlined />,
       },
     ],
   },
@@ -56,7 +59,7 @@ const items = [
   {
     label: <Link to="/staff/track">Theo dõi tiến độ</Link>,
     key: "track",
-    icon: <FileDoneOutlined  />,
+    icon: <FileDoneOutlined />,
   },
   {
     label: <Link to="/staff/profile">Hồ sơ cá nhân</Link>,
@@ -109,7 +112,7 @@ const LayoutStaff = () => {
               colorBgContainer: "#42BC81",
               colorText: "#FFFFFF",
               colorPrimary: "#070707",
-            }
+            },
           },
         }}
       >

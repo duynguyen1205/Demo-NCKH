@@ -150,9 +150,19 @@ const ProjectResubmit = () => {
       width: "30%",
     },
     {
-      title: "Lĩnh Vực",
-      dataIndex: "categoryName",
+      title: "Trạng thái",
       key: "categoryName",
+      render: (text, record, index) => {
+        return (
+          <>
+            {record.state === "EarlytermReport"
+              ? "Đầu kì"
+              : record.state === "MidtermReport"
+              ? "Giữa kì"
+              : "Cuối kì"}
+          </>
+        );
+      },
     },
     {
       title: "Ngày",

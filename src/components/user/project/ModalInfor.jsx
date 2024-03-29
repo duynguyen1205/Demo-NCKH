@@ -20,12 +20,15 @@ import { useLocation } from "react-router-dom";
 const ModalInfor = (props) => {
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
-  const [topicLink, setTopicLink] = useState([]);
+  const [topicLink, setTopicLink] = useState({});
   const [checked, setChecked] = useState(true);
   const [reason, setReason] = useState(null);
   const topicId = props.data.topicId;
+  let checkEnd;
   const location = useLocation();
   const handleCancel = () => {
+    form.setFieldsValue("");
+    setChecked(true);
     props.setIsModalOpen(false);
   };
   const getTopicDetail = async () => {
@@ -34,34 +37,34 @@ const ModalInfor = (props) => {
         topicId: topicId,
       });
       if (res && res.isSuccess) {
-        setTopicLink(
-          res.data.topicFiles.map((item) => ({
-            name: item.topicFileName,
-            link: item.topicFileLink,
-          }))
-        );
+        setTopicLink({
+          topicFileName: res.data.topicFileName,
+          topicFileLink: res.data.topicFileLink,
+        });
         form.setFieldsValue(res.data);
+        checkEnd = res.data.topicFileLink.endsWith(".docx");
       }
     } catch (error) {
       console.log("Error getting topic detail: ", error);
     }
   };
   // member approval accept
-  const handleOnClickApprove = () => {
+  const handleOnClickApprove = async () => {
     if (location.pathname === "/user/manager") {
       const param = {
         memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
         topicId: topicId,
         isApproved: true,
-        reason: reason,
+        reasonOfDecision: reason,
       };
-      createMemberDecision(param)
+      await createMemberDecision(param)
         .then((data) => {
           if (props.status === true) {
-            setStatus(false);
+            props.setStatus(false);
           } else {
-            setStatus(true);
+            props.setStatus(true);
           }
+          handleCancel();
         })
         .catch((error) => {
           console.log(error);
@@ -71,22 +74,24 @@ const ModalInfor = (props) => {
         diciderId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87",
         topicId: topicId,
         deanDecision: true,
-        reason: reason,
+        reasonOfDecision: reason,
       };
-      createDeanMakeDecesion(param).then((data) => {
-        if (props.status === true) {
-          setStatus(false);
-        } else {
-          setStatus(true);
-        }
-      });
-      handleCancel().catch((error) => {
-        console.log(error);
-      });
+      await createDeanMakeDecesion(param)
+        .then((data) => {
+          if (props.status === true) {
+            props.setStatus(false);
+          } else {
+            props.setStatus(true);
+          }
+          handleCancel();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
   // member approval rejected
-  const handleOnClickRejected = () => {
+  const handleOnClickRejected = async () => {
     if (reason === null) {
       message.error("Vui lòng nhập lí do từ chối");
       return;
@@ -96,9 +101,9 @@ const ModalInfor = (props) => {
           memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
           topicId: topicId,
           isApproved: false,
-          reason: reason,
+          reasonOfDecision: reason,
         };
-        createMemberDecision(param)
+        await createMemberDecision(param)
           .then((data) => {
             message.success("Tạo đánh giá thành công");
             if (props.status === true) {
@@ -116,9 +121,9 @@ const ModalInfor = (props) => {
           diciderId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87",
           topicId: topicId,
           deanDecision: false,
-          rejectReason: reason,
+          reasonOfDecision: reason,
         };
-        createDeanMakeDecesion(param)
+        await createDeanMakeDecesion(param)
           .then((data) => {
             message.success("Tạo đánh giá thành công");
             if (props.status === true) {
@@ -174,6 +179,7 @@ const ModalInfor = (props) => {
   useEffect(() => {
     getTopicDetail();
   }, [isModalOpen === true]);
+
   return (
     <>
       <Modal
@@ -239,20 +245,21 @@ const ModalInfor = (props) => {
                 label="Tài liệu đính kèm"
                 labelCol={{ span: 24 }}
               >
-                {topicLink.map((item, index) => (
-                  <span key={index}>
-                    <a
-                      key={index}
-                      href={`https://view.officeapps.live.com/op/view.aspx?src=`+item.link}
-                      target="_blank"
-                      rel={item.name}
-                      onClick={() => setChecked(false)}
-                    >
-                      {item.name}
-                    </a>
-                    <br />
-                  </span>
-                ))}
+                <span>
+                  <a
+                    href={
+                      checkEnd
+                        ? `https://view.officeapps.live.com/op/view.aspx?src=` +
+                          topicLink.topicFileLink
+                        : topicLink.topicFileLink
+                    }
+                    target="_blank"
+                    rel={topicLink.topicFileName}
+                    onClick={() => setChecked(false)}
+                  >
+                    {topicLink.topicFileName}
+                  </a>
+                </span>
               </Form.Item>
             </Col>
             {props.currentTab === "notpassyet" && (
@@ -262,7 +269,7 @@ const ModalInfor = (props) => {
                   label="Ghi chú"
                   labelCol={{ span: 24 }}
                 >
-                  <Input onChange={(value) => setReason(value)} />
+                  <Input onChange={(event) => setReason(event.target.value)} />
                 </Form.Item>
               </Col>
             )}

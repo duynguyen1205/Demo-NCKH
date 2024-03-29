@@ -81,21 +81,30 @@ const RegisterProject = () => {
   //props của upload
   const props = {
     name: "file",
-    multiple: true,
+    multiple: false,
+    maxCount: 1,
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
         // Thực hiện tải lên file thông qua API của bạn
+        const isCompressedFile =
+          file.type === "application/x-rar-compressed" ||
+          file.type === "application/x-zip-compressed";
+        if (!isCompressedFile) {
+          message.error(
+            "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
+          );
+          onError(file);
+          return;
+        }
         const response = await uploadFile(file);
-        if (response.data[0].fileLink === null) {
+        if (response.data.fileLink === null) {
           onError(response, file);
           message.error(`${file.name} file uploaded unsuccessfully.`);
         } else {
           setFileList((fileList) => [
-            ...fileList,
             {
-              uid: file.uid,
-              fileName: response.data[0].fileName,
-              fileLink: response.data[0].fileLink,
+              fileName: response.data.fileName,
+              fileLink: response.data.fileLink,
             },
           ]);
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
@@ -111,8 +120,7 @@ const RegisterProject = () => {
       }
     },
     onRemove: (file) => {
-      const fileFilter = newTopicFiles.filter((x) => x.uid !== file.uid);
-      setFileList(fileFilter);
+      setFileList([]);
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -150,7 +158,10 @@ const RegisterProject = () => {
     });
     const creatorId = "a813f937-8c3a-40e8-b39e-7b1e0dd962f7"; // Ngô Minh G
     const { categoryId, topicName, description, budget, startTime } = values;
-    const updatedFileFilter = newTopicFiles.map(({ uid, ...rest }) => rest);
+    if(newTopicFiles.length === 0) {
+      message.error("Xin hãy tải các tài liệu liên quan lên")
+      return
+    }
     const data = {
       categoryId: categoryId,
       creatorId: creatorId,
@@ -158,11 +169,18 @@ const RegisterProject = () => {
       description: description,
       budget: budget.toString(),
       memberList: newData,
-      newTopicFiles: updatedFileFilter,
+      topicFileName: newTopicFiles[0].fileName,
+      topicFileLink: newTopicFiles[0].fileLink,
       startTime: dayjs(startTime).utc().format(),
     };
+    console.log('====================================');
+    console.log(data);
+    console.log('====================================');
     try {
       const res = await createTopicAPI(data);
+      console.log('====================================');
+      console.log(res);
+      console.log('====================================');
       if (res && res.isSuccess) {
         message.success("Tạo topic thành công");
         setFileList([]);
@@ -216,7 +234,7 @@ const RegisterProject = () => {
               ]}
               labelCol={{ span: 24 }}
             >
-              <TextEditor/>
+              <TextEditor />
             </Form.Item>
           </Col>
           <Col span={12}>

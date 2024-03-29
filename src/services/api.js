@@ -20,12 +20,12 @@ export const createMemberDecision = (param) => {
   return axios.post("/api/memberreview/make-decision", param);
 };
 // upload file return link and name
-export const uploadFile = (files) => {
+export const uploadFile = (file) => {
   const bodyFormData = new FormData();
-  bodyFormData.append("formFiles", files);
+  bodyFormData.append("formFile", file);
   return axios({
     method: "post",
-    url: "/api/uploadfile/multiple",
+    url: "/api/uploadfile/single-DO",
     data: bodyFormData,
     headers: {
       "Content-Type": "multipart/form-data",
@@ -164,5 +164,10 @@ export const getInforMeetingForCouncil = (param) => {
 // get reviewcouncil and member documents
 export const getReviewDocuments = (param) => {
   return  axios.get(`api/topic/all-review-documents?${qs.stringify(param)}`)
+}
+
+// done early term report 
+export const moveToMiddleReport = (param) => {
+  return axios.post(`api/topic/move-to-middle-term?${qs.stringify(param)}`)
 }
 

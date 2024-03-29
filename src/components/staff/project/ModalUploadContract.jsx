@@ -61,18 +61,26 @@ const ModalUploadContract = (props) => {
     multiple: true,
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
+        const isCompressedFile =
+          file.type === "application/x-rar-compressed" ||
+          file.type === "application/x-zip-compressed";
+        if (!isCompressedFile) {
+          message.error(
+            "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
+          );
+          onError(file);
+          return;
+        }
         // Thực hiện tải lên file thông qua API của bạn
         const response = await uploadFile(file);
-        if (response.data[0].fileLink === null) {
+        if (response.data.fileLink === null) {
           onError(response, file);
           message.error(`${file.name} file uploaded unsuccessfully.`);
         } else {
           setFileList((fileList) => [
-            ...fileList,
             {
-              uid: file.uid,
-              fileName: response.data[0].fileName,
-              fileLink: response.data[0].fileLink,
+              fileName: response.data.fileName,
+              fileLink: response.data.fileLink,
             },
           ]);
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
@@ -88,8 +96,7 @@ const ModalUploadContract = (props) => {
       }
     },
     onRemove: (file) => {
-      const fileFilter = newTopicFiles.filter((x) => x.uid !== file.uid);
-      setFileList(fileFilter);
+      setFileList([]);
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);

@@ -27,9 +27,26 @@ const items = [
     icon: <HomeOutlined />,
   },
   {
-    label: <Link to="/staff/manager">Quản lý</Link>,
+    label: <Link to="/staff/manager">Quản lý đề tài</Link>,
     key: "manager",
     icon: <UnorderedListOutlined />,
+    children: [
+      {
+        label: <Link to="/staff/earlytearm">Đề tài đầu kì</Link>,
+        key: "earlytearm",
+        icon: <UnorderedListOutlined />,
+      },
+      {
+        label: <Link to="/staff/midtearm">Đề tài giữa kì</Link>,
+        key: "midtearm",
+        icon: <UnorderedListOutlined />,
+      },
+      {
+        label: <Link to="/staff/finaltearm">Đề tài cuối kì</Link>,
+        key: "finaltearm",
+        icon: <UnorderedListOutlined />,
+      },
+    ],
   },
   {
     label: <Link to="/staff/upload-document">Tải tài liệu lên </Link>,
@@ -92,7 +109,7 @@ const LayoutStaff = () => {
               colorBgContainer: "#42BC81",
               colorText: "#FFFFFF",
               colorPrimary: "#070707",
-            },
+            }
           },
         }}
       >

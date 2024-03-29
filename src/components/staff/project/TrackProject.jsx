@@ -41,6 +41,9 @@ const TrackProjectStaff = () => {
       });
       if (res && res.isSuccess) {
         setDataProcess(res.data);
+        if(res.data?.state === "MidtermReport") {
+          setCurrentStep(2)
+        }
       }
     } catch (error) {
       console.log("====================================");
@@ -182,7 +185,6 @@ const TrackProjectStaff = () => {
             {
               key: "2",
               label: "Báo cáo giữa kì",
-
               extra: renderExtra(2),
             },
           ]}

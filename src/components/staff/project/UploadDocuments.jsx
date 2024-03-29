@@ -26,6 +26,7 @@ import {
   getTopicUploadContract,
   getTopicUploadDoc,
   getTopicWaitingResubmit,
+  moveToMiddleReport,
 } from "../../../services/api";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -74,6 +75,7 @@ const UploadDocument = () => {
       const res = await getTopicWaitingResubmit({
         staffId: staffId,
       });
+ 
       if (res && res.isSuccess) {
         setDataTopic(res.data);
       }
@@ -187,14 +189,19 @@ const UploadDocument = () => {
         text
       ),
   });
-  const confirm = (e) => {
-    console.log(e);
-    message.success("Click on Yes");
+  const confirm = async (topicId) => {
+    try {
+      const result = await moveToMiddleReport({
+        topicId: topicId,
+      });
+      if (result && result.isSuccess) {
+        message.success("Chuyển sang giai đoạn báo cáo giữa kì thành công")
+      }
+    } catch (error) {
+      console.log("có lỗi tại ", error);
+    }
   };
-  const cancel = (e) => {
-    console.log(e);
-    message.error("Click on No");
-  };
+  const cancel = () => {};
   const columns = [
     {
       title: "Id",
@@ -262,7 +269,7 @@ const UploadDocument = () => {
                   placement="topRight"
                   title="Xác nhận"
                   description="Xác nhận kết thúc giai đoạn này ?"
-                  onConfirm={confirm}
+                  onConfirm={() => confirm(record.topicId)}
                   onCancel={cancel}
                   okText="Đồng ý"
                   cancelText="Không"

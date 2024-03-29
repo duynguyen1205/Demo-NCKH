@@ -298,6 +298,7 @@ const ProjectManagerUser = () => {
         title={renderHeader}
       />
       <ModalInfor
+        currentTab={activeTab}
         data={data}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}

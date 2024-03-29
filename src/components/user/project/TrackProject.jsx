@@ -44,6 +44,9 @@ const TrackProject = () => {
       });
       if (res && res.isSuccess) {
         setDataProcess(res.data);
+        if(res.data?.state === "MidtermReport") {
+          setCurrentStep(2)
+        }
       }
     } catch (error) {
       console.log("====================================");

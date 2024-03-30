@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { Modal, Calendar, theme, Divider } from "antd";
+import { Modal, Calendar, theme, Divider, message } from "antd";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { makeDeadlineSubmit } from "../../../services/api";
 
+dayjs.extend(utc);
 const ModalMidTerm = (props) => {
   const { token } = theme.useToken();
-  const [selectedTime, setSelectedTime] = useState()
+  const [selectedTime, setSelectedTime] = useState();
 
   const closeModal = () => {
     props.setIsModalOpen(false);
@@ -14,13 +18,25 @@ const ModalMidTerm = (props) => {
     border: `1px solid ${token.colorBorderSecondary}`,
     borderRadius: token.borderRadiusLG,
   };
-  const onPanelChange = (value, mode) => {
-    setSelectedTime(value.format("DD-MM-YYYY "))
-    console.log(value.format("YYYY-MM-DD"), mode);
+  const onChange = (value) => {
+    setSelectedTime(value);
   };
-  const submit = () => {
-
-  }
+  const submit = async () => {
+    try {
+      const data = {
+        topicId: props.data.topicId,
+        deadline: dayjs(selectedTime).utc().format(),
+      };
+      const res = await makeDeadlineSubmit(data);
+      if(res && res.isSuccess) {
+        message.success("Tạo deadline thành công");
+      }
+    } catch (error) {
+      console.log('====================================');
+      console.log(error);
+      console.log('====================================');
+    }
+  };
   return (
     <div style={wrapperStyle}>
       <Modal
@@ -33,8 +49,13 @@ const ModalMidTerm = (props) => {
         maskClosable={false}
       >
         <div style={{ height: 350 }}>
-          <Calendar fullscreen={false} onPanelChange={onPanelChange} />
-          <p>Chọn ngày: <span>{selectedTime}</span></p>
+          <Calendar
+            fullscreen={false}
+            onChange={onChange}
+          />
+          <p>
+            Ngày: <span>{selectedTime?.format("DD-MM-YYYY")}</span>
+          </p>
         </div>
       </Modal>
     </div>

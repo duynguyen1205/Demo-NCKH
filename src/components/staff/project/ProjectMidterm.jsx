@@ -188,7 +188,10 @@ const ProjectManagerMidTerm = () => {
                       margin: "0 10px",
                     }}
                     type="primary"
-                    onClick={() => {setIsModalOpen(true)}}
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setDataPro(record);
+                    }}
                   />
                 </Tooltip>
               )}
@@ -292,6 +295,7 @@ const ProjectManagerMidTerm = () => {
       />
 
       <ModalMidTerm
+        data={dataPro}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />

@@ -7,6 +7,7 @@ import {
   LoadingOutlined,
   SmileOutlined,
   SolutionOutlined,
+  SyncOutlined,
   UserAddOutlined,
   UserOutlined,
   UsergroupAddOutlined,
@@ -23,7 +24,7 @@ const TrackProject = () => {
   const [dataProcess, setDataProcess] = useState({});
   const renderExtra = (step) => {
     if (step === currentStep) {
-      return <Spin />;
+      return <SyncOutlined spin style={{color: "blue"}}/>;
     } else if (step < currentStep) {
       return <CheckOutlined style={{ color: "green" }} />;
     }

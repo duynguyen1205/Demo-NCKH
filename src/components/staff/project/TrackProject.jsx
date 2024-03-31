@@ -280,7 +280,7 @@ const TrackProjectStaff = () => {
         shape="round"
         type="primary"
         danger
-        onClick={() => navigate("/staff/track")}
+        onClick={() => navigate(-1)}
         style={{ margin: "10px 0" }}
       >
         Quay về

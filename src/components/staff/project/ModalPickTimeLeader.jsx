@@ -19,8 +19,11 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { councilConfig } from "../../../services/api";
-import utc from 'dayjs/plugin/utc';
+import {
+  councilConfigEarly,
+  councilConfigMidterm,
+} from "../../../services/api";
+import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 dayjs.extend(customParseFormat);
@@ -35,8 +38,9 @@ const ModalPickTimeLeader = (props) => {
   const [meetingDetails, setMeetingDetails] = useState("");
   const [council, setCouncil] = useState([]);
   const location = useLocation();
-  let topicId = location.pathname.split("/");
-  topicId = topicId[4];
+  let path = location.pathname.split("/");
+  let topicId = path[4];
+  let checkTerm = path[2];
   const navigate = useNavigate();
   const handleRadioChange = (itemId) => {
     const updatedDataUser = props.dataUser.map((user) => ({
@@ -128,7 +132,9 @@ const ModalPickTimeLeader = (props) => {
         <>
           <div>
             {" "}
-            <p style={{ fontSize: "18px", marginBottom: "8px" }}>Danh sách thành viên hội đồng</p>
+            <p style={{ fontSize: "18px", marginBottom: "8px" }}>
+              Danh sách thành viên hội đồng
+            </p>
             <List
               dataSource={council}
               bordered
@@ -143,7 +149,7 @@ const ModalPickTimeLeader = (props) => {
                 </List.Item>
               )}
             />
-            <div style={{marginTop: "8px"}}>
+            <div style={{ marginTop: "8px" }}>
               <p style={{ fontSize: "18px", marginBottom: "8px" }}>
                 Ngày họp: {meetingDate && meetingDate.format(dateFormat)}
               </p>
@@ -184,23 +190,33 @@ const ModalPickTimeLeader = (props) => {
       councilId: user.id,
       isChairman: user.isChairman,
     }));
-    
+
     const data = {
       topicId: topicId,
       meetingTime: dayjs(meetingDate).utc().format(),
       councils: councilArray,
       meetingDetail: meetingDetails,
-    }
-   
+    };
+    let res;
     try {
-      const res = await councilConfig(data);
-      if(res && res.isSuccess) {
+      if (checkTerm === "earlyterm") {
+        res = await councilConfigEarly(data).catch((error) => {
+          console.error("Lỗi trong councilConfigEarly:", error);
+          throw error;
+        });
+      } else if (checkTerm === "midterm") {
+        res = await councilConfigMidterm(data).catch((error) => {
+          console.error("Lỗi trong councilConfigMidterm:", error);
+          throw error;
+        });
+      }
+      if (res && res.isSuccess) {
         message.success("Tạo hội đồng đánh giá thành công");
         navigate("/staff");
       } else {
-        console.log('====================================');
+        console.log("====================================");
         console.log(res);
-        console.log('====================================');
+        console.log("====================================");
         message.error("Tạo hội đồng không thành công");
       }
     } catch (error) {
@@ -233,10 +249,7 @@ const ModalPickTimeLeader = (props) => {
             )}
 
             {current === steps.length - 1 && (
-              <Button
-                type="primary"
-                onClick={handleSubmit}
-              >
+              <Button type="primary" onClick={handleSubmit}>
                 Xác nhận
               </Button>
             )}

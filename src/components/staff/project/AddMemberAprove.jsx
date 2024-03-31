@@ -1,15 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Badge,
-  Button,
-  ConfigProvider,
-  Input,
-  List,
-  Popover,
-  Space,
-  Table,
-  message,
-} from "antd";
+import { Button, ConfigProvider, Input, List, Space, Table } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import "../../user/project/table.scss";
@@ -176,6 +166,7 @@ const AddMemberApprove = () => {
           )}
         </Space>
       ),
+      width: "21%"
     },
     {
       title: "Số điện thoại",
@@ -300,7 +291,7 @@ const AddMemberApprove = () => {
         shape="round"
         type="primary"
         danger
-        onClick={() => navigate("/staff/manager")}
+        onClick={() => navigate(-1)}
         style={{ margin: "0 10px" }}
       >
         Quay về

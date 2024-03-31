@@ -15,7 +15,6 @@ import "./table.scss";
 import { getTopicByUserId } from "../../../services/api";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import ModalInforMeetingForMember from "./ModalMeetingForMem";
 import ModalMeetingInfor from "./ModalMeetingInfor";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";

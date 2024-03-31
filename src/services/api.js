@@ -100,7 +100,7 @@ export const getReviewedByMember = (param) => {
 };
 
 // create council
-export const councilConfig = (data) => {
+export const councilConfigEarly = (data) => {
   return axios.post("/api/review/config-early", data);
 };
 
@@ -193,7 +193,7 @@ export const moveToMiddleReport = (param) => {
 
 // get topic mid-term report
 export const getMidTermReport = (param) => {
-  return axios.get("api/topic/middle-topic-waiting-config");
+  return axios.get("api/topic/middle-topic-waiting-configure-conference");
 };
 
 // make deadline submit documents
@@ -203,11 +203,11 @@ export const makeDeadlineSubmit = (data) => {
 
 // submit documents
 export const submitDocumentsMidterm = (data) => {
-  
+  return axios.post("api/attachment/create-supp-docs", data);
 }
 
 // create mid-term council
-export const makeMidTerm = (data) => {
+export const councilConfigMidterm = (data) => {
   return axios.post("api/review/config-middle", data);
 };
 

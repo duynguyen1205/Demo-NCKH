@@ -43,7 +43,7 @@ function App() {
           element: <StaffPage />,
         },
         {
-          path: "earlytearm",
+          path: "earlyterm",
           element: <Outlet />,
           children: [
             {
@@ -61,12 +61,16 @@ function App() {
           ],
         },
         {
-          path: "midtearm",
+          path: "midterm",
           element: <Outlet />,
           children: [
             {
               index: true,
               element: <MidtermProject />,
+            },
+            {
+              path: "add-council/:projectId",
+              element: <AddMemberApprove />,
             },
           ],
         },
@@ -77,10 +81,6 @@ function App() {
             {
               index: true,
               element: <Project />,
-            },
-            {
-              path: "add-member/:projectId",
-              element: <AddMemberApprove />,
             },
             {
               path: "add-council/:projectId",

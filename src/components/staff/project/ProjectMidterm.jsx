@@ -2,6 +2,7 @@ import {
   CalendarOutlined,
   InfoCircleOutlined,
   SearchOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -22,6 +23,7 @@ dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 import { getMidTermReport } from "../../../services/api";
 import ModalMidTerm from "./ModalMidterm";
+import { useNavigate } from "react-router-dom";
 const ProjectManagerMidTerm = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -31,6 +33,7 @@ const ProjectManagerMidTerm = () => {
   const [dataPro, setDataPro] = useState({});
   const [isModalInforOpen, setIsModalInforOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate()
   const items = [
     {
       key: "notyet",
@@ -38,8 +41,13 @@ const ProjectManagerMidTerm = () => {
       children: <></>,
     },
     {
-      key: "chohoidong",
+      key: "dabaocao",
       label: `Đã tạo lịch báo cáo`,
+      children: <></>,
+    },
+    {
+      key: "taohoidong",
+      label: `Thêm thành viên hội đồng`,
       children: <></>,
     },
   ];
@@ -195,6 +203,23 @@ const ProjectManagerMidTerm = () => {
                   />
                 </Tooltip>
               )}
+              {checkTab === "taohoidong" && (
+                <Tooltip placement="top" title={"Gửi hội đồng"}>
+                <UsergroupAddOutlined
+                  style={{
+                    fontSize: "20px",
+                    color: "blue",
+                    margin: "0 10px",
+                  }}
+                  type="primary"
+                  onClick={() => {
+                    navigate(`/staff/midterm/add-council/${record.topicId}`);
+                  }}
+                >
+                  Gửi hội đồng
+                </UsergroupAddOutlined>
+              </Tooltip>
+              )}
             </ConfigProvider>
           </div>
         );
@@ -215,6 +240,17 @@ const ProjectManagerMidTerm = () => {
       console.log("có lỗi tại getTopicMidTerm: " + error);
     }
   };
+  const getTopicWaitCouncil = async () => {
+    try {
+      const res = await getMidTermReport();
+      if (res && res?.data) {
+        setData(res.data);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log("có lỗi tại getTopicWaitCouncil: " + error);
+    }
+  };
   useEffect(() => {
     getTopicMidTerm();
   }, []);
@@ -228,6 +264,8 @@ const ProjectManagerMidTerm = () => {
           if (value === "notyet") {
             getTopicMidTerm();
           } else if (value === "wait") {
+          } else {
+            getTopicWaitCouncil();
           }
         }}
         style={{ overflowX: "auto", marginLeft: "30px" }}

@@ -11,7 +11,6 @@ import {
   Select,
   Upload,
   message,
-  notification,
 } from "antd";
 import {  UploadOutlined } from "@ant-design/icons";
 import { uploadFileSingle, uploadResult } from "../../../services/api";
@@ -46,7 +45,7 @@ const ModalUpload = (props) => {
   };
 
   const onSubmit = async (values) => {
-    if (newTopicFiles[0]?.topicFileLink == null) {
+    if (newTopicFiles[0]?.topicFileLink === null) {
       message.error("Xin hãy tải biên bản cuộc họp lên");
       return;
     }

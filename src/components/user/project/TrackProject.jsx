@@ -1,34 +1,36 @@
 import {
-  CalendarOutlined,
   CheckOutlined,
   CloudUploadOutlined,
   ContactsOutlined,
   FileDoneOutlined,
   FileProtectOutlined,
   FileTextOutlined,
-  LoadingOutlined,
   ScheduleOutlined,
-  SmileOutlined,
   SolutionOutlined,
   SyncOutlined,
   UploadOutlined,
   UserAddOutlined,
-  UserOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
-import { Collapse, Spin, Space, Steps, Button } from "antd";
+import { Collapse, Space, Steps, Button, ConfigProvider } from "antd";
 import "./track.scss";
 import { trackReseach } from "../../../services/api";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import UploadMidTerm from "./UploadMidTerm";
+dayjs.extend(customParseFormat);
+const dateFormat = "DD-MM-YYYY";
 const TrackProject = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [dataProcess, setDataProcess] = useState({});
+  const [status, setStatus] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const renderExtra = (step) => {
     if (step === currentStep) {
-      return <SyncOutlined spin style={{color: "blue"}}/>;
+      return <SyncOutlined spin style={{ color: "blue" }} />;
     } else if (step < currentStep) {
       return <CheckOutlined style={{ color: "green" }} />;
     }
@@ -48,12 +50,12 @@ const TrackProject = () => {
         topicId: topicId,
       });
       if (res && res.isSuccess) {
-        console.log('====================================');
+        console.log("====================================");
         console.log(res.data);
-        console.log('====================================');
+        console.log("====================================");
         setDataProcess(res.data);
-        if(res.data?.state === "MidtermReport") {
-          setCurrentStep(2)
+        if (res.data?.state === "MidtermReport") {
+          setCurrentStep(2);
         }
       }
     } catch (error) {
@@ -64,7 +66,7 @@ const TrackProject = () => {
   };
   useEffect(() => {
     getProjectProcess();
-  }, []);
+  }, [status]);
   return (
     <div>
       <h2
@@ -142,11 +144,11 @@ const TrackProject = () => {
                         icon: <FileDoneOutlined />,
                       },
                       {
-                        title: 
-                        dataProcess?.earlyTermReportProcess
-                        ?.waitingForCouncilFormation === "Done"
-                        ? "Staff đã tạo hội đồng đánh giá"
-                        : "Staff tạo hội đồng đánh giá",
+                        title:
+                          dataProcess?.earlyTermReportProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "Staff đã tạo hội đồng đánh giá"
+                            : "Staff tạo hội đồng đánh giá",
                         status:
                           dataProcess?.earlyTermReportProcess
                             ?.waitingForCouncilFormation === "Done"
@@ -196,61 +198,109 @@ const TrackProject = () => {
             {
               key: "2",
               label: "Báo cáo giữa kì",
-              children: (
-                <>
-                {/* format("DD-MM-YYYY") */}
-                  <p>Trạng thái: {}</p>
-                  <Steps
-                    size="small"
-                    labelPlacement="vertical"
-                    items={[
-                      {
-                        title: "Staff tạo ngày nộp đơn",
-                        status: "finished",
-                        icon: <ScheduleOutlined />,
-                      },
-                      {
-                        title: "Trưởng nhóm nộp đơn",
-                        status:
-                          dataProcess?.preliminaryReviewProcess
-                            ?.waitingForDean === "Accept"
-                            ? "finished"
-                            : dataProcess?.preliminaryReviewProcess
-                                ?.waitingForDean === "Reject"
-                            ? "error"
-                            : "wait",
-                        icon: <FileTextOutlined />,
-                      },
-                      {
-                        title:
-                          dataProcess?.preliminaryReviewProcess
-                            ?.waitingForCouncilFormation === "Done"
-                            ? "Staff đã tạo hội đồng đánh giá"
-                            : "Staff tạo hội đồng đánh giá",
-                        status:
-                          dataProcess?.preliminaryReviewProcess
-                            ?.waitingForCouncilFormation === "Done"
-                            ? "finished"
-                            : "wait",
-                        icon: <UsergroupAddOutlined />,
-                      },
-                      {
-                        title:
-                          dataProcess?.preliminaryReviewProcess
-                            ?.waitingForCouncilDecision === "Accept"
-                            ? "Staff tải lên quyết định"
-                            : "Staff tải lên quyết định",
-                        status:
-                          dataProcess?.preliminaryReviewProcess
-                            ?.waitingForCouncilDecision === "Accept"
-                            ? "finished"
-                            : "wait",
-                        icon: <UploadOutlined />,
-                      }
-                    ]}
-                  />
-                </>
-              ),
+              children:
+                dataProcess.middleTermReportProcess?.length > 0 ? (
+                  <>
+                    {dataProcess.middleTermReportProcess?.map((item, index) => {
+                      return (
+                        <>
+                          <Collapse
+                            items={[
+                              {
+                                key: { index },
+                                label:
+                                  "Báo cáo giữa kì lần " + item.numberOfReport,
+                                children: (
+                                  <>
+                                    {item.deadlineForDocumentSupplementation ? (
+                                      <>
+                                        <p>
+                                          Trạng thái: Trưởng nhóm cần nộp form
+                                          trước ngày{" "}
+                                          {dayjs(
+                                            item.deadlineForDocumentSupplementation
+                                          ).format(dateFormat)}
+                                        </p>
+                                        <ConfigProvider
+                                          theme={{
+                                            token: {
+                                              colorPrimary: "#55E6A0",
+                                            },
+                                          }}
+                                        >
+                                          <Button
+                                            type="primary"
+                                            style={{
+                                              marginBottom: "10px",
+                                            }}
+                                            onClick={() => setIsModalOpen(true)}
+                                          >
+                                            Nộp tài liệu
+                                          </Button>
+                                        </ConfigProvider>
+                                      </>
+                                    ) : (
+                                      <p>Trạng thái: </p>
+                                    )}
+
+                                    <Steps
+                                      size="small"
+                                      labelPlacement="vertical"
+                                      items={[
+                                        {
+                                          title: "Staff tạo ngày nộp đơn",
+                                          status: "finished",
+                                          icon: <ScheduleOutlined />,
+                                        },
+                                        {
+                                          title: "Trưởng nhóm nộp đơn",
+                                          status:
+                                            item?.waitingForDocumentSupplementation ===
+                                            "OnGoing"
+                                              ? "wait"
+                                              : "finished",
+                                          icon: <FileTextOutlined />,
+                                        },
+                                        {
+                                          title:
+                                            item?.waitingForConfigureConference ===
+                                            "Done"
+                                              ? "Staff đã tạo hội đồng đánh giá"
+                                              : "Staff tạo hội đồng đánh giá",
+                                          status:
+                                            item?.waitingForConfigureConference ===
+                                            "Done"
+                                              ? "finished"
+                                              : "wait",
+                                          icon: <UsergroupAddOutlined />,
+                                        },
+                                        {
+                                          title:
+                                            item?.waitingForConfigureConference ===
+                                            "Accept"
+                                              ? "Staff đã tải lên quyết định"
+                                              : "Staff tải lên quyết định",
+                                          status:
+                                            item?.waitingForConfigureConference ===
+                                            "Accept"
+                                              ? "finished"
+                                              : "wait",
+                                          icon: <UploadOutlined />,
+                                        },
+                                      ]}
+                                    />
+                                  </>
+                                ),
+                              },
+                            ]}
+                          />
+                        </>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <div>Staff chưa đăng kí thời hạn nộp hồ sơ</div>
+                ),
               extra: renderExtra(2),
             },
           ]}
@@ -282,11 +332,19 @@ const TrackProject = () => {
         shape="round"
         type="primary"
         danger
-        onClick={() => navigate("/user/track")}
+        onClick={() => navigate(-1)}
         style={{ margin: "10px 0" }}
       >
         Quay về
       </Button>
+
+      <UploadMidTerm
+        topicId={topicId}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        status={status}
+        setStatus={setStatus}
+      />
     </div>
   );
 };

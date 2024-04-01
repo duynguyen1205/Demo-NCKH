@@ -45,6 +45,7 @@ const UploadDocument = () => {
   const [isModalContractOpen, setIsModalContractOpen] = useState(false);
   const [dataTopic, setDataTopic] = useState([]);
   const [checkTab, setCheckTab] = useState("confirm");
+  const [status, setStatus] = useState(false);
   const staffId = "2D5E2220-EEEF-4FDC-8C98-1B5C5012319C";
   const getTopicUpload = async () => {
     try {
@@ -75,7 +76,7 @@ const UploadDocument = () => {
       const res = await getTopicWaitingResubmit({
         staffId: staffId,
       });
- 
+
       if (res && res.isSuccess) {
         setDataTopic(res.data);
       }
@@ -195,7 +196,12 @@ const UploadDocument = () => {
         topicId: topicId,
       });
       if (result && result.isSuccess) {
-        message.success("Chuyển sang giai đoạn báo cáo giữa kì thành công")
+        message.success("Chuyển sang giai đoạn báo cáo giữa kì thành công");
+        if (status) {
+          setStatus(false);
+        } else {
+          setStatus(true);
+        }
       }
     } catch (error) {
       console.log("có lỗi tại ", error);
@@ -329,7 +335,7 @@ const UploadDocument = () => {
   };
   useEffect(() => {
     getTopicUpload();
-  }, []);
+  }, [status]);
   return (
     <div>
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>

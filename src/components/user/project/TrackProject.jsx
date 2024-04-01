@@ -1,13 +1,17 @@
 import {
+  CalendarOutlined,
   CheckOutlined,
   CloudUploadOutlined,
   ContactsOutlined,
   FileDoneOutlined,
   FileProtectOutlined,
+  FileTextOutlined,
   LoadingOutlined,
+  ScheduleOutlined,
   SmileOutlined,
   SolutionOutlined,
   SyncOutlined,
+  UploadOutlined,
   UserAddOutlined,
   UserOutlined,
   UsergroupAddOutlined,
@@ -44,6 +48,9 @@ const TrackProject = () => {
         topicId: topicId,
       });
       if (res && res.isSuccess) {
+        console.log('====================================');
+        console.log(res.data);
+        console.log('====================================');
         setDataProcess(res.data);
         if(res.data?.state === "MidtermReport") {
           setCurrentStep(2)
@@ -151,7 +158,7 @@ const TrackProject = () => {
                         title: "Staff tải lên quyết định",
                         status:
                           dataProcess?.earlyTermReportProcess
-                            ?.waitingForCouncilMeeting === "Accept"
+                            ?.waitingForUploadMeetingMinutes === "Accept"
                             ? "finished"
                             : "wait",
                         icon: <CloudUploadOutlined />,
@@ -189,7 +196,61 @@ const TrackProject = () => {
             {
               key: "2",
               label: "Báo cáo giữa kì",
-
+              children: (
+                <>
+                {/* format("DD-MM-YYYY") */}
+                  <p>Trạng thái: {}</p>
+                  <Steps
+                    size="small"
+                    labelPlacement="vertical"
+                    items={[
+                      {
+                        title: "Staff tạo ngày nộp đơn",
+                        status: "finished",
+                        icon: <ScheduleOutlined />,
+                      },
+                      {
+                        title: "Trưởng nhóm nộp đơn",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForDean === "Accept"
+                            ? "finished"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "error"
+                            : "wait",
+                        icon: <FileTextOutlined />,
+                      },
+                      {
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "Staff đã tạo hội đồng đánh giá"
+                            : "Staff tạo hội đồng đánh giá",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "finished"
+                            : "wait",
+                        icon: <UsergroupAddOutlined />,
+                      },
+                      {
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "Staff tải lên quyết định"
+                            : "Staff tải lên quyết định",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "finished"
+                            : "wait",
+                        icon: <UploadOutlined />,
+                      }
+                    ]}
+                  />
+                </>
+              ),
               extra: renderExtra(2),
             },
           ]}

@@ -88,7 +88,8 @@ const RegisterProject = () => {
         // Thực hiện tải lên file thông qua API của bạn
         const isCompressedFile =
           file.type === "application/x-rar-compressed" ||
-          file.type === "application/x-zip-compressed";
+          file.type === "application/x-zip-compressed" ||
+          file.type === "application/x-compressed";
         if (!isCompressedFile) {
           message.error(
             "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
@@ -158,9 +159,9 @@ const RegisterProject = () => {
     });
     const creatorId = "a813f937-8c3a-40e8-b39e-7b1e0dd962f7"; // Ngô Minh G
     const { categoryId, topicName, description, budget, startTime } = values;
-    if(newTopicFiles.length === 0) {
-      message.error("Xin hãy tải các tài liệu liên quan lên")
-      return
+    if (newTopicFiles.length === 0) {
+      message.error("Xin hãy tải các tài liệu liên quan lên");
+      return;
     }
     const data = {
       categoryId: categoryId,
@@ -173,14 +174,14 @@ const RegisterProject = () => {
       topicFileLink: newTopicFiles[0].fileLink,
       startTime: dayjs(startTime).utc().format(),
     };
-    console.log('====================================');
+    console.log("====================================");
     console.log(data);
-    console.log('====================================');
+    console.log("====================================");
     try {
       const res = await createTopicAPI(data);
-      console.log('====================================');
+      console.log("====================================");
       console.log(res);
-      console.log('====================================');
+      console.log("====================================");
       if (res && res.isSuccess) {
         message.success("Tạo topic thành công");
         setFileList([]);

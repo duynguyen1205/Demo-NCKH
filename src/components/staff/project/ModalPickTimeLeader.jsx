@@ -196,10 +196,10 @@ const ModalPickTimeLeader = (props) => {
       const res = await councilConfig(data);
       if(res && res.isSuccess) {
         message.success("Tạo hội đồng đánh giá thành công");
-        navigate("/staff/manager");
+        navigate("/staff");
       } else {
         console.log('====================================');
-        console.log(res.message);
+        console.log(res);
         console.log('====================================');
         message.error("Tạo hội đồng không thành công");
       }

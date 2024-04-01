@@ -1,10 +1,14 @@
 import {
+  CalendarOutlined,
   CheckOutlined,
   CloudUploadOutlined,
   ContactsOutlined,
   FileDoneOutlined,
   FileProtectOutlined,
+  FileTextOutlined,
+  ScheduleOutlined,
   SolutionOutlined,
+  UploadOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
@@ -183,8 +187,69 @@ const TrackProjectStaff = () => {
           collapsible={isCollapseDisabled(2)}
           items={[
             {
-              key: "2",
+              key: "1",
               label: "Báo cáo giữa kì",
+              children: (
+                <>
+                  <p>Trạng thái: </p>
+                  <Steps
+                    size="small"
+                    labelPlacement="vertical"
+                    items={[
+                      {
+                        title: "Nộp đề tài",
+                        status: "finished",
+                        icon: <ScheduleOutlined />,
+                      },
+                      {
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForDean === "Accept"
+                            ? "Trưởng khoa đã duyệt"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "Trưởng khoa đã từ chối"
+                            : "Trưởng khoa duyệt",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForDean === "Accept"
+                            ? "finished"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "error"
+                            : "wait",
+                        icon: <FileTextOutlined />,
+                      },
+                      {
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "Staff đã thêm thành viên sơ duyệt"
+                            : "Staff thêm thành viên sơ duyệt",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "finished"
+                            : "wait",
+                        icon: <CalendarOutlined />,
+                      },
+                      {
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "Thông qua"
+                            : "Thành viên sơ duyệt đánh giá",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "finished"
+                            : "wait",
+                        icon: <UploadOutlined />,
+                      }
+                    ]}
+                  />
+                </>
+              ),
               extra: renderExtra(2),
             },
           ]}
@@ -195,7 +260,6 @@ const TrackProjectStaff = () => {
             {
               key: "3",
               label: "Báo cáo cuối kì",
-
               extra: renderExtra(3),
             },
           ]}

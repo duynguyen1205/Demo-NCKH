@@ -101,7 +101,7 @@ export const getReviewedByMember = (param) => {
 
 // create council
 export const councilConfig = (data) => {
-  return axios.post("/api/review/config", data);
+  return axios.post("/api/review/config-early", data);
 };
 
 // getDetail topic

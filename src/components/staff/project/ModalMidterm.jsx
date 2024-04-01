@@ -3,7 +3,6 @@ import { Modal, Calendar, theme, Divider, message } from "antd";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { makeDeadlineSubmit } from "../../../services/api";
-
 dayjs.extend(utc);
 const ModalMidTerm = (props) => {
   const { token } = theme.useToken();

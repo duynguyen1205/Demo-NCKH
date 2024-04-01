@@ -202,7 +202,7 @@ const ProjectManager = () => {
                     }}
                     type="primary"
                     onClick={() => {
-                      navigate(`/staff/manager/add-member/${record.topicId}`);
+                      navigate(`/staff/earlytearm/add-member/${record.topicId}`);
                     }}
                   />
                 </Tooltip>
@@ -217,7 +217,7 @@ const ProjectManager = () => {
                     }}
                     type="primary"
                     onClick={() => {
-                      navigate(`/staff/manager/add-council/${record.topicId}`);
+                      navigate(`/staff/earlytearm/add-council/${record.topicId}`);
                     }}
                   >
                     Gửi hội đồng

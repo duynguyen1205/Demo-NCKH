@@ -26,7 +26,7 @@ const UploadMidTerm = (props) => {
   };
   const handleCancel = () => {
     props.setIsModalOpen(false);
-    setFileList([]);
+    setFileList({});
   };
 
   const onSubmit = async () => {
@@ -98,7 +98,7 @@ const UploadMidTerm = (props) => {
       }
     },
     onRemove: (file) => {
-      setFileList([]);
+      setFileList({});
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);

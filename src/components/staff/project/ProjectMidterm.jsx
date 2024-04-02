@@ -21,7 +21,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
-import { getMidTermReport } from "../../../services/api";
+import { getMidTermReport, getMidTermReportWait } from "../../../services/api";
 import ModalMidTerm from "./ModalMidterm";
 import { useNavigate } from "react-router-dom";
 const ProjectManagerMidTerm = () => {
@@ -230,7 +230,7 @@ const ProjectManagerMidTerm = () => {
 
   const getTopicMidTerm = async () => {
     try {
-      const res = await getMidTermReport();
+      const res = await getMidTermReportWait();
       setIsLoading(true);
       if (res && res?.data) {
         setData(res.data);

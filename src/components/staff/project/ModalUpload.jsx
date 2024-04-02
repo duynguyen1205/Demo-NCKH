@@ -12,12 +12,16 @@ import {
   Upload,
   message,
 } from "antd";
-import {  UploadOutlined } from "@ant-design/icons";
-import { uploadFileSingle, uploadResult } from "../../../services/api";
+import { UploadOutlined } from "@ant-design/icons";
+import {
+  uploadFileSingle,
+  uploadReportMidTerm,
+  uploadResult,
+} from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
-import utc from 'dayjs/plugin/utc';
+import utc from "dayjs/plugin/utc";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(utc);
 dayjs.extend(customParseFormat);
@@ -29,10 +33,11 @@ const ModalUpload = (props) => {
   const maxDate = dayjs().add(14, "day");
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
-  const [newTopicFiles, setFileList] = useState([]);
+  const [newTopicFiles, setFileList] = useState({});
   const [review, setReview] = useState();
   const [meetingDate, setMeetingDate] = useState(today);
   const data = props.data;
+  const state = data.state === "MidtermReport" ? true : false;
   const navigate = useNavigate();
   const handleOk = () => {
     form.submit();
@@ -40,37 +45,61 @@ const ModalUpload = (props) => {
   const handleCancel = () => {
     props.setDataUser({});
     props.setIsModalOpen(false);
-    setFileList([]);
+    setFileList({});
     form.resetFields();
   };
 
   const onSubmit = async (values) => {
-    if (newTopicFiles[0]?.topicFileLink === null) {
+    if (newTopicFiles.length === 0) {
       message.error("Xin hãy tải biên bản cuộc họp lên");
       return;
     }
-    const param = {
-      topicId: data.topicId,
-      decisionOfCouncil: Number(values.decisionOfCouncil),
-      resultFileLink: newTopicFiles[0].topicFileLink,
-      deadline: dayjs(meetingDate).utc().format(),
-    };
-    console.log('====================================');
-    console.log(param);
-    console.log('====================================');
-    try {
-      const res = await uploadResult(param);
-      console.log(res);
-      setIsSubmit(true);
-      if (res && res.isSuccess) {
-        setIsSubmit(false);
-        message.success("Tải biên bản lên thành công");
-        navigate("/staff");
+    if (data.state === "MidtermReport") {
+      const param = {
+        topicId: data.topicId,
+        newFile: newTopicFiles,
+      };
+      console.log("====================================");
+      console.log(param);
+      console.log("====================================");
+      try {
+        const res = await uploadReportMidTerm(param);
+        console.log(res);
+        setIsSubmit(true);
+        if (res && res.isSuccess) {
+          setIsSubmit(false);
+          message.success("Tải biên bản lên thành công");
+          navigate("/staff");
+        }
+      } catch (error) {
+        console.log("====================================");
+        console.log("có lỗi tại upload result", error);
+        console.log("====================================");
       }
-    } catch (error) {
+    } else {
+      const param = {
+        topicId: data.topicId,
+        decisionOfCouncil: Number(values.decisionOfCouncil),
+        resultFileLink: newTopicFiles.fileLink,
+        deadline: dayjs(meetingDate).utc().format(),
+      };
       console.log("====================================");
-      console.log("có lỗi tại upload result", error);
+      console.log(param);
       console.log("====================================");
+      try {
+        const res = await uploadResult(param);
+        console.log(res);
+        setIsSubmit(true);
+        if (res && res.isSuccess) {
+          setIsSubmit(false);
+          message.success("Tải biên bản lên thành công");
+          navigate("/staff");
+        }
+      } catch (error) {
+        console.log("====================================");
+        console.log("có lỗi tại upload result", error);
+        console.log("====================================");
+      }
     }
   };
   const propsUpload = {
@@ -84,12 +113,10 @@ const ModalUpload = (props) => {
           onError(response, file);
           message.error(`${file.name} file uploaded unsuccessfully.`);
         } else {
-          setFileList(() => [
-            {
-              topicFileName: response.data.fileName,
-              topicFileLink: response.data.fileLink,
-            },
-          ]);
+          setFileList({
+            fileName: response.data.fileName,
+            fileLink: response.data.fileLink,
+          });
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
@@ -103,7 +130,7 @@ const ModalUpload = (props) => {
       }
     },
     onRemove: (file) => {
-      setFileList([]);
+      setFileList({});
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -161,14 +188,15 @@ const ModalUpload = (props) => {
                 <Input disabled />
               </Form.Item>
             </Col>
-            <Col span={24}>
+
+            <Col span={24} hidden={state}>
               <Form.Item
                 name="decisionOfCouncil"
                 label="Quyết định của hội đồng"
                 labelCol={{ span: 24 }}
                 rules={[
                   {
-                    required: true,
+                    required: data.state === "MidtermReport" ? false : true,
                     message: "Xin hãy chọn quyết định của hội đồng!",
                   },
                 ]}
@@ -196,7 +224,11 @@ const ModalUpload = (props) => {
             </Col>
             {review === "2" && (
               <Col span={24}>
-                <Form.Item name="date" label="Ngày phải nộp lại" labelCol={{ span: 24 }}>
+                <Form.Item
+                  name="date"
+                  label="Ngày phải nộp lại"
+                  labelCol={{ span: 24 }}
+                >
                   <DatePicker
                     format={dateFormat}
                     defaultValue={today}

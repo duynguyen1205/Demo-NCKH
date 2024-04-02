@@ -223,9 +223,20 @@ const UploadDocument = () => {
       width: "30%",
     },
     {
-      title: "Lĩnh Vực",
-      dataIndex: "categoryName",
-      key: "categoryName",
+      title: "Gai đoạn",
+      dataIndex: "state",
+      key: "state",
+      render: (text, record, index) => {
+        return (
+          <>
+            {record.state === "EarlytermReport"
+              ? "Đăng kí đề tài"
+              : record.state === "MidtermReport"
+              ? "Báo cáo giữa kì"
+              : "Báo cáo cuối kì"}
+          </>
+        );
+      },
     },
     {
       title: "Ngày tạo",
@@ -312,7 +323,6 @@ const UploadDocument = () => {
   //search
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();

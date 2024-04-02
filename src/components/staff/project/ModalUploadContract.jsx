@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Checkbox,
   Col,
   ConfigProvider,
   Divider,
@@ -12,16 +13,34 @@ import {
   message,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { uploadContract, uploadFile } from "../../../services/api";
+import {
+  getContractType,
+  uploadContract,
+  uploadFile,
+} from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 
 const ModalUploadContract = (props) => {
   const isModalOpen = props.isModalContractOpen;
+  const data = props.data;
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
-  const [newTopicFiles, setFileList] = useState([]);
-  const data = props.data;
-  const navigate = useNavigate()
+  const [newTopicFiles, setFileList] = useState({});
+  const [checkedList, setCheckedList] = useState([]);
+  const [plainOptions, setPlainOptions] = useState([]);
+  const navigate = useNavigate();
+  const checkAll = plainOptions.length === checkedList.length;
+  const indeterminate =
+    checkedList.length > 0 && checkedList.length < plainOptions.length;
+  const onChange = (list) => {
+    setCheckedList(list);
+  };
+  const onCheckAllChange = (e) => {
+    setCheckedList(
+      e.target.checked ? plainOptions.map((option) => option.key) : []
+    );
+  };
+
   const handleOk = () => {
     form.submit();
   };
@@ -31,29 +50,54 @@ const ModalUploadContract = (props) => {
     setFileList([]);
     form.resetFields();
   };
-
-  const onSubmit = async (values) => { 
-    if(newTopicFiles.length <= 0) {
+  const getTopicType = async () => {
+    try {
+      const res = await getContractType({
+        contractTypeSateNumber: 0,
+      });
+      if (res && res.isSuccess) {
+        const newOptions = res.data.map((item) => ({
+          key: item.contractTypeId,
+          value: item.typeName,
+        }));
+        setPlainOptions(newOptions);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log(error);
+      console.log("====================================");
+    }
+  };
+  const onSubmit = async () => {
+    if (newTopicFiles.length <= 0) {
       message.error("Xin hãy tải biên bản cuộc họp lên");
       return;
     }
+    const contractArray = checkedList.map((item) => ({
+      contractTypeId: item,
+      isSubmited: true,
+    }));
+    console.log("====================================");
+    console.log(newTopicFiles);
+    console.log("====================================");
     const param = {
       topicId: data.topicId,
-      newFiles: newTopicFiles,
-    }
-    console.log(param)
+      contractName: newTopicFiles.fileName,
+      contractLink: newTopicFiles.fileLink,
+      contractAttachments: contractArray,
+    };
     try {
       const res = await uploadContract(param);
       setIsSubmit(true);
-      if(res && res.message) {
+      if (res && res.message) {
         setIsSubmit(false);
         message.success("Tải hợp đồng lên thành công");
-        navigate("/staff")
+        navigate("/staff");
       }
     } catch (error) {
-      console.log('====================================');
+      console.log("====================================");
       console.log("có lỗi tại upload result", error.message);
-      console.log('====================================');
+      console.log("====================================");
     }
   };
   const propsUpload = {
@@ -77,12 +121,10 @@ const ModalUploadContract = (props) => {
           onError(response, file);
           message.error(`${file.name} file uploaded unsuccessfully.`);
         } else {
-          setFileList((fileList) => [
-            {
-              fileName: response.data.fileName,
-              fileLink: response.data.fileLink,
-            },
-          ]);
+          setFileList({
+            fileName: response.data.fileName,
+            fileLink: response.data.fileLink,
+          });
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
@@ -102,9 +144,9 @@ const ModalUploadContract = (props) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
-
   // set up initial value for the form
   useEffect(() => {
+    getTopicType();
     form.setFieldsValue(data);
   }, [data]);
   return (
@@ -128,7 +170,12 @@ const ModalUploadContract = (props) => {
               },
             }}
           >
-            <Button type="primary" onClick={handleOk}>
+            <Button
+              key="send"
+              type="primary"
+              onClick={handleOk}
+              disabled={checkedList.length <= 0}
+            >
               Gửi
             </Button>
           </ConfigProvider>,
@@ -157,9 +204,32 @@ const ModalUploadContract = (props) => {
                 label="Hợp đồng"
                 labelCol={{ span: 24 }}
               >
+                <Checkbox
+                  indeterminate={indeterminate}
+                  onChange={onCheckAllChange}
+                  checked={checkAll}
+                >
+                  Check all
+                </Checkbox>
+                <Divider />
+                <Checkbox.Group
+                  style={{ display: "flex", flexDirection: "column" }}
+                  value={checkedList}
+                  onChange={onChange}
+                >
+                  {plainOptions.map((option) => (
+                    <Checkbox key={option.key} value={option.key}>
+                      {option.value}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+                <Divider />
                 <Upload {...propsUpload}>
-                  <Button icon={<UploadOutlined />}>
-                    Ấn vào để tải hợp đồng lên
+                  <Button
+                    disabled={checkedList.length <= 0}
+                    icon={<UploadOutlined />}
+                  >
+                    Tải hợp đồng lên
                   </Button>
                 </Upload>
               </Form.Item>

@@ -56,6 +56,8 @@ const TrackProject = () => {
         setDataProcess(res.data);
         if (res.data?.state === "MidtermReport") {
           setCurrentStep(2);
+        } else if (res.data?.state === "FinaltermReport") {
+          setCurrentStep(3);
         }
       }
     } catch (error) {
@@ -276,13 +278,13 @@ const TrackProject = () => {
                                         },
                                         {
                                           title:
-                                            item?.waitingForConfigureConference ===
-                                            "Accept"
+                                            item?.waitingForUploadEvaluate ===
+                                            "Done"
                                               ? "Staff đã tải lên quyết định"
                                               : "Staff tải lên quyết định",
                                           status:
-                                            item?.waitingForConfigureConference ===
-                                            "Accept"
+                                            item?.waitingForUploadEvaluate ===
+                                            "Done"
                                               ? "finished"
                                               : "wait",
                                           icon: <UploadOutlined />,

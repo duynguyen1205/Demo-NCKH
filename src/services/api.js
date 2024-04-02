@@ -119,12 +119,11 @@ export const getTopicWaitingMember = (param) => {
 //get topic waiting for upload resullts after meeting
 export const getTopicUploadDoc = (param) => {
   return axios.get(
-    `api/topic/early-topic-waiting-council-meetting?${qs.stringify(param)}`
+    `api/topic/all-topic-waiting-upload-meeting-minutes?${qs.stringify(param)}`
   );
 };
 
 //get topic waiting for upload contract
-
 export const getTopicUploadContract = (param) => {
   return axios.get(
     `api/topic/early-topic-waiting-upload-contract?${qs.stringify(param)}`
@@ -135,6 +134,7 @@ export const getTopicUploadContract = (param) => {
 export const uploadResult = (data) => {
   return axios.post("/api/review/update-meeting-result", data);
 };
+
 // upload contract contract for topic
 export const uploadContract = (data) => {
   return axios.post("/api/contract/upload-early-contract", data);
@@ -189,11 +189,21 @@ export const moveToMiddleReport = (param) => {
   return axios.post(`api/topic/move-to-middle-term?${qs.stringify(param)}`);
 };
 
+// get contract type
+export const getContractType = (param) => {
+  return axios.get(`api/contracttype?${qs.stringify(param)}`);
+};
+
 // mid-term report
 
 // get topic mid-term report
 export const getMidTermReport = (param) => {
   return axios.get("api/topic/middle-topic-waiting-configure-conference");
+};
+
+// get topic mid-term watiing make schedule
+export const getMidTermReportWait = (param) => {
+  return axios.get("api/topic/middle-topic-waiting-make-schedule");
 };
 
 // make deadline submit documents
@@ -204,15 +214,14 @@ export const makeDeadlineSubmit = (data) => {
 // submit documents
 export const submitDocumentsMidterm = (data) => {
   return axios.post("api/attachment/create-supp-docs", data);
-}
+};
 
 // create mid-term council
 export const councilConfigMidterm = (data) => {
   return axios.post("api/review/config-middle", data);
 };
 
-// staff upload report 
+// staff upload report
 export const uploadReportMidTerm = (data) => {
-
-}
-
+  return axios.post("api/document/create-evaluate",data);
+};

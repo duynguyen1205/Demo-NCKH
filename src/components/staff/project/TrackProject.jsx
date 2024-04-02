@@ -47,6 +47,8 @@ const TrackProjectStaff = () => {
         setDataProcess(res.data);
         if(res.data?.state === "MidtermReport") {
           setCurrentStep(2)
+        } else if (res.data?.state === "FinaltermReport") {
+          setCurrentStep(3)
         }
       }
     } catch (error) {

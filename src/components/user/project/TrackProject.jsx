@@ -180,8 +180,7 @@ const TrackProject = () => {
                       {
                         title: "Staff tải hợp đồng lên",
                         status:
-                          dataProcess?.earlyTermReportProcess
-                            ?.waitingForContractSigning === "Accept"
+                          dataProcess?.state === "MidtermReport"
                             ? "finished"
                             : "wait",
                         icon: <ContactsOutlined />,

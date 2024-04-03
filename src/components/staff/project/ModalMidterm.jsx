@@ -27,13 +27,14 @@ const ModalMidTerm = (props) => {
         deadline: dayjs(selectedTime).utc().format(),
       };
       const res = await makeDeadlineSubmit(data);
-      if(res && res.isSuccess) {
+      if (res && res.isSuccess) {
         message.success("Tạo deadline thành công");
+        closeModal();
       }
     } catch (error) {
-      console.log('====================================');
+      console.log("====================================");
       console.log(error);
-      console.log('====================================');
+      console.log("====================================");
     }
   };
   return (
@@ -48,10 +49,7 @@ const ModalMidTerm = (props) => {
         maskClosable={false}
       >
         <div style={{ height: 350 }}>
-          <Calendar
-            fullscreen={false}
-            onChange={onChange}
-          />
+          <Calendar fullscreen={false} onChange={onChange} />
           <p>
             Ngày: <span>{selectedTime?.format("DD-MM-YYYY")}</span>
           </p>

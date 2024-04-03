@@ -15,6 +15,7 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import {
   getContractType,
+  getDocumentMidTerm,
   uploadContract,
   uploadFile,
 } from "../../../services/api";
@@ -28,6 +29,7 @@ const ModalUploadContract = (props) => {
   const [newTopicFiles, setFileList] = useState({});
   const [checkedList, setCheckedList] = useState([]);
   const [plainOptions, setPlainOptions] = useState([]);
+  const [contracHistory, setContracHistory] = useState();
   const navigate = useNavigate();
   const checkAll = plainOptions.length === checkedList.length;
   const indeterminate =
@@ -61,6 +63,24 @@ const ModalUploadContract = (props) => {
           value: item.typeName,
         }));
         setPlainOptions(newOptions);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log(error);
+      console.log("====================================");
+    }
+  };
+
+  const getTopicUploadHistory = async () => {
+    try {
+      const res = await getDocumentMidTerm({
+        topicId: data.topicId,
+      });
+      if (res && res.isSuccess) {
+        setContracHistory(res.data);
+        console.log("====================================");
+        console.log(res.data);
+        console.log("====================================");
       }
     } catch (error) {
       console.log("====================================");
@@ -146,8 +166,8 @@ const ModalUploadContract = (props) => {
   };
   // set up initial value for the form
   useEffect(() => {
+    getTopicUploadHistory();
     getTopicType();
-    form.setFieldsValue(data);
   }, [data]);
   return (
     <>
@@ -182,57 +202,62 @@ const ModalUploadContract = (props) => {
         ]}
       >
         <Divider />
-        <Form form={form} name="basic" onFinish={onSubmit}>
+        <Form form={form} name="basic1" onFinish={onSubmit}>
           <Row gutter={20}>
-            <Col span={12}>
-              <Form.Item name="code" label="ID đề tài" labelCol={{ span: 24 }}>
-                <Input disabled />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="topicName"
-                label="Tên đề tài"
-                labelCol={{ span: 24 }}
-              >
-                <Input disabled />
-              </Form.Item>
-            </Col>
             <Col span={24}>
-              <Form.Item
-                name="comment"
-                label="Hợp đồng"
-                labelCol={{ span: 24 }}
+              <h3>Lịch sử tải lên hợp đồng:</h3>
+              {contracHistory === null ? (
+                <div>Chưa tải lên tài liệu</div>
+              ) : (
+                <>
+                  <div>
+                    <p>Loại hợp đồng:</p>
+                    <ul>
+                      {contracHistory?.contractAttachments.map((item) => (
+                        <li key={item.contractTypeId}>{item.typeName}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p>Link đính kèm:</p>
+                    <a href={contracHistory?.contractLink}>
+                      {contracHistory?.contractName}
+                    </a>
+                  </div>
+                </>
+              )}
+            </Col>
+            <Divider />
+            <Col span={24}>
+              <h3>Hợp đồng đính kèm:</h3>
+              {/* <Checkbox
+                indeterminate={indeterminate}
+                onChange={onCheckAllChange}
+                checked={checkAll}
               >
-                <Checkbox
-                  indeterminate={indeterminate}
-                  onChange={onCheckAllChange}
-                  checked={checkAll}
+                Check all
+              </Checkbox>
+              <Divider /> */}
+              <Checkbox.Group
+                style={{ display: "flex", flexDirection: "column" }}
+                value={checkedList}
+                onChange={onChange}
+              >
+                {plainOptions.map((option) => (
+                  <Checkbox key={option.key} value={option.key}>
+                    {option.value}
+                  </Checkbox>
+                ))}
+              </Checkbox.Group>
+              <Divider />
+              <Upload {...propsUpload}>
+                <Button
+                  disabled={checkedList.length <= 0}
+                  icon={<UploadOutlined />}
                 >
-                  Check all
-                </Checkbox>
-                <Divider />
-                <Checkbox.Group
-                  style={{ display: "flex", flexDirection: "column" }}
-                  value={checkedList}
-                  onChange={onChange}
-                >
-                  {plainOptions.map((option) => (
-                    <Checkbox key={option.key} value={option.key}>
-                      {option.value}
-                    </Checkbox>
-                  ))}
-                </Checkbox.Group>
-                <Divider />
-                <Upload {...propsUpload}>
-                  <Button
-                    disabled={checkedList.length <= 0}
-                    icon={<UploadOutlined />}
-                  >
-                    Tải hợp đồng lên
-                  </Button>
-                </Upload>
-              </Form.Item>
+                  Tải hợp đồng lên
+                </Button>
+              </Upload>
             </Col>
           </Row>
         </Form>

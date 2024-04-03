@@ -83,9 +83,6 @@ const ModalUpload = (props) => {
         resultFileLink: newTopicFiles.fileLink,
         deadline: dayjs(meetingDate).utc().format(),
       };
-      console.log("====================================");
-      console.log(param);
-      console.log("====================================");
       try {
         const res = await uploadResult(param);
         console.log(res);
@@ -188,7 +185,6 @@ const ModalUpload = (props) => {
                 <Input disabled />
               </Form.Item>
             </Col>
-
             <Col span={24} hidden={state}>
               <Form.Item
                 name="decisionOfCouncil"
@@ -246,9 +242,7 @@ const ModalUpload = (props) => {
                 labelCol={{ span: 24 }}
               >
                 <Upload {...propsUpload}>
-                  <Button icon={<UploadOutlined />}>
-                    Ấn vào để tải tài liệu lên
-                  </Button>
+                  <Button icon={<UploadOutlined />}>Tải tài liệu lên</Button>
                 </Upload>
               </Form.Item>
             </Col>

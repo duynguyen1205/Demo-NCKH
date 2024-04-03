@@ -225,3 +225,8 @@ export const councilConfigMidterm = (data) => {
 export const uploadReportMidTerm = (data) => {
   return axios.post("api/document/create-evaluate",data);
 };
+
+// get document had upload report
+export const getDocumentMidTerm = (param) => {
+  return axios.get(`api/contract/uploaded-contract?${qs.stringify(param)}`);
+};

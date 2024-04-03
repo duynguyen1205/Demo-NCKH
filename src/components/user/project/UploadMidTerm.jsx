@@ -108,7 +108,7 @@ const UploadMidTerm = (props) => {
   return (
     <>
       <Modal
-        title="Góp ý của hội đồng"
+        title="Đăng kí báo cáo giữa kì"
         centered
         open={isModalOpen}
         onOk={handleOk}
@@ -135,6 +135,10 @@ const UploadMidTerm = (props) => {
         <Divider />
         <Form form={form} name="basic" onFinish={onSubmit}>
           <Row gutter={20}>
+            <Col span={24}>
+              <p>File mẫu tham khảo: </p>
+              <a href="https://srms.sgp1.cdn.digitaloceanspaces.com/template-20240404003752374.zip">Ấn để tải</a>
+            </Col>
             <Col span={24}>
               <Form.Item
                 name="file"

@@ -31,6 +31,7 @@ import {
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import ModalUploadContract from "./ModalUploadContract";
+import { useNavigate } from "react-router-dom";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 const UploadDocument = () => {
@@ -47,6 +48,7 @@ const UploadDocument = () => {
   const [checkTab, setCheckTab] = useState("confirm");
   const [status, setStatus] = useState(false);
   const staffId = "2D5E2220-EEEF-4FDC-8C98-1B5C5012319C";
+  const navigate = useNavigate()
   const getTopicUpload = async () => {
     try {
       const res = await getTopicUploadDoc({
@@ -202,6 +204,7 @@ const UploadDocument = () => {
         } else {
           setStatus(true);
         }
+        navigate("/ staff/midterm");
       }
     } catch (error) {
       console.log("có lỗi tại ", error);

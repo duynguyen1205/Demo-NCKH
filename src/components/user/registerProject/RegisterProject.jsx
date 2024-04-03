@@ -28,24 +28,21 @@ import {
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import ModalAddMember from "./ModalAddMember";
-import {
-  createTopicAPI,
-  getAllCategory,
-  getAllUser,
-  uploadFile,
-} from "../../../services/api";
+import { getAllCategory, getAllUser, uploadFile } from "../../../services/api";
 import "./register.scss";
-import { useNavigate } from "react-router-dom";
+import ModalConfirm from "./ModalConfirm";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 const today = dayjs();
 const RegisterProject = () => {
   const [open, setOpen] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const [category, setCategory] = useState([]);
   const [listUser, setListUser] = useState([]);
   const [newTopicFiles, setFileList] = useState([]);
   const [addMember, setAddMember] = useState([]);
-  const navigate = useNavigate();
+  const [data, setData] = useState({});
+
   const showUserModal = () => {
     setOpen(true);
   };
@@ -174,23 +171,10 @@ const RegisterProject = () => {
       topicFileLink: newTopicFiles[0].fileLink,
       startTime: dayjs(startTime).utc().format(),
     };
-    console.log("====================================");
-    console.log(data);
-    console.log("====================================");
-    try {
-      const res = await createTopicAPI(data);
-      console.log("====================================");
-      console.log(res);
-      console.log("====================================");
-      if (res && res.isSuccess) {
-        message.success("Tạo topic thành công");
-        setFileList([]);
-        setAddMember([]);
-        form.resetFields();
-        navigate("/user/track");
-      }
-    } catch (error) {
-      console.error("lỗi thêm mới topic", error.message);
+
+    if (data !== null) {
+      setOpenConfirm(true);
+      setData(data);
     }
   };
   const checkUser = addMember.length > 0;
@@ -443,6 +427,16 @@ const RegisterProject = () => {
         open={open}
         onCancel={hideUserModal}
         data={listUser}
+        setAddMember={setAddMember}
+      />
+      {/*Modal xác nhận cuối cùng*/}
+      <ModalConfirm
+        data={data}
+        setData={setData}
+        open={openConfirm}
+        setOpen={setOpenConfirm}
+        form={form}
+        setFileList={setFileList}
         setAddMember={setAddMember}
       />
     </>

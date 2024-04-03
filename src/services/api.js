@@ -6,7 +6,7 @@ import qs from "query-string";
 // get all user
 
 export const getAllUser = () => {
-  return axios.get("/api/user/all");
+  return axios.get("/api/user/users");
 };
 
 export const getAllCategory = () => {

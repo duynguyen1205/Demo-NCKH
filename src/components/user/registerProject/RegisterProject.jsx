@@ -42,7 +42,7 @@ const RegisterProject = () => {
   const [newTopicFiles, setFileList] = useState([]);
   const [addMember, setAddMember] = useState([]);
   const [data, setData] = useState({});
-
+  const [error, setError] = useState(null);
   const showUserModal = () => {
     setOpen(true);
   };
@@ -91,13 +91,14 @@ const RegisterProject = () => {
           message.error(
             "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
           );
+          setError("Chỉ được phép tải lên các file đã nén (zip hoặc rar)!")
           onError(file);
           return;
         }
         const response = await uploadFile(file);
         if (response.data.fileLink === null) {
           onError(response, file);
-          message.error(`${file.name} file uploaded unsuccessfully.`);
+          message.error(`${file.name} không tải lên thành công.`);
         } else {
           setFileList((fileList) => [
             {
@@ -108,17 +109,18 @@ const RegisterProject = () => {
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
-          message.success(`${file.name} file uploaded successfully.`);
+          message.success(`${file.name} tải lên thành công.`);
         }
       } catch (error) {
         // Gọi onError để thông báo lỗi nếu có vấn đề khi tải lên
         onError(error);
         // Hiển thị thông báo lỗi
-        message.error(`${file.name} file upload failed.`);
+        message.error(`${file.name} không tải lên thành công.`);
       }
     },
     onRemove: (file) => {
       setFileList([]);
+      setError(null)
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -395,6 +397,7 @@ const RegisterProject = () => {
               >
                 <Button icon={<InboxOutlined />}>Tải tài liệu lên</Button>
               </Upload>
+              {error && <p style={{ color: 'red' }}>{error}</p>}
             </Form.Item>
             <Form.Item>
               <ConfigProvider

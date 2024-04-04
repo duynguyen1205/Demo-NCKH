@@ -143,7 +143,7 @@ const ProjectManagerMidTerm = () => {
 
   const columns = [
     {
-      title: "ID",
+      title: "Mã Đề Tài",
       key: "index",
       dataIndex: "topicId",
       width: "10%",

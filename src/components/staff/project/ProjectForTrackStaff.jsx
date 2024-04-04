@@ -124,7 +124,7 @@ const ProjectForTrackStaff = () => {
 
   const columns = [
     {
-      title: "ID",
+      title: "STT",
       key: "index",
       render: (text, record, index) => index + 1,
       color: "red",

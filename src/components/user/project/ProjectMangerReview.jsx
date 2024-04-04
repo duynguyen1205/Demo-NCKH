@@ -126,7 +126,7 @@ const ProjectManagerUserReview = () => {
   });
   const columns = [
     {
-      title: "ID",
+      title: "Mã đề tài",
       key: "topicId",
       dataIndex: "code",
       width: "10%",

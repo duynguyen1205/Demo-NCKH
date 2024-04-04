@@ -136,7 +136,7 @@ const ProjectResubmit = () => {
 
   const columns = [
     {
-      title: "ID",
+      title: "Mã đề tài",
       dataIndex: "code",
       key: "code",
       color: "red",

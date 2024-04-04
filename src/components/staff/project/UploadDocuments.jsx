@@ -213,7 +213,7 @@ const UploadDocument = () => {
   const cancel = () => {};
   const columns = [
     {
-      title: "Id",
+      title: "Mã đề tài",
       key: "index",
       dataIndex: "code",
       width: "10%",
@@ -226,7 +226,7 @@ const UploadDocument = () => {
       width: "30%",
     },
     {
-      title: "Gai đoạn",
+      title: "Giai đoạn",
       dataIndex: "state",
       key: "state",
       render: (text, record, index) => {

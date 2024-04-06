@@ -1,19 +1,19 @@
-import { Table, Space } from "antd";
 import "./table.scss";
+import "./card.css";
 import {
   CheckOutlined,
   CloseOutlined,
   EditOutlined,
-  FileSyncOutlined,
-  InfoCircleOutlined,
-  ScheduleOutlined,
-  SearchOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
-import { getReviewDocuments } from "../../../services/api";
+import { chairmanApprove, getReviewDocuments } from "../../../services/api";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Collapse } from 'antd';
+import ModalUpload from "./ModalResubmit";
+import ModalChairmanReject from "./ModalChairmanReject";
+import CollapseTopic from "./CollapTopic";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 
@@ -22,93 +22,40 @@ const ResubmitProject = () => {
   const [pageSize, setPageSize] = useState(5);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isTableOpen, setTableOpen] = useState(false);
   const [topicLink, setTopicLink] = useState([]);
   const [data, setDataUser] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenR, setIsModalOpenR] = useState(false);
   const [status, setStatus] = useState(false);
-  const userId = "5b5e31b2-cb63-47c7-b92a-129e15a2b2e3";
+  const userId = "7dc9eb1d-3b80-434b-9b7e-85dd78e5011d";
   const [dataReviewDocument, setDataReviewDocument] = useState([]);
-
+console.log("day la data document",{dataReviewDocument});
   const location = useLocation();
   let topicId = location.pathname.split("/");
   topicId = topicId[4];
-
-  const columns = [
-    {
-      title: "Giai đoạn",
-      key: "giaidoan",
-      dataIndex: "state",
-      width: "10%",
-    },
-    {
-      title: "Góp ý của hội đồng",
-      dataIndex: "resultFileLink",
-      key: "resultFileLink",
-      width: "20%",
-      render: (text, record, index) => {
-        return <a href={text}>File chỉnh sửa</a>;
-      },
-    },
-    {
-      title: "File chỉnh sửa",
-      dataIndex: "documents",
-      key: "documents",
-      width: "30%",
-      render: (text) => {
-        <link href={text}>â</link>;
-      },
-    },
-
-    {
-      title: "Hạn nộp",
-      dataIndex: "deadline",
-      key: "deadline",
-      width: "10%",
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "decisionOfCouncil",
-      key: "decisionOfCouncil",
-      width: "10%",
-    },
-
-    {
-      title: "Chi tiết",
-      width: "20%",
-      render: (text, record, index) => {
-        const style1 = {
-          color: "blue",
-          fontSize: "1.5em",
-          cursor: "pointer",
-        };
-        const style2 = {
-          color: "green",
-          fontSize: "1.5em",
-          margin: "0 10px",
-          cursor: "pointer",
-        };
-        const style3 = {
-          color: "red",
-          fontSize: "1.5em",
-          cursor: "pointer",
-        };
-        const isChairMan =
-          dataReviewDocument[0]?.role === "Chairman" ? true : false;
-        return (
-          <div>
-            <EditOutlined style={style1} onClick={() => {}} />
-            {isChairMan && (
-              <>
-                <CheckOutlined onClick={() => {}} style={style2} />
-                <CloseOutlined onClick={() => {}} style={style3} />
-              </>
-            )}
-          </div>
-        );
-      },
-      align: "center",
-    },
-  ];
+  const renderRole = (role) => {
+    if (role == "Chairman") {
+      return (
+        <>
+        <button className="btnOk" onClick={() => chairmanApprove(topicId)}>Đồng ý</button>
+      <button className="btnRe" onClick={() => {
+        setDataUser(dataReviewDocument);
+        setIsModalOpenR(true);
+      }}>Từ chối</button>
+        </>
+      
+      )
+    }
+    if (role == "Leader") {
+      return (
+        <button className="btn" onClick={() => {
+          setDataUser(dataReviewDocument);
+          setIsModalOpen(true);
+        }}>Tải tài liệu</button>)
+    }
+    return "";
+  }
 
   const getReviewDoc = async () => {
     const res = await getReviewDocuments({
@@ -118,6 +65,7 @@ const ResubmitProject = () => {
     if (res && res?.data) {
       const data = [
         {
+          topicId,
           role: res.data.role,
           state: res.data?.reviewEarlyDocument
             ? "Đăng ký đề tài"
@@ -131,6 +79,7 @@ const ResubmitProject = () => {
             res.data.reviewEarlyDocument.documents.length > 0
               ? res.data.reviewEarlyDocument.documents
               : null,
+
         },
       ];
       console.log("đây là res data", res.data);
@@ -138,6 +87,7 @@ const ResubmitProject = () => {
       setDataReviewDocument(data);
     }
   };
+  
   useEffect(() => {
     getReviewDoc();
   }, [status]);
@@ -164,30 +114,50 @@ const ResubmitProject = () => {
       >
         Bổ sung tài liệu
       </h2>
-      <Table
-        rowClassName={(record, index) =>
-          index % 2 === 0 ? "table-row-light" : "table-row-dark"
-        }
-        bordered={true}
-        columns={columns}
-        dataSource={dataReviewDocument}
-        onChange={onChange}
-        rowKey={"_id"}
-        pagination={{
-          current: current,
-          pageSize: pageSize,
-          showSizeChanger: true,
-          total: total,
-          pageSizeOptions: ["5", "10", "15"],
-          showTotal: (total, range) => {
-            return (
-              <div>
-                {range[0]} - {range[1]} on {total} rows
-              </div>
-            );
-          },
-        }}
-        loading={isLoading}
+      <div>
+        <section>
+          <div className="container">
+            <div className="cards">
+              {
+                dataReviewDocument.map((card, i) => (
+                  <div key={i} className="card">
+                    <h2 style={{
+                      fontWeight: "bold",
+                      fontSize: "20px",
+                      color: "#303972",
+                      marginBottom: "10px",
+                    }}>
+                      {card.state}
+
+                    </h2>
+                    <p>Hạn nộp: {" "}
+                      {card.deadline}
+                    </p>
+                    <p> {" "}
+                      <a target="_blank" href={card.resultFileLink}>File kết quả của hội đồng</a>
+                    </p>
+                    {/* <Collapse items={items} onChange={onChange1} /> */}
+                    <CollapseTopic data={card.documents} />
+                    {renderRole(card.role)}
+                    
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </section>
+      </div>
+      <ModalUpload
+        data={data}
+        setDataUser={setDataUser}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
+      <ModalChairmanReject
+        data={data}
+        setDataUser={setDataUser}
+        isModalOpen={isModalOpenR}
+        setIsModalOpen={setIsModalOpenR}
       />
     </>
   );

@@ -184,6 +184,21 @@ export const getReviewDocuments = (param) => {
   return axios.get(`api/topic/all-review-documents?${qs.stringify(param)}`);
 };
 
+// upload Resubmit Document For Leader
+export const uploadResubmit = (data) => {
+  return axios.post("/api/attachment/create", data);
+};
+
+// chairman approve
+export const chairmanApprove = (data) => {
+  return axios.post("api/topic/chairman-approve", data);
+};
+
+//chairman reject
+export const chairmanReject = (data) => {
+  return axios.post("api/topic/chairman-reject", data);
+};
+
 // done early term report
 export const moveToMiddleReport = (param) => {
   return axios.post(`api/topic/move-to-middle-term?${qs.stringify(param)}`);
@@ -193,6 +208,8 @@ export const moveToMiddleReport = (param) => {
 export const getContractType = (param) => {
   return axios.get(`api/contracttype?${qs.stringify(param)}`);
 };
+
+
 
 // mid-term report
 

@@ -68,10 +68,10 @@ const RegisterProject = () => {
     <Select
       defaultValue={"VND"}
       style={{
-        width: 100,
+        width: 104,
       }}
     >
-      <Option value="VND">VND</Option>
+      <Option value="VND">triệu VND</Option>
     </Select>
   );
   const [form] = Form.useForm();
@@ -82,11 +82,13 @@ const RegisterProject = () => {
     maxCount: 1,
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
+        
         // Thực hiện tải lên file thông qua API của bạn
         const isCompressedFile =
           file.type === "application/x-rar-compressed" ||
           file.type === "application/x-zip-compressed" ||
           file.type === "application/x-compressed";
+          console.log('file này', file);
         if (!isCompressedFile) {
           message.error(
             "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
@@ -201,12 +203,12 @@ const RegisterProject = () => {
               rules={[
                 {
                   required: true,
-                  message: "Xin hãy nhập tên đề tài",
+                  message: "Xin hãy nhập tên đề tài ( tối thiểu 10 kí tự, tối đa 100 kí tự )",
                 },
               ]}
               labelCol={{ span: 24 }}
             >
-              <Input maxLength={"100"} />
+              <Input minLength={"10"} maxLength={"100"} />
             </Form.Item>
           </Col>
           <Col span={24}>
@@ -216,11 +218,12 @@ const RegisterProject = () => {
               rules={[
                 {
                   required: true,
-                  message: "Xin hãy nhập tóm tắt nội dung đề tài",
+                  message: "Xin hãy nhập tóm tắt nội dung đề tài ( tối thiểu 10 kí tự, tối đa 1000 kí tự )",
                 },
               ]}
               labelCol={{ span: 24 }}
             >
+             
               <TextEditor />
             </Form.Item>
           </Col>

@@ -201,12 +201,12 @@ const ProjectResubmit = () => {
               }}
               style={style2}
             />
-            <FileSyncOutlined
+            {record.hasResultFile && <FileSyncOutlined
               onClick={() => {
                 navigate(`/user/review/review-topic/${record.topicId}`);
               }}
               style={style1}
-            />
+            /> }
           </div>
         );
       },
@@ -233,7 +233,7 @@ const ProjectResubmit = () => {
   );
   const getTopicForCouncil = async () => {
     const res = await getTopicForCouncilMeeting({
-      councilId: "5b5e31b2-cb63-47c7-b92a-129e15a2b2e3",
+      councilId: "7dc9eb1d-3b80-434b-9b7e-85dd78e5011d", // Lâm Văn Q
     });
     if (res && res?.data) {
       setdataTopicForCouncil(res.data);

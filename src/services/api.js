@@ -212,7 +212,10 @@ export const moveToMiddleReport = (param) => {
 export const getContractType = (param) => {
   return axios.get(`api/contracttype?${qs.stringify(param)}`);
 };
-
+// get topic done for council
+export const getReviewDocumentsDone = (param) => {
+  return axios.get(`api/topic/topic-has-been-resolved-for-council?${qs.stringify(param)}`);
+};
 // mid-term report
 
 // get topic mid-term report
@@ -232,7 +235,7 @@ export const makeDeadlineSubmit = (data) => {
 
 // submit documents
 export const submitDocumentsMidterm = (data) => {
-  return axios.post("api/attachment/create-supp-docs", data);
+  return axios.post("api/document/create-middle-document", data);
 };
 
 // create mid-term council
@@ -242,7 +245,7 @@ export const councilConfigMidterm = (data) => {
 
 // staff upload report
 export const uploadReportMidTerm = (data) => {
-  return axios.post("api/document/create-evaluate", data);
+  return axios.post("api/review/create-evaluate", data);
 };
 
 // get document had upload report

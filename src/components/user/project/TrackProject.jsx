@@ -199,96 +199,79 @@ const TrackProject = () => {
               children:
                 dataProcess.middleTermReportProcess?.length > 0 ? (
                   <>
-                    {dataProcess.middleTermReportProcess?.map((item, index) => {
+                    {dataProcess.middleTermReportProcess?.slice(-1).map((item, index) => {
                       return (
                         <>
-                          <Collapse
+                          <h4>Báo cáo giữa kì lần {item.numberOfReport}</h4>
+                          {item.deadlineForDocumentSupplementation ? (
+                            <>
+                              <p>
+                                Trạng thái: Trưởng nhóm cần nộp form trước ngày{" "}
+                                {dayjs(
+                                  item.deadlineForDocumentSupplementation
+                                ).format(dateFormat)}
+                              </p>
+                              <ConfigProvider
+                                theme={{
+                                  token: {
+                                    colorPrimary: "#55E6A0",
+                                  },
+                                }}
+                              >
+                                <Button
+                                  type="primary"
+                                  style={{
+                                    marginBottom: "10px",
+                                  }}
+                                  onClick={() => setIsModalOpen(true)}
+                                >
+                                  Nộp tài liệu
+                                </Button>
+                              </ConfigProvider>
+                            </>
+                          ) : (
+                            <p>Trạng thái: </p>
+                          )}
+
+                          <Steps
+                            size="small"
+                            labelPlacement="vertical"
                             items={[
                               {
-                                key: { index },
-                                label:
-                                  "Báo cáo giữa kì lần " + item.numberOfReport,
-                                children: (
-                                  <>
-                                    {item.deadlineForDocumentSupplementation ? (
-                                      <>
-                                        <p>
-                                          Trạng thái: Trưởng nhóm cần nộp form
-                                          trước ngày{" "}
-                                          {dayjs(
-                                            item.deadlineForDocumentSupplementation
-                                          ).format(dateFormat)}
-                                        </p>
-                                        <ConfigProvider
-                                          theme={{
-                                            token: {
-                                              colorPrimary: "#55E6A0",
-                                            },
-                                          }}
-                                        >
-                                          <Button
-                                            type="primary"
-                                            style={{
-                                              marginBottom: "10px",
-                                            }}
-                                            onClick={() => setIsModalOpen(true)}
-                                          >
-                                            Nộp tài liệu
-                                          </Button>
-                                        </ConfigProvider>
-                                      </>
-                                    ) : (
-                                      <p>Trạng thái: </p>
-                                    )}
-
-                                    <Steps
-                                      size="small"
-                                      labelPlacement="vertical"
-                                      items={[
-                                        {
-                                          title: "Staff tạo ngày nộp đơn",
-                                          status: "finished",
-                                          icon: <ScheduleOutlined />,
-                                        },
-                                        {
-                                          title: "Trưởng nhóm nộp đơn",
-                                          status:
-                                            item?.waitingForDocumentSupplementation ===
-                                            "OnGoing"
-                                              ? "wait"
-                                              : "finished",
-                                          icon: <FileTextOutlined />,
-                                        },
-                                        {
-                                          title:
-                                            item?.waitingForConfigureConference ===
-                                            "Done"
-                                              ? "Staff đã tạo hội đồng đánh giá"
-                                              : "Staff tạo hội đồng đánh giá",
-                                          status:
-                                            item?.waitingForConfigureConference ===
-                                            "Done"
-                                              ? "finished"
-                                              : "wait",
-                                          icon: <UsergroupAddOutlined />,
-                                        },
-                                        {
-                                          title:
-                                            item?.waitingForUploadEvaluate ===
-                                            "Done"
-                                              ? "Staff đã tải lên quyết định"
-                                              : "Staff tải lên quyết định",
-                                          status:
-                                            item?.waitingForUploadEvaluate ===
-                                            "Done"
-                                              ? "finished"
-                                              : "wait",
-                                          icon: <UploadOutlined />,
-                                        },
-                                      ]}
-                                    />
-                                  </>
-                                ),
+                                title: "Staff tạo ngày nộp đơn",
+                                status: "finished",
+                                icon: <ScheduleOutlined />,
+                              },
+                              {
+                                title: "Trưởng nhóm nộp đơn",
+                                status:
+                                  item?.waitingForDocumentSupplementation ===
+                                  "OnGoing"
+                                    ? "wait"
+                                    : "finished",
+                                icon: <FileTextOutlined />,
+                              },
+                              {
+                                title:
+                                  item?.waitingForConfigureConference === "Done"
+                                    ? "Staff đã tạo hội đồng đánh giá"
+                                    : "Staff tạo hội đồng đánh giá",
+                                status:
+                                  item?.waitingForConfigureConference === "Done"
+                                    ? "finished"
+                                    : "wait",
+                                icon: <UsergroupAddOutlined />,
+                              },
+                              {
+                                title:
+                                  item?.waitingForUploadEvaluate === "Done"
+                                    ? "Staff đã tải lên quyết định"
+                                    : "Staff tải lên quyết định",
+                                status:
+                                  item?.waitingForUploadEvaluate === "Done"
+                                    ? "finished"
+                                    : "wait",
+                                icon: <UploadOutlined />,
                               },
                             ]}
                           />

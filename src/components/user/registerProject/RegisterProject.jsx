@@ -157,7 +157,7 @@ const RegisterProject = () => {
     });
     const creatorId = "a813f937-8c3a-40e8-b39e-7b1e0dd962f7"; // Ngô Minh G
     const { categoryId, topicName, description, budget, startTime } = values;
-    if (newTopicFiles.length === 0) {
+    if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải các tài liệu liên quan lên");
       return;
     }

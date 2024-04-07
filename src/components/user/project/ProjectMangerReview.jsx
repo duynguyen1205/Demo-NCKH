@@ -4,7 +4,7 @@ import {
   InfoCircleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, ConfigProvider, Input, Space, Table, Tabs } from "antd";
+import { Button, Tag, Input, Space, Table, Tabs } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "../../staff/project/project.scss";
@@ -158,6 +158,8 @@ const ProjectManagerUserReview = () => {
           fontSize: "1.5em",
           cursor: "pointer",
         };
+        const color = record.deanDecision ? "green" : "red";
+        const status = record.deanDecision ? "Đồng ý" : "Từ chối";
         return (
           <div style={{ textAlign: "center" }}>
             <InfoCircleOutlined
@@ -171,19 +173,16 @@ const ProjectManagerUserReview = () => {
               dataTopicForDean &&
               dataTopicForDean.length > 0 && (
                 <>
-                  <p
+                  <Tag
                     style={{
-                      backgroundColor: record.deanDecision ? "green" : "red",
-                      color: "white",
-                      display: "inline-block",
-                      padding: "5px 10px",
-                      borderRadius: "5px",
-                      marginTop: "8px",
-                      margin: "0 10px",
+                      marginLeft: "10px",
+                      fontSize: "13px",
+                      padding: "5px 8px",
                     }}
+                    color={color}
                   >
-                    {record.deanDecision ? "Đồng ý" : "Từ chối"}
-                  </p>
+                    {status}
+                  </Tag>
                 </>
               )}
           </div>

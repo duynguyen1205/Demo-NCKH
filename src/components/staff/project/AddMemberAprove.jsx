@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, ConfigProvider, Input, List, Space, Table, Tag } from "antd";
+import { Button, ConfigProvider, Input, List, Space, Table, Tag, message } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import "../../user/project/table.scss";
@@ -29,9 +29,9 @@ const AddMemberApprove = () => {
   const [showFullData, setShowFullData] = useState({});
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [maxSelectedMembers, setMaxSelectedMembers] = useState();
+  const [coreMember, setCoreMember] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [newData, setNewData] = useState([]);
-  const [mergeTable, setMergeTable] = useState([]);
   const isRowDisabled = (record) => {
     // Check if the row should be disabled based on the number of selected members
     return (
@@ -234,25 +234,6 @@ const AddMemberApprove = () => {
     return resultArray;
   };
 
-  const getMemberHasReviewed = async () => {
-    try {
-      const res = await getMembersHasReview({
-        topicId: topicID,
-      });
-      setIsLoading(true);
-      if (res && res?.data) {
-        const dataKey = res.data.map((item) => ({
-          ...item,
-          key: item.id,
-        }));
-        const mergeArray = mergeArrays(dataKey, user);
-        setUser(mergeArray);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Error fetching get user:", error);
-    }
-  };
   const getUserAPI = async () => {
     try {
       const res = await getAllUserWithoutCreator({
@@ -298,9 +279,6 @@ const AddMemberApprove = () => {
     if (current === 1 && newData.length > 1) setUser(newData);
   }, [current]);
   const navigate = useNavigate();
-  console.log("====================================");
-  console.log(user);
-  console.log("====================================");
   // hide email and phone munber
   const maskEmail = (accountEmail) => {
     const [username, domain] = accountEmail.split("@");
@@ -391,7 +369,17 @@ const AddMemberApprove = () => {
               shape="round"
               type="primary"
               onClick={() => {
-                setIsModalOpen(true);
+                const hasJoinedParticipant = selectedUser.some(
+                  (row) => row.isDuplicate
+                );
+                if (!hasJoinedParticipant) {
+                  message.error(
+                    "Vui lòng chọn ít nhất một người đã từng phê duyệt đề tài."
+                  );
+                  return;
+                } else {
+                  setIsModalOpen(true);
+                }
               }}
             >
               Thêm thành viên đánh giá

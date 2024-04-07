@@ -52,7 +52,7 @@ const ProjectManager = () => {
     },
     {
       key: "chohoidong",
-      label: `Chờ hội đồng`,
+      label: `Xem xét`,
       children: <></>,
     },
   ];

@@ -7,13 +7,16 @@ import {
   ScheduleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Space, Table, Tabs } from "antd";
+import { Button, Input, Space, Table, Tabs, Tag } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "../../staff/project/project.scss";
 import { useNavigate } from "react-router-dom";
 import "./table.scss";
-import { getTopicForCouncilMeeting } from "../../../services/api";
+import {
+  getReviewDocumentsDone,
+  getTopicForCouncilMeeting,
+} from "../../../services/api";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import ModalInfor from "./ModalInfor";
@@ -30,7 +33,7 @@ const ProjectResubmit = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalInforOpen, setIsModalInforOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("notyet");
-  const [status, setStatus] = useState(false);
+  const [dataTopicDoneForCouncil, setdataTopicDoneForCouncil] = useState([]);
   const [dataTopicForCouncil, setdataTopicForCouncil] = useState([]);
   const items = [
     {
@@ -185,6 +188,8 @@ const ProjectResubmit = () => {
           margin: "0 10px",
           cursor: "pointer",
         };
+        const color = record.ChairmanDecision ? "green" : "red";
+        const status = record.ChairmanDecision ? "Đồng ý" : "Từ chối";
         return (
           <div style={{ textAlign: "center" }}>
             <InfoCircleOutlined
@@ -201,12 +206,30 @@ const ProjectResubmit = () => {
               }}
               style={style2}
             />
-            {record.hasResultFile && <FileSyncOutlined
-              onClick={() => {
-                navigate(`/user/review/review-topic/${record.topicId}`);
-              }}
-              style={style1}
-            /> }
+            {record.hasResultFile && (
+              <FileSyncOutlined
+                onClick={() => {
+                  navigate(`/user/review/review-topic/${record.topicId}`);
+                }}
+                style={style1}
+              />
+            )}
+            {activeTab == "done" &&
+              dataTopicDoneForCouncil &&
+              dataTopicDoneForCouncil.length > 0 && (
+                <>
+                  <Tag
+                    style={{
+                      marginLeft: "10px",
+                      fontSize: "13px",
+                      padding: "5px 8px",
+                    }}
+                    color={color}
+                  >
+                    {status}
+                  </Tag>
+                </>
+              )}
           </div>
         );
       },
@@ -222,7 +245,7 @@ const ProjectResubmit = () => {
         onChange={(value) => {
           setActiveTab(value);
           if (value === "done") {
-            getTopicForCouncil();
+            getTopicDoneForCouncil();
           } else {
             getTopicForCouncil();
           }
@@ -239,9 +262,17 @@ const ProjectResubmit = () => {
       setdataTopicForCouncil(res.data);
     }
   };
+  const getTopicDoneForCouncil = async () => {
+    const res = await getReviewDocumentsDone({
+      councilId: "7dc9eb1d-3b80-434b-9b7e-85dd78e5011d", // Lâm Văn Q
+    });
+    if (res && res?.data) {
+      setdataTopicDoneForCouncil(res.data);
+    }
+  };
   useEffect(() => {
     getTopicForCouncil();
-  }, [status]);
+  }, [activeTab]);
   //search
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");

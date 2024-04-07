@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
 
 * {
-  margin: 0;
+  margin: 0 ;
   padding: 0;
   box-sizing: border-box;
 }
@@ -13,7 +13,7 @@ input {
 
 .container {
   position: relative;
-  width: 100%;
+  width: 100% ;
   background-color: #fff;
   min-height: 100vh;
   overflow: hidden;
@@ -133,22 +133,22 @@ form.sign-in-form {
 }
 
 .btn {
-  width: 150px;
-  background-color: #5995fd;
-  border: none;
-  outline: none;
-  height: 49px;
-  border-radius: 49px;
-  color: #fff;
-  text-transform: uppercase;
-  font-weight: 600;
-  margin: 10px 0;
-  cursor: pointer;
-  transition: 0.5s;
+  width: 200px !important; 
+  background-color: #5995fd !important;
+  border: none !important;
+  outline: none !important;
+  height: 49px !important;
+  border-radius: 49px !important;
+  color: #fff !important;
+  text-transform: uppercase ;
+  font-weight: 600 !important;
+  margin: 10px 0 ;
+  cursor: pointer ;
+  transition: 0.5s ;
 }
 
 .btn:hover {
-  background-color: #4d84e2;
+  background-color: #4d84e2 ;
 }
 .panels-container {
   position: absolute;
@@ -217,13 +217,13 @@ form.sign-in-form {
 }
 
 .btn.transparent {
-  margin: 0;
-  background: none;
-  border: 2px solid #fff;
-  width: 130px;
-  height: 41px;
-  font-weight: 600;
-  font-size: 0.8rem;
+  margin: 0 ;
+  background: none !important;
+  border: 2px solid #fff !important;
+  width: 130px !important;
+  height: 41px !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
 }
 
 .right-panel .image,
@@ -330,9 +330,9 @@ form.sign-in-form {
   }
 
   .btn.transparent {
-    width: 110px;
-    height: 35px;
-    font-size: 0.7rem;
+    width: 110px !important;
+    height: 35px !important;
+    font-size: 0.7rem !important;
   }
 
   .container:before {

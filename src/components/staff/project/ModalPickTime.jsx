@@ -1,14 +1,21 @@
-import {  Divider, List, Modal,  Select, message } from "antd";
+import { Divider, List, Modal, Select, message } from "antd";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { memberReviewAPI } from "../../../services/api";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+const dateFormat = "DD/MM/YYYY";
 const ModalPickTime = ({ visible, onCancel, dataUser }) => {
   const [selectedTime, setSelectedTime] = useState(1);
+  const [date, setDate] = useState(dayjs().add(1, "day"));
+  const today = dayjs().format(dateFormat);
   const location = useLocation();
   const navigate = useNavigate();
   let topicId = location.pathname.split("/");
   topicId = topicId[4];
   const handleTimeChange = (value) => {
+    setDate(dayjs().add(value, "day"));
     setSelectedTime(value);
   };
   const createMemberApproval = async (data) => {
@@ -29,13 +36,12 @@ const ModalPickTime = ({ visible, onCancel, dataUser }) => {
       memberReviewIds: userIDArray,
       numberOfDay: selectedTime,
     };
-  const result =  createMemberApproval(data)
-    if(result) {
-        message.success("Tạo thành viên phê duyệt thành công");
-        navigate("/staff");
-    } 
-    else {
-        message.error("Lỗi tạo thành viên phê duyệt");
+    const result = createMemberApproval(data);
+    if (result) {
+      message.success("Tạo thành viên phê duyệt thành công");
+      navigate("/staff");
+    } else {
+      message.error("Lỗi tạo thành viên phê duyệt");
     }
   };
 
@@ -62,7 +68,10 @@ const ModalPickTime = ({ visible, onCancel, dataUser }) => {
         )}
       />
       <p style={{ width: "100%", marginTop: 20, fontWeight: "bold" }}>
-        Thời hạn phê duyệt
+        Thời hạn phê duyệt:
+      </p>
+      <p>
+        Từ ngày: {today} - Đến ngày: {dayjs(date).format(dateFormat)}
       </p>
       <Select
         placeholder="Thời hạn phê duyệt"

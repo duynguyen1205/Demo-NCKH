@@ -16,6 +16,7 @@ import {
   getTopicDetailAPI,
 } from "../../../services/api";
 import { useLocation } from "react-router-dom";
+import ModalConfirm from "./ModalConfirm";
 
 const ModalInfor = (props) => {
   const isModalOpen = props.isModalOpen;
@@ -23,6 +24,8 @@ const ModalInfor = (props) => {
   const [topicLink, setTopicLink] = useState({});
   const [checked, setChecked] = useState(true);
   const [reason, setReason] = useState(null);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [state, setState] = useState();
   const topicId = props.data.topicId;
   let checkEnd;
   const location = useLocation();
@@ -157,7 +160,15 @@ const ModalInfor = (props) => {
             shape="round"
             type="primary"
             danger
-            onClick={() => handleOnClickRejected()}
+            onClick={() => {
+              if (reason === null) {
+                message.error("Vui lòng nhập lí do từ chối");
+                return;
+              } else {
+                setOpenConfirm(true);
+                setState("rejected");
+              }
+            }}
             style={{ margin: "0 10px" }}
           >
             Từ chối
@@ -166,7 +177,10 @@ const ModalInfor = (props) => {
             disabled={checked}
             shape="round"
             type="primary"
-            onClick={() => handleOnClickApprove()}
+            onClick={() => {
+              setState("approved");
+              setOpenConfirm(true);
+            }}
           >
             Thông qua
           </Button>
@@ -276,6 +290,13 @@ const ModalInfor = (props) => {
           </Row>
         </Form>
       </Modal>
+      <ModalConfirm
+        openConfirm={openConfirm}
+        setOpen={setOpenConfirm}
+        state={state}
+        approved={handleOnClickApprove}
+        rejected={handleOnClickRejected}
+      />
     </>
   );
 };

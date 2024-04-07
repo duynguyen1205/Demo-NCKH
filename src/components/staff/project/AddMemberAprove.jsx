@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, ConfigProvider, Input, List, Space, Table } from "antd";
+import { Button, ConfigProvider, Input, List, Space, Table, Tag } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import "../../user/project/table.scss";
@@ -10,7 +10,11 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import ModalPickTimeLeader from "./ModalPickTimeLeader";
-import { getAllUser } from "../../../services/api";
+import {
+  getAllUser,
+  getAllUserWithoutCreator,
+  getMembersHasReview,
+} from "../../../services/api";
 import ModalPickTime from "./ModalPickTime";
 const AddMemberApprove = () => {
   const searchInput = useRef(null);
@@ -27,6 +31,7 @@ const AddMemberApprove = () => {
   const [maxSelectedMembers, setMaxSelectedMembers] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [newData, setNewData] = useState([]);
+  const [mergeTable, setMergeTable] = useState([]);
   const isRowDisabled = (record) => {
     // Check if the row should be disabled based on the number of selected members
     return (
@@ -45,8 +50,9 @@ const AddMemberApprove = () => {
   };
   // check path
   const location = useLocation();
-  let path = location.pathname.split("/");
-  path = path[3];
+  let checkPath = location.pathname.split("/");
+  let path = checkPath[3];
+  let topicID = checkPath[4];
   // search in table
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
@@ -137,6 +143,7 @@ const AddMemberApprove = () => {
         text
       ),
   });
+  const isCouncil = path === "add-council" ? true : false;
   const columns = [
     {
       title: "Tên",
@@ -144,7 +151,6 @@ const AddMemberApprove = () => {
       ...getColumnSearchProps("fullName"),
       sorter: (a, b) => a.fullName.length - b.fullName.length,
     },
-
     {
       title: "Chức vụ",
       dataIndex: "position",
@@ -166,7 +172,7 @@ const AddMemberApprove = () => {
           )}
         </Space>
       ),
-      width: "21%"
+      width: "21%",
     },
     {
       title: "Số điện thoại",
@@ -182,6 +188,21 @@ const AddMemberApprove = () => {
           )}
         </Space>
       ),
+    },
+    {
+      title: "Phê duyệt",
+      dataIndex: "isDuplicate",
+      key: "isDuplicate",
+      sorter: (a, b) =>
+        a.isDuplicate === b.isDuplicate ? 0 : a.isDuplicate ? -1 : 1,
+      render: (text, record) => {
+        if (isCouncil) {
+          const color = record.isDuplicate ? "green" : "red";
+          const status = record.isDuplicate ? "Đã tham gia" : "Chưa tham gia";
+          return <Tag color={color}>{status}</Tag>;
+        }
+        return null;
+      },
     },
     {
       title: "",
@@ -200,16 +221,70 @@ const AddMemberApprove = () => {
       ),
     },
   ];
-  const getUserAPI = async () => {
+
+  const mergeArrays = (arr1, arr2) => {
+    // Duyệt qua từng phần tử của mảng 2
+    const resultArray = arr2.map((item2) => {
+      // Kiểm tra xem phần tử có tồn tại trong mảng 1 không
+      const isDuplicate = arr1.some((item1) => item1.id === item2.id);
+      // Trả về phần tử kèm thuộc tính isDuplicate
+      return { ...item2, isDuplicate };
+    });
+
+    return resultArray;
+  };
+
+  const getMemberHasReviewed = async () => {
     try {
-      const res = await getAllUser();
+      const res = await getMembersHasReview({
+        topicId: topicID,
+      });
       setIsLoading(true);
       if (res && res?.data) {
         const dataKey = res.data.map((item) => ({
           ...item,
           key: item.id,
         }));
-        setUser(dataKey);
+        const mergeArray = mergeArrays(dataKey, user);
+        setUser(mergeArray);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching get user:", error);
+    }
+  };
+  const getUserAPI = async () => {
+    try {
+      const res = await getAllUserWithoutCreator({
+        topicId: topicID,
+      });
+      setIsLoading(true);
+      if (res && res?.data) {
+        let dataKey1 = res.data.map((item) => ({
+          ...item,
+          key: item.id,
+        }));
+        if (isCouncil) {
+          try {
+            const res = await getMembersHasReview({
+              topicId: topicID,
+            });
+            setIsLoading(true);
+            if (res && res?.data) {
+              const dataKey = res.data.map((item) => ({
+                ...item,
+                key: item.id,
+              }));
+              const mergeArray = mergeArrays(dataKey, dataKey1);
+              setUser(mergeArray);
+              setIsLoading(false);
+            }
+          } catch (error) {
+            console.error("Error fetching get user:", error);
+          }
+        } else {
+          setUser(dataKey1);
+        }
         setIsLoading(false);
       }
     } catch (error) {
@@ -223,7 +298,9 @@ const AddMemberApprove = () => {
     if (current === 1 && newData.length > 1) setUser(newData);
   }, [current]);
   const navigate = useNavigate();
-
+  console.log("====================================");
+  console.log(user);
+  console.log("====================================");
   // hide email and phone munber
   const maskEmail = (accountEmail) => {
     const [username, domain] = accountEmail.split("@");
@@ -339,6 +416,9 @@ const AddMemberApprove = () => {
       </ConfigProvider>
     </div>
   );
+  const filteredColumns = columns.filter(
+    (column) => isCouncil || column.dataIndex !== "isDuplicate"
+  );
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -397,8 +477,8 @@ const AddMemberApprove = () => {
           scroll={{
             y: 340,
           }}
-          columns={columns}
           dataSource={showFullData ? user : maskedData}
+          columns={filteredColumns}
           onChange={onChange}
           pagination={{
             current: current,

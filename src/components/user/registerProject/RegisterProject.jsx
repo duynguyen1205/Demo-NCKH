@@ -63,7 +63,6 @@ const RegisterProject = () => {
       />
     </div>
   );
-
   const selectAfter = (
     <Select
       defaultValue={"VND"}
@@ -82,18 +81,16 @@ const RegisterProject = () => {
     maxCount: 1,
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
-        
         // Thực hiện tải lên file thông qua API của bạn
         const isCompressedFile =
           file.type === "application/x-rar-compressed" ||
           file.type === "application/x-zip-compressed" ||
           file.type === "application/x-compressed";
-          console.log('file này', file);
         if (!isCompressedFile) {
           message.error(
             "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
           );
-          setError("Chỉ được phép tải lên các file đã nén (zip hoặc rar)!")
+          setError("Chỉ được phép tải lên các file đã nén (zip hoặc rar)!");
           onError(file);
           return;
         }
@@ -122,7 +119,7 @@ const RegisterProject = () => {
     },
     onRemove: (file) => {
       setFileList([]);
-      setError(null)
+      setError(null);
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -203,7 +200,8 @@ const RegisterProject = () => {
               rules={[
                 {
                   required: true,
-                  message: "Xin hãy nhập tên đề tài ( tối thiểu 10 kí tự, tối đa 100 kí tự )",
+                  message:
+                    "Xin hãy nhập tên đề tài ( tối thiểu 10 kí tự, tối đa 100 kí tự )",
                 },
               ]}
               labelCol={{ span: 24 }}
@@ -218,12 +216,12 @@ const RegisterProject = () => {
               rules={[
                 {
                   required: true,
-                  message: "Xin hãy nhập tóm tắt nội dung đề tài ( tối thiểu 10 kí tự, tối đa 1000 kí tự )",
+                  message:
+                    "Xin hãy nhập tóm tắt nội dung đề tài ( tối thiểu 10 kí tự, tối đa 1000 kí tự )",
                 },
               ]}
               labelCol={{ span: 24 }}
             >
-             
               <TextEditor />
             </Form.Item>
           </Col>
@@ -400,7 +398,7 @@ const RegisterProject = () => {
               >
                 <Button icon={<InboxOutlined />}>Tải tài liệu lên</Button>
               </Upload>
-              {error && <p style={{ color: 'red' }}>{error}</p>}
+              {error && <p style={{ color: "red" }}>{error}</p>}
             </Form.Item>
             <Form.Item>
               <ConfigProvider
@@ -439,7 +437,7 @@ const RegisterProject = () => {
       <ModalConfirm
         data={data}
         setData={setData}
-        open={openConfirm}
+        openConfirm={openConfirm}
         setOpen={setOpenConfirm}
         form={form}
         setFileList={setFileList}

@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
-  uploadFileSingle,
+  uploadFile,
   uploadReportMidTerm,
   uploadResult,
 } from "../../../services/api";
@@ -105,7 +105,19 @@ const ModalUpload = (props) => {
     maxCount: 1,
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
-        const response = await uploadFileSingle(file);
+        const isCompressedFile =
+        file.type === "application/x-rar-compressed" ||
+        file.type === "application/x-zip-compressed" ||
+        file.type === "application/x-compressed";
+      if (!isCompressedFile) {
+        message.error(
+          "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
+        );
+        setError("Chỉ được phép tải lên các file words !")
+        onError(file);
+        return;
+      }
+        const response = await uploadFile(file);
         if (response.data.fileLink === null) {
           onError(response, file);
           message.error(`${file.name} file uploaded unsuccessfully.`);

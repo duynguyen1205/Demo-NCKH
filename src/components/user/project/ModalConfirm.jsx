@@ -1,25 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Button,
-  ConfigProvider,
-  Modal,
-  message,
-  Checkbox,
-  Divider,
-} from "antd";
-import ReCAPTCHA from "react-google-recaptcha";
-import { createTopicAPI, getFileType } from "../../../services/api";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Button, ConfigProvider, Modal, Checkbox, Divider } from "antd";
+import { getFileType } from "../../../services/api";
 const ModalConfirm = (props) => {
-  const recaptchaRef = useRef(null);
-  const [checkCapcha, setCheckCapcha] = useState(true);
   const [checkedList, setCheckedList] = useState([]);
   const [fileType, setFileType] = useState([]);
-  const navigate = useNavigate();
   const checkAll = fileType.length === checkedList.length;
   const indeterminate =
     checkedList.length > 0 && checkedList.length < fileType.length;
-  const onChange1 = (list) => {
+  const onChange = (list) => {
     setCheckedList(list);
   };
   const onCheckAllChange = (e) => {
@@ -27,42 +15,20 @@ const ModalConfirm = (props) => {
       e.target.checked ? fileType.map((option) => option.typeName) : []
     );
   };
-  const onSubmit = async () => {
-    const data = props.data;
-    try {
-      const res = await createTopicAPI(data);
-      console.log("====================================");
-      console.log("check result: ", res);
-      console.log("====================================");
-      if (res && res.statusCode === 200) {
-        message.success("Tạo topic thành công");
-        props.setFileList([]);
-        props.setAddMember([]);
-        props.form.resetFields();
-        navigate("/user/track");
-      } else {
-        message.error("Tạo topic không thành công");
-      }
-    } catch (error) {
-      console.error("lỗi thêm mới topic", error.message);
+  const onSubmit = () => {
+    if (props.state === "approved") {
+      props.approved();
+      hideModal();
+    } else {
+      props.rejected();
+      hideModal();
     }
   };
 
   const hideModal = () => {
     props.setOpen(false);
-    setCheckCapcha(true);
-    if (recaptchaRef.current) {
-      console.log(recaptchaRef.current);
-      recaptchaRef.current.reset();
-    }
   };
-  const onChange = (value) => {
-    if (value !== null) {
-      setCheckCapcha(false);
-    } else {
-      setCheckCapcha(true);
-    }
-  };
+
   const renderFooter = () => (
     <div style={{ display: "flex", justifyContent: "flex-end" }}>
       <Button shape="round" type="primary" onClick={hideModal}>
@@ -76,15 +42,13 @@ const ModalConfirm = (props) => {
         }}
       >
         <Button
-          disabled={
-            checkCapcha || fileType.length === checkedList.length ? false : true
-          }
+          disabled={fileType.length === checkedList.length ? false : true}
           shape="round"
           type="primary"
           onClick={onSubmit}
           style={{ margin: "0 10px" }}
         >
-          Nộp đề tài
+          Xác nhận
         </Button>
       </ConfigProvider>
     </div>
@@ -108,14 +72,14 @@ const ModalConfirm = (props) => {
   return (
     <>
       <Modal
-        title="Xác nhận nộp đề tài"
+        title="Xác nhận đã đọc qua các file"
         open={props.openConfirm}
         onCancel={hideModal}
         maskClosable={false}
         forceRender
         footer={renderFooter}
       >
-        <h3>Hợp đồng đính kèm:</h3>
+        {" "}
         <Checkbox
           indeterminate={indeterminate}
           onChange={onCheckAllChange}
@@ -127,7 +91,7 @@ const ModalConfirm = (props) => {
         <Checkbox.Group
           style={{ display: "flex", flexDirection: "column" }}
           value={checkedList}
-          onChange={onChange1}
+          onChange={onChange}
         >
           {fileType.map((option) => (
             <Checkbox key={option.typeName} value={option.typeName}>
@@ -136,11 +100,6 @@ const ModalConfirm = (props) => {
           ))}
         </Checkbox.Group>
         <Divider />
-        <ReCAPTCHA
-          ref={recaptchaRef}
-          sitekey="6LdBn60pAAAAAADn0d2__-zqT4Tk9CqPY_4DBIdW"
-          onChange={onChange}
-        />
       </Modal>
     </>
   );

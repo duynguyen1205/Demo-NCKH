@@ -50,9 +50,6 @@ const TrackProject = () => {
         topicId: topicId,
       });
       if (res && res.isSuccess) {
-        console.log("====================================");
-        console.log(res.data);
-        console.log("====================================");
         setDataProcess(res.data);
         if (res.data?.state === "MidtermReport") {
           setCurrentStep(2);

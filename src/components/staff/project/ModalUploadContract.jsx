@@ -78,9 +78,6 @@ const ModalUploadContract = (props) => {
       });
       if (res && res.isSuccess) {
         setContracHistory(res.data);
-        console.log("====================================");
-        console.log(res.data);
-        console.log("====================================");
       }
     } catch (error) {
       console.log("====================================");
@@ -97,9 +94,6 @@ const ModalUploadContract = (props) => {
       contractTypeId: item,
       isSubmited: true,
     }));
-    console.log("====================================");
-    console.log(newTopicFiles);
-    console.log("====================================");
     const param = {
       topicId: data.topicId,
       contractName: newTopicFiles.fileName,

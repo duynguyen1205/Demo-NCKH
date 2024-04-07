@@ -3,16 +3,27 @@ import qs from "query-string";
 
 // gọi tất cả api ở đây
 
-// get all user
-
+// get all user except dean
 export const getAllUser = () => {
   return axios.get("/api/user/users");
 };
 
+// get all user except dean
+export const getAllUserWithoutCreator = (param) => {
+  return axios.get(`/api/user/users-not-participating-topic?${qs.stringify(param)}`);
+};
+
+// get category
 export const getAllCategory = () => {
   return axios.get("/api/category");
 };
-// đề tài sơ duyệt
+
+// get file type
+export const getFileType = () => {
+  return axios.get("api/filetype");
+};
+
+// register project
 export const getTopicReviewerAPI = (param) => {
   return axios.get(
     `/api/topic/pre-topic-waiting-reviewer?${qs.stringify(param)}`
@@ -35,18 +46,6 @@ export const uploadFile = (file) => {
   });
 };
 
-export const uploadFileSingle = (file) => {
-  const bodyFormData = new FormData();
-  bodyFormData.append("formFile", file);
-  return axios({
-    method: "post",
-    url: "/api/uploadfile/single",
-    data: bodyFormData,
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-};
 // create a new topic
 export const createTopicAPI = (data) => {
   return axios({
@@ -99,6 +98,11 @@ export const getReviewedByMember = (param) => {
   );
 };
 
+// get members has review topics 
+export const getMembersHasReview = (param) => {
+  return axios.get(`api/memberreview/member-review-of-topic?${qs.stringify(param)}`)
+}
+
 // create council
 export const councilConfigEarly = (data) => {
   return axios.post("/api/review/config-early", data);
@@ -116,7 +120,7 @@ export const getTopicWaitingMember = (param) => {
   );
 };
 
-//get topic waiting for upload resullts after meeting
+//get topic waiting for upload results after meeting
 export const getTopicUploadDoc = (param) => {
   return axios.get(
     `api/topic/all-topic-waiting-upload-meeting-minutes?${qs.stringify(param)}`
@@ -209,8 +213,6 @@ export const getContractType = (param) => {
   return axios.get(`api/contracttype?${qs.stringify(param)}`);
 };
 
-
-
 // mid-term report
 
 // get topic mid-term report
@@ -240,7 +242,7 @@ export const councilConfigMidterm = (data) => {
 
 // staff upload report
 export const uploadReportMidTerm = (data) => {
-  return axios.post("api/document/create-evaluate",data);
+  return axios.post("api/document/create-evaluate", data);
 };
 
 // get document had upload report

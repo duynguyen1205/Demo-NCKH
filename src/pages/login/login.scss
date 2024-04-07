@@ -1,0 +1,59 @@
+$main-color: #42bc81;
+
+.section {
+  background-color: $main-color;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .ant-input-affix-wrapper {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .ant-form-item {
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .ant-btn-primary {
+      background-color: $main-color;
+      border-color: $main-color;
+    }
+
+    .social-media-btn {
+      background-color: $main-color;
+      border-color: $main-color;
+      margin-bottom: 10px; 
+    }
+  }
+
+  h2 {
+    color: $main-color; 
+    font-weight: bold;
+  }
+
+  .register-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .register-link a {
+    color: $main-color;
+    font-weight: bold;
+  }
+}

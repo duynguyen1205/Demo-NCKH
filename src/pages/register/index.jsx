@@ -15,6 +15,11 @@ const Register = () => {
     // Hiển thị thông báo và cập nhật state otpSent
     setOtpSent(true);
   };
+    const handleRegister = () => {
+    message.success('Đăng ký thành công!');
+    window.location.href = '/first-information'; 
+  };
+
 
   return (
     <section className="section">
@@ -63,7 +68,7 @@ const Register = () => {
                       <Input type="password" prefix={<LockOutlined />} placeholder="Nhập lại mật khẩu" />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit-regiter" className="ant-btn-primary">
+                        <Button type="primary" htmlType="submit-regiter" className="ant-btn-primary" onClick={handleRegister}>
                             Đăng ký
                         </Button>
                      </Form.Item>

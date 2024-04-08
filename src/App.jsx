@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import LoginPage from "./pages/login/index.jsx";
 import NotFound from "./components/NotFound/index.jsx";
 import Register from "./pages/register/index.jsx";
+import FirstInfo from "./pages/firstInfo/index.jsx";
 
 import "antd/dist/reset.css";
 import LayoutStaff from "./components/staff/LayoutStaff.jsx";
@@ -37,6 +38,10 @@ function App() {
     {
       path: "/register",
       element: <Register/>,
+    },
+    {
+      path: "/first-information",
+      element: <FirstInfo/>,
     },
     {
       path: "/staff",

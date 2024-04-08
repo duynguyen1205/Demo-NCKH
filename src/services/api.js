@@ -212,7 +212,10 @@ export const moveToMiddleReport = (param) => {
 export const getContractType = (param) => {
   return axios.get(`api/contracttype?${qs.stringify(param)}`);
 };
-
+// get topic done for council
+export const getReviewDocumentsDone = (param) => {
+  return axios.get(`api/topic/topic-has-been-resolved-for-council?${qs.stringify(param)}`);
+};
 // mid-term report
 
 // get topic mid-term report

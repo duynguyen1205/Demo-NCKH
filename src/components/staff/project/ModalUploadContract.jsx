@@ -29,7 +29,6 @@ const ModalUploadContract = (props) => {
   const [newTopicFiles, setFileList] = useState({});
   const [checkedList, setCheckedList] = useState([]);
   const [plainOptions, setPlainOptions] = useState([]);
-  const [contracHistory, setContracHistory] = useState();
   const navigate = useNavigate();
   const checkAll = plainOptions.length === checkedList.length;
   const indeterminate =
@@ -39,7 +38,7 @@ const ModalUploadContract = (props) => {
   };
   const onCheckAllChange = (e) => {
     setCheckedList(
-      e.target.checked ? plainOptions.map((option) => option.key) : []
+      e.target.checked ? plainOptions.map((option) => option.value) : []
     );
   };
 
@@ -59,7 +58,6 @@ const ModalUploadContract = (props) => {
       });
       if (res && res.isSuccess) {
         const newOptions = res.data.map((item) => ({
-          key: item.contractTypeId,
           value: item.typeName,
         }));
         setPlainOptions(newOptions);
@@ -71,34 +69,15 @@ const ModalUploadContract = (props) => {
     }
   };
 
-  const getTopicUploadHistory = async () => {
-    try {
-      const res = await getDocumentMidTerm({
-        topicId: data.topicId,
-      });
-      if (res && res.isSuccess) {
-        setContracHistory(res.data);
-      }
-    } catch (error) {
-      console.log("====================================");
-      console.log(error);
-      console.log("====================================");
-    }
-  };
   const onSubmit = async () => {
-    if (newTopicFiles.length <= 0) {
+    if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải biên bản cuộc họp lên");
       return;
     }
-    const contractArray = checkedList.map((item) => ({
-      contractTypeId: item,
-      isSubmited: true,
-    }));
     const param = {
       topicId: data.topicId,
       contractName: newTopicFiles.fileName,
       contractLink: newTopicFiles.fileLink,
-      contractAttachments: contractArray,
     };
     try {
       const res = await uploadContract(param);
@@ -133,7 +112,7 @@ const ModalUploadContract = (props) => {
         const response = await uploadFile(file);
         if (response.data.fileLink === null) {
           onError(response, file);
-          message.error(`${file.name} file uploaded unsuccessfully.`);
+          message.error(`${file.name} file tải lên không thành công.`);
         } else {
           setFileList({
             fileName: response.data.fileName,
@@ -142,13 +121,15 @@ const ModalUploadContract = (props) => {
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
-          message.success(`${file.name} file uploaded successfully.`);
+          message.success(`${file.name} file tải lên thành công.`);
         }
       } catch (error) {
         // Gọi onError để thông báo lỗi nếu có vấn đề khi tải lên
         onError(error);
         // Hiển thị thông báo lỗi
-        message.error(`${file.name} file upload failed.`);
+        message.error(
+          `${file.name} file tải lên thất bại vui lòng thử lại sau.`
+        );
       }
     },
     onRemove: (file) => {
@@ -158,9 +139,9 @@ const ModalUploadContract = (props) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
+
   // set up initial value for the form
   useEffect(() => {
-    getTopicUploadHistory();
     getTopicType();
   }, [data]);
   return (
@@ -188,7 +169,7 @@ const ModalUploadContract = (props) => {
               key="send"
               type="primary"
               onClick={handleOk}
-              disabled={checkedList.length <= 0}
+              disabled={Object.values(newTopicFiles).length === 0}
             >
               Gửi
             </Button>
@@ -199,46 +180,22 @@ const ModalUploadContract = (props) => {
         <Form form={form} name="basic1" onFinish={onSubmit}>
           <Row gutter={20}>
             <Col span={24}>
-              <h3>Lịch sử tải lên hợp đồng:</h3>
-              {contracHistory === null ? (
-                <div>Chưa tải lên tài liệu</div>
-              ) : (
-                <>
-                  <div>
-                    <p>Loại hợp đồng:</p>
-                    <ul>
-                      {contracHistory?.contractAttachments.map((item) => (
-                        <li key={item.contractTypeId}>{item.typeName}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <p>Link đính kèm:</p>
-                    <a href={contracHistory?.contractLink}>
-                      {contracHistory?.contractName}
-                    </a>
-                  </div>
-                </>
-              )}
-            </Col>
-            <Divider />
-            <Col span={24}>
               <h3>Hợp đồng đính kèm:</h3>
-              {/* <Checkbox
+              <Checkbox
                 indeterminate={indeterminate}
                 onChange={onCheckAllChange}
                 checked={checkAll}
               >
                 Check all
               </Checkbox>
-              <Divider /> */}
+              <Divider />
               <Checkbox.Group
                 style={{ display: "flex", flexDirection: "column" }}
                 value={checkedList}
                 onChange={onChange}
               >
                 {plainOptions.map((option) => (
-                  <Checkbox key={option.key} value={option.key}>
+                  <Checkbox key={option.value} value={option.value}>
                     {option.value}
                   </Checkbox>
                 ))}
@@ -246,7 +203,9 @@ const ModalUploadContract = (props) => {
               <Divider />
               <Upload {...propsUpload}>
                 <Button
-                  disabled={checkedList.length <= 0}
+                  disabled={
+                    plainOptions.length === checkedList.length ? false : true
+                  }
                   icon={<UploadOutlined />}
                 >
                   Tải hợp đồng lên

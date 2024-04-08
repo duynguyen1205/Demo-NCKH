@@ -35,6 +35,7 @@ const ModalUpload = (props) => {
   const [isSubmit, setIsSubmit] = useState(false);
   const [newTopicFiles, setFileList] = useState({});
   const [review, setReview] = useState();
+  const [reviewMidtearm, setReviewMidtearm] = useState();
   const [meetingDate, setMeetingDate] = useState(today);
   const data = props.data;
   const state = data.state === "MidtermReport" ? true : false;
@@ -50,7 +51,7 @@ const ModalUpload = (props) => {
   };
 
   const onSubmit = async (values) => {
-    if (newTopicFiles.length === 0) {
+    if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải biên bản cuộc họp lên");
       return;
     }
@@ -106,21 +107,18 @@ const ModalUpload = (props) => {
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
         const isCompressedFile =
-        file.type === "application/x-rar-compressed" ||
-        file.type === "application/x-zip-compressed" ||
-        file.type === "application/x-compressed";
-      if (!isCompressedFile) {
-        message.error(
-          "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
-        );
-        setError("Chỉ được phép tải lên các file words !")
-        onError(file);
-        return;
-      }
+          file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        if (!isCompressedFile) {
+          message.error("Chỉ được phép tải lên các file words, docx!");
+          setError("Chỉ được phép tải lên các file words !");
+          onError(file);
+          return;
+        }
         const response = await uploadFile(file);
         if (response.data.fileLink === null) {
           onError(response, file);
-          message.error(`${file.name} file uploaded unsuccessfully.`);
+          message.error(`${file.name} file tải lên không thành công!.`);
         } else {
           setFileList({
             fileName: response.data.fileName,
@@ -129,7 +127,7 @@ const ModalUpload = (props) => {
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
-          message.success(`${file.name} file uploaded successfully.`);
+          message.success(`${file.name} tải lên thành công.`);
         }
       } catch (error) {
         // Gọi onError để thông báo lỗi nếu có vấn đề khi tải lên
@@ -235,6 +233,55 @@ const ModalUpload = (props) => {
                 <Form.Item
                   name="date"
                   label="Ngày phải nộp lại"
+                  labelCol={{ span: 24 }}
+                >
+                  <DatePicker
+                    format={dateFormat}
+                    defaultValue={today}
+                    minDate={today}
+                    maxDate={maxDate}
+                    onChange={handleDateChange}
+                  />
+                </Form.Item>
+              </Col>
+            )}
+            <Col
+              span={24}
+              hidden={data.state === "MidtermReport" ? false : true}
+            >
+              <Form.Item
+                name="decisionOfCouncil"
+                label="Quyết định của hội đồng"
+                labelCol={{ span: 24 }}
+                rules={[
+                  {
+                    required: data.state === "MidtermReport" ? true : false,
+                    message: "Xin hãy chọn quyết định của hội đồng!",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  onChange={(value) => setReviewMidtearm(value)}
+                  options={[
+                    {
+                      value: "1",
+                      label: "Tiếp tục báo cáo",
+                    },
+                    {
+                      value: "0",
+                      label: "Kết thúc báo cáo",
+                    },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+            {reviewMidtearm === "1" && (
+              <Col span={24}>
+                <Form.Item
+                  name="date"
+                  label="Ngày phải nộp lại tài liệu"
                   labelCol={{ span: 24 }}
                 >
                   <DatePicker

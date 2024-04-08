@@ -232,7 +232,7 @@ export const makeDeadlineSubmit = (data) => {
 
 // submit documents
 export const submitDocumentsMidterm = (data) => {
-  return axios.post("api/attachment/create-supp-docs", data);
+  return axios.post("api/document/create-middle-document", data);
 };
 
 // create mid-term council
@@ -242,7 +242,7 @@ export const councilConfigMidterm = (data) => {
 
 // staff upload report
 export const uploadReportMidTerm = (data) => {
-  return axios.post("api/document/create-evaluate", data);
+  return axios.post("api/review/create-evaluate", data);
 };
 
 // get document had upload report

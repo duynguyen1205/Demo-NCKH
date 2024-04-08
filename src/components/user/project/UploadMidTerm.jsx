@@ -30,7 +30,7 @@ const UploadMidTerm = (props) => {
   };
 
   const onSubmit = async () => {
-    if (newTopicFiles.length <= 0) {
+    if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải file lên");
       return;
     }

@@ -1,14 +1,23 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button, Checkbox, DatePicker,Select } from "antd";
 import { DoubleRightOutlined } from "@ant-design/icons";
 import { message } from "antd";
-import { Row, Col,} from "antd";
+import { Row, Col, } from "antd";
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+const dateFormat = "DD/MM/YYYY";
+const today = dayjs();
 
 
-const InforUser =()=> {
+const InforUser = () => {
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const [departMent, setDepartMent] = useState([]);
 
   const onFinish = async () => {
     try {
@@ -41,34 +50,43 @@ const InforUser =()=> {
     return callback("Hãy xác nhận thông tin bạn khai báo.");
   };
 
+  const getDepartment = async () => {
+    const res = await getAllDepartment();
+    if (res && res?.data) {
+      setDepartMent(res.data);
+    }
+  };
+  useEffect(() => {
+    getDepartment();
+  }, []);
   return (
     <>
 
       <Form
-        name="signup"
+        name="infor"
         initialValues={{}}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         form={form}
       >
-       
+
         <h2 className="text-center">Thông tin tài khoản</h2>
 
         <div className="option-text">Vui lòng nhập đầy đủ thông tin</div>
 
         <Row gutter={{ xs: 8, sm: 16 }}>
-          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 12 }}>
+          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 8 }}>
             <Form.Item
               hasFeedback
-              name="firstName"
-              label="Họ"
+              name="fullName"
+              label="Họ và tên"
               labelCol={{ span: 24 }}
               wrapperCol={{ span: 16 }}
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập họ của bạn.",
+                  message: "Vui lòng nhập họ và tên của bạn.",
                 },
                 {
                   min: 2,
@@ -76,39 +94,63 @@ const InforUser =()=> {
                 },
               ]}
             >
-              <Input placeholder="Vui lòng nhập họ của bạn" size="large" />
+              <Input placeholder="Vui lòng nhập họ và tên của bạn" size="large" />
             </Form.Item>
           </Col>
-          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 12 }}>
+          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 8 }}>
+
             <Form.Item
-              hasFeedback
-              name="lastName"
-              label="Tên"
+              name="phoneNumber"
+              label="Số điện thoại"
               labelCol={{ span: 24 }}
-              wrapperCol={{ span: 12}}
+              wrapperCol={{ span: 10 }}
+              hasFeedback
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập tên của bạn.",
+                  message: "Vui lòng nhập số điện thoại.",
                 },
                 {
-                  min: 2,
-                  message: "Bạn phải nhập ít nhất 2 kí tự.",
+                  min: 9,
+                  message: "Số điện thoại của bạn không hợp lệ..",
                 },
               ]}
             >
-              <Input placeholder="Vui lòng nhập tên của bạn" size="large" />
+              <Input placeholder="Số điện thoại" size="large" />
+            </Form.Item>
+          </Col>
+          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 8 }}>
+          <Form.Item
+              name="departmentId"
+              label="Bộ phận"
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 11 }}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: "Xin hãy chọn lĩnh vực nghiên cứu",
+                },
+              ]}
+            >
+              <Select
+                style={{ width: 200 }}
+                options={departMent.map((item) => ({
+                  value: item.departmentId,
+                  label: item.departmentName,
+                }))}
+              />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={{ xs: 8, sm: 16 }}>
-          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 12 }}>
+          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 8 }}>
             <Form.Item
-              name="identityCard"
+              name="identityNumber"
               label="Chứng minh nhân dân"
               labelCol={{ span: 24 }}
-              wrapperCol={{ span: 12 }}
+              wrapperCol={{ span: 11 }}
               hasFeedback
               rules={[
                 {
@@ -118,30 +160,49 @@ const InforUser =()=> {
                 { min: 12, message: "Chứng minh nhân dân phải có 12 kí tự." },
               ]}
             >
-              <Input.Password placeholder="Vui lòng nhập chứng minh nhân dân." size="large" />
+              <Input.Password placeholder="Vui lòng nhập CMND." size="large" />
             </Form.Item>
           </Col>
 
-          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 12 }}>
-          <Form.Item
-          name="phone"
-          label="Số điện thoại"
-          labelCol={{ span: 24 }}
-          wrapperCol={{ span: 10 }}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập số điện thoại.",
-            },
-            {
-              min: 9,
-              message: "Số điện thoại của bạn không hợp lệ..",
-            },
-          ]}
-        >
-          <Input placeholder="Số điện thoại" size="large" />
-        </Form.Item>
+          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 6 }}>
+            <Form.Item
+
+              hasFeedback
+              name="issue"
+              label="Ngày cấp"
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 10 }}
+              rules={[
+                {
+                  required: true,
+                  message: "Xin hãy chọn thời gian cấp CMND.",
+                },
+              ]}
+            >
+              <DatePicker format={dateFormat} maxDate={today} />
+            </Form.Item>
+          </Col>
+          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 10 }}>
+
+            <Form.Item
+              name="placeOfIssue"
+              label="Nơi cấp"
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 6 }}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập nơi cấp CMND.",
+                },
+                {
+                  min: 5,
+                  message: "Nơi cấp không hợp lệ.",
+                },
+              ]}
+            >
+              <Input placeholder="Nơi cấp CMND." size="large" />
+            </Form.Item>
           </Col>
         </Row>
 
@@ -153,7 +214,7 @@ const InforUser =()=> {
             rules={[{ validator: validation }]}
           >
             <Checkbox checked={checked} onChange={onCheckboxChange}>
-            Tôi xin cam kết những thông tin trên.
+              Tôi xin cam kết những thông tin trên.
             </Checkbox>
           </Form.Item>
         </Form.Item>

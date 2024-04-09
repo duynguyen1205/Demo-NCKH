@@ -277,3 +277,13 @@ export const uploadReportMidTerm = (data) => {
 export const getDocumentMidTerm = (param) => {
   return axios.get(`api/contract/uploaded-contract?${qs.stringify(param)}`);
 };
+
+// get all department
+export const getAllDepartment = () => {
+  return axios.get("/api/Department/all");
+};
+
+// upload infor user
+export const uploadInforUser = (data) => {
+  return axios.post("api/user/register-user-infor", data);
+};

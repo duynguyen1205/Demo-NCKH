@@ -89,11 +89,11 @@ const InforUser =()=> {
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập họ của bạn.",
+                  message: "Vui lòng nhập tên của bạn.",
                 },
                 {
                   min: 2,
-                  message: "Bạn phải nhập tên của bạn ít nhất 2 kí tự.",
+                  message: "Bạn phải nhập ít nhất 2 kí tự.",
                 },
               ]}
             >
@@ -108,7 +108,7 @@ const InforUser =()=> {
               name="identityCard"
               label="Chứng minh nhân dân"
               labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
+              wrapperCol={{ span: 12 }}
               hasFeedback
               rules={[
                 {

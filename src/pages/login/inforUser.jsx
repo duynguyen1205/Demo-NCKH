@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Checkbox, DatePicker,Select } from "antd";
-import { DoubleRightOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Checkbox, DatePicker, Select } from "antd";
 import { message } from "antd";
 import { Row, Col, } from "antd";
 
@@ -8,6 +7,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { getAllDepartment } from "../../services/api";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 const today = dayjs();
@@ -86,7 +86,7 @@ const InforUser = () => {
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập họ và tên của bạn.",
+                  message: "Vui lòng nhập họ và tên.",
                 },
                 {
                   min: 2,
@@ -98,12 +98,11 @@ const InforUser = () => {
             </Form.Item>
           </Col>
           <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 8 }}>
-
             <Form.Item
               name="phoneNumber"
               label="Số điện thoại"
               labelCol={{ span: 24 }}
-              wrapperCol={{ span: 10 }}
+              wrapperCol={{ span: 13 }}
               hasFeedback
               rules={[
                 {
@@ -112,15 +111,17 @@ const InforUser = () => {
                 },
                 {
                   min: 9,
-                  message: "Số điện thoại của bạn không hợp lệ..",
+                  message: "Số điện thoại của bạn không hợp lệ.",
                 },
               ]}
             >
               <Input placeholder="Số điện thoại" size="large" />
             </Form.Item>
+
+
           </Col>
           <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 8 }}>
-          <Form.Item
+            <Form.Item
               name="departmentId"
               label="Bộ phận"
               labelCol={{ span: 24 }}
@@ -150,7 +151,7 @@ const InforUser = () => {
               name="identityNumber"
               label="Chứng minh nhân dân"
               labelCol={{ span: 24 }}
-              wrapperCol={{ span: 11 }}
+              wrapperCol={{ span: 18 }}
               hasFeedback
               rules={[
                 {
@@ -164,31 +165,12 @@ const InforUser = () => {
             </Form.Item>
           </Col>
 
-          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 6 }}>
-            <Form.Item
-
-              hasFeedback
-              name="issue"
-              label="Ngày cấp"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 10 }}
-              rules={[
-                {
-                  required: true,
-                  message: "Xin hãy chọn thời gian cấp CMND.",
-                },
-              ]}
-            >
-              <DatePicker format={dateFormat} maxDate={today} />
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 10 }}>
-
+          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 8 }}>
             <Form.Item
               name="placeOfIssue"
               label="Nơi cấp"
               labelCol={{ span: 24 }}
-              wrapperCol={{ span: 6 }}
+              wrapperCol={{ span: 12 }}
               hasFeedback
               rules={[
                 {
@@ -202,6 +184,24 @@ const InforUser = () => {
               ]}
             >
               <Input placeholder="Nơi cấp CMND." size="large" />
+            </Form.Item>
+
+          </Col>
+          <Col className="gutter-row" xs={{ span: 24 }} md={{ span: 8 }}>
+            <Form.Item
+              hasFeedback
+              name="issue"
+              label="Ngày cấp"
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 15 }}
+              rules={[
+                {
+                  required: true,
+                  message: "Xin hãy chọn thời gian cấp CMND.",
+                },
+              ]}
+            >
+              <DatePicker format={dateFormat} maxDate={today} />
             </Form.Item>
           </Col>
         </Row>
@@ -220,15 +220,16 @@ const InforUser = () => {
         </Form.Item>
 
         <Button
-          type="normal"
-          loading={loading}
-          className="form-submit-btn"
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%,-50%)",
+          }}
+          type="primary"
           htmlType="submit"
-          shape="round"
-          icon={<DoubleRightOutlined />}
-          size="large"
         >
-          Next
+          Xác nhận
         </Button>
       </Form>
     </>

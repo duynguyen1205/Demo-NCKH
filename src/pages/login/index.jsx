@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button,message } from "antd";
 import "./login.css";
 import Img from "./img/log.svg";
 import Re from "./img/register.svg";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { registerAccount, registerEmail } from "../../services/api";
+import { loginAccount, registerAccount, registerEmail } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [toggle, setToggle] = useState(false);
   const [action, setAction] = useState("login");
   const [email, setEmail] = useState();
+  const navigation = useNavigate();
   const handleToggle = (action) => {
     setAction(action);
     setToggle(!toggle);
@@ -20,12 +22,16 @@ const Login = () => {
     try {
       if (action === "login") {
         const data = {
-          email: "string",
-          password: "string",
+          email: values.email,
+          password: values.password,
         };
         const res = await loginAccount(data);
-        if (res && res?.data) {
-          console.log(res.data);
+        console.log('====================================');
+        console.log(res);
+        console.log('====================================');
+        if (res && res.isSuccess) {
+          localStorage.setItem("token", res.data.token);
+          navigation("/user")
         }
       } else if (action === "register") {
         const data = {
@@ -34,8 +40,9 @@ const Login = () => {
           otp: values.otp,
         };
         const res = await registerAccount(data);
-        if (res && res?.data) {
-          console.log(res.data);
+        if(res && res.success) {
+          message.success("Đăng kí tài khoản thành công!")
+          setToggle(true)
         }
       }
     } catch (error) {
@@ -45,8 +52,12 @@ const Login = () => {
   const handleSendOTP = async () => {
     // Xử lý logic khi người dùng nhấn nút "Gửi mã OTP"
     try {
-      const res = await registerEmail(email);
-      console.log("check handle send otp: ", res);
+      const res = await registerEmail({
+        email: email,
+      });
+      if(res && res.isSuccess) {
+        message.success("Vui lòng check mail để lấy mã otp")
+      }
     } catch (error) {
       console.log("Error tại đăng kí account ", error);
     }

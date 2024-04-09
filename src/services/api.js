@@ -3,6 +3,25 @@ import qs from "query-string";
 
 // gọi tất cả api ở đây
 
+// authenticated
+
+//register email
+export const registerEmail = (email) => {
+  return axios.post(
+    `/api/authentication/register-email?${qs.stringify(email)}`
+  );
+};
+
+//register account
+export const registerAccount = (account) => {
+  return axios.post("/api/authentication/register-account", account);
+};
+
+//login account
+export const loginAccount = (account) => {
+  return axios.post("/api/authentication/login", account);
+};
+
 // get all user except dean
 export const getAllUser = () => {
   return axios.get("/api/user/users");
@@ -10,7 +29,9 @@ export const getAllUser = () => {
 
 // get all user except dean
 export const getAllUserWithoutCreator = (param) => {
-  return axios.get(`/api/user/users-not-participating-topic?${qs.stringify(param)}`);
+  return axios.get(
+    `/api/user/users-not-participating-topic?${qs.stringify(param)}`
+  );
 };
 
 // get category
@@ -98,10 +119,12 @@ export const getReviewedByMember = (param) => {
   );
 };
 
-// get members has review topics 
+// get members has review topics
 export const getMembersHasReview = (param) => {
-  return axios.get(`api/memberreview/member-review-of-topic?${qs.stringify(param)}`)
-}
+  return axios.get(
+    `api/memberreview/member-review-of-topic?${qs.stringify(param)}`
+  );
+};
 
 // create council
 export const councilConfigEarly = (data) => {
@@ -214,7 +237,9 @@ export const getContractType = (param) => {
 };
 // get topic done for council
 export const getReviewDocumentsDone = (param) => {
-  return axios.get(`api/topic/topic-has-been-resolved-for-council?${qs.stringify(param)}`);
+  return axios.get(
+    `api/topic/topic-has-been-resolved-for-council?${qs.stringify(param)}`
+  );
 };
 // mid-term report
 

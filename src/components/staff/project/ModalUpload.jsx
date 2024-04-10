@@ -14,6 +14,8 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
+  makeDeadlineSubmit,
+  moveToFinalTerm,
   uploadFile,
   uploadReportMidTerm,
   uploadResult,
@@ -65,12 +67,29 @@ const ModalUpload = (props) => {
       console.log("====================================");
       try {
         const res = await uploadReportMidTerm(param);
-        console.log(res);
         setIsSubmit(true);
         if (res && res.isSuccess) {
           setIsSubmit(false);
           message.success("Tải biên bản lên thành công");
-          navigate("/staff");
+          if (reviewMidtearm === "1") {
+            const timeMidterm = {
+              topicId: data.topicId,
+              deadline: dayjs(meetingDate).utc().format(),
+            };
+            const res = await makeDeadlineSubmit(timeMidterm);
+            if (res && res.isSuccess) {
+              navigate("/staff/midterm");
+            }
+          } else if (reviewMidtearm === "0") {
+            const res = await moveToFinalTerm({
+              topicId: data.topicId,
+            })
+
+            if(res && res.statusCode === 200) {
+              navigate("/staff/finalterm");
+            }
+           
+          }
         }
       } catch (error) {
         console.log("====================================");

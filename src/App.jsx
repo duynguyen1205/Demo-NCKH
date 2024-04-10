@@ -75,7 +75,7 @@ function App() {
           ],
         },
         {
-          path: "finaltearm",
+          path: "finalterm",
           element: <Outlet />,
           children: [
             {

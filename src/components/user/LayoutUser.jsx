@@ -140,7 +140,11 @@ const LayoutUser = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <p>Quang Anh</p>
+                  {path === "manager-review" ? (
+                    <p>Gia Phát</p>
+                  ) : (
+                    <p>Quang Anh</p>
+                  )}
                   <Avatar />
                 </Space>
               </a>

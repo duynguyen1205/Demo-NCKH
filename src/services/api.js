@@ -252,3 +252,8 @@ export const uploadReportMidTerm = (data) => {
 export const getDocumentMidTerm = (param) => {
   return axios.get(`api/contract/uploaded-contract?${qs.stringify(param)}`);
 };
+
+//move to final term 
+export const moveToFinalTerm = (param) => {
+  return axios.post(`api/topic/move-to-final-term?${qs.stringify(param)}`);
+}

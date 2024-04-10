@@ -186,7 +186,7 @@ const ModalUploadContract = (props) => {
                 onChange={onCheckAllChange}
                 checked={checkAll}
               >
-                Check all
+                Đánh dấu tất cả
               </Checkbox>
               <Divider />
               <Checkbox.Group

@@ -199,12 +199,12 @@ const UploadDocument = () => {
       });
       if (result && result.isSuccess) {
         message.success("Chuyển sang giai đoạn báo cáo giữa kì thành công");
-        if (status) {
+        if (status === true) {
           setStatus(false);
         } else {
           setStatus(true);
         }
-        navigate("/ staff/midterm");
+        navigate("/staff/midterm");
       }
     } catch (error) {
       console.log("có lỗi tại ", error);

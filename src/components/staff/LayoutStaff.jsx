@@ -45,8 +45,8 @@ const items = [
         icon: <HourglassOutlined />,
       },
       {
-        label: <Link to="/staff/finaltearm">Cuối kì</Link>,
-        key: "finaltearm",
+        label: <Link to="/staff/finalterm">Cuối kì</Link>,
+        key: "finalterm",
         icon: <FlagOutlined />,
       },
     ],

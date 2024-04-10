@@ -253,7 +253,7 @@ const ProjectManagerMidTerm = () => {
   };
   useEffect(() => {
     getTopicMidTerm();
-  }, []);
+  }, [isModalOpen]);
   const renderHeader = () => (
     <div>
       <Tabs

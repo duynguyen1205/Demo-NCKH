@@ -247,6 +247,14 @@ export const councilConfigMidterm = (data) => {
 export const uploadReportMidTerm = (data) => {
   return axios.post("api/review/create-evaluate", data);
 };
+export const getAllDepartment = () => {
+  return axios.get("/api/Department/all");
+};
+
+// upload infor user
+export const uploadInforUser = (data) => {
+  return axios.post("api/user/register-user-infor", data);
+};
 
 // get document had upload report
 export const getDocumentMidTerm = (param) => {

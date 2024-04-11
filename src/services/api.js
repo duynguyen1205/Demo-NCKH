@@ -291,3 +291,6 @@ export const uploadInforUser = (data) => {
 export const moveToFinalTerm = (param) => {
   return axios.post(`api/topic/move-to-final-term?${qs.stringify(param)}`);
 }
+
+
+

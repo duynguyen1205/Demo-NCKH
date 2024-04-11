@@ -5,7 +5,7 @@ const CollapseTopic = ({ data = [] }) => {
     const [itemsCollapse, setItemsCollapse] = useState([])
 
     useEffect(() => {
-        if (!data && !data.length) return
+        if (!data && !data?.length) return
 
         const newData = data.map((items, index) => ({
             key: index,

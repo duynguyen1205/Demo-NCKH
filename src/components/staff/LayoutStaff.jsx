@@ -75,8 +75,9 @@ const LayoutStaff = () => {
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const navigate = useNavigate();
   const handleLogout = async () => {
-    message.success("Logged out successfully");
+    message.success("Đăng xuất thành công");
     navigate("/login");
+    localStorage.removeItem("token");
   };
 
   const itemDropdown = [
@@ -85,13 +86,13 @@ const LayoutStaff = () => {
       key: "account",
     },
     {
-      label: <a href="/">Home Page</a>,
+      label: <a href="/">Trang chủ</a>,
       key: "homepage",
     },
     {
       label: (
         <label style={{ cursor: "pointer" }} onClick={() => handleLogout()}>
-          Log out
+          Đăng xuất
         </label>
       ),
       key: "logout",

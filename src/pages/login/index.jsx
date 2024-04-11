@@ -17,8 +17,6 @@ const Login = () => {
     setToggle(!toggle);
   };
   const onFinish = async (values) => {
-    console.log("Received values:", values);
-
     try {
       if (action === "login") {
         const data = {
@@ -40,9 +38,9 @@ const Login = () => {
           otp: values.otp,
         };
         const res = await registerAccount(data);
-        if(res && res.success) {
+        if(res && res.isSuccess) {
           message.success("Đăng kí tài khoản thành công!")
-          setToggle(true)
+          handleToggle("login")
         }
       }
     } catch (error) {

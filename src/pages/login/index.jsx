@@ -1,16 +1,21 @@
 import { useState } from "react";
-import { Form, Input, Button,message } from "antd";
+import { Form, Input, Button, message, Statistic } from "antd";
 import "./login.css";
 import Img from "./img/log.svg";
 import Re from "./img/register.svg";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { loginAccount, registerAccount, registerEmail } from "../../services/api";
+import {
+  loginAccount,
+  registerAccount,
+  registerEmail,
+} from "../../services/api";
 import { useNavigate } from "react-router-dom";
-
+const { Countdown } = Statistic;
 const Login = () => {
   const [toggle, setToggle] = useState(false);
   const [action, setAction] = useState("login");
-  const [email, setEmail] = useState();
+  const [email, setEmail] = useState(null);
+  const [waiting, setWaiting] = useState(false);
   const navigation = useNavigate();
   const handleToggle = (action) => {
     setAction(action);
@@ -24,12 +29,9 @@ const Login = () => {
           password: values.password,
         };
         const res = await loginAccount(data);
-        console.log('====================================');
-        console.log(res);
-        console.log('====================================');
         if (res && res.isSuccess) {
           localStorage.setItem("token", res.data.token);
-          navigation("/user")
+          navigation("/user");
         }
       } else if (action === "register") {
         const data = {
@@ -38,9 +40,9 @@ const Login = () => {
           otp: values.otp,
         };
         const res = await registerAccount(data);
-        if(res && res.isSuccess) {
-          message.success("Đăng kí tài khoản thành công!")
-          handleToggle("login")
+        if (res && res.isSuccess) {
+          message.success("Đăng kí tài khoản thành công!");
+          handleToggle("login");
         }
       }
     } catch (error) {
@@ -49,15 +51,20 @@ const Login = () => {
   };
   const handleSendOTP = async () => {
     // Xử lý logic khi người dùng nhấn nút "Gửi mã OTP"
-    try {
-      const res = await registerEmail({
-        email: email,
-      });
-      if(res && res.isSuccess) {
-        message.success("Vui lòng check mail để lấy mã otp")
+    if (email === null) {
+      message.error("Vui lòng nhập email");
+    } else {
+      setWaiting(true);
+      try {
+        const res = await registerEmail({
+          email: email,
+        });
+        if (res && res.isSuccess) {
+          message.success("Vui lòng check mail để lấy mã otp");
+        }
+      } catch (error) {
+        console.log("Error tại đăng kí account ", error);
       }
-    } catch (error) {
-      console.log("Error tại đăng kí account ", error);
     }
   };
 
@@ -105,8 +112,22 @@ const Login = () => {
                       type="primary"
                       onClick={handleSendOTP}
                       className="send-otp-button"
+                      disabled={waiting}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
                     >
-                      Gửi mã OTP
+                      {waiting ? (
+                        <Countdown
+                          value={Date.now() + 2 * 60 * 1000} 
+                          onFinish={() => setWaiting(false)} 
+                          format="mm:ss"
+                        />
+                      ) : (
+                        "Gửi mã OTP"
+                      )}
                     </Button>
                   </div>
                 </Form.Item>
@@ -119,7 +140,7 @@ const Login = () => {
               >
                 <Input.Password
                   prefix={<i className="fas fa-lock"></i>}
-                  placeholder="Password"
+                  placeholder="Mật khẩu"
                 />
               </Form.Item>
 

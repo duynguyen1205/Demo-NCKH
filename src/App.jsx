@@ -20,7 +20,7 @@ import ProjectResubmit from "./components/user/project/ProjectResubmit.jsx";
 import ProjectForTrackStaff from "./components/staff/project/ProjectForTrackStaff.jsx";
 import MidtermProject from "./pages/projectMangerStaff/midterm.jsx";
 const Layout = () => {
-  return <>Main Page</>;
+  return <LoginPage/>;
 };
 function App() {
   const router = createBrowserRouter([

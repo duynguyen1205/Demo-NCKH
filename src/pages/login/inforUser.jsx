@@ -161,7 +161,7 @@ const InforUser = () => {
                 { min: 12, message: "Chứng minh nhân dân phải có 12 kí tự." },
               ]}
             >
-              <Input.Password placeholder="Vui lòng nhập CMND." size="large" />
+              <Input placeholder="Vui lòng nhập CMND." size="large" />
             </Form.Item>
           </Col>
 

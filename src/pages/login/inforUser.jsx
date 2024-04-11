@@ -228,6 +228,7 @@ const InforUser = () => {
           }}
           type="primary"
           htmlType="submit"
+          loading={loading}
         >
           Xác nhận
         </Button>

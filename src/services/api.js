@@ -287,3 +287,7 @@ export const getAllDepartment = () => {
 export const uploadInforUser = (data) => {
   return axios.post("api/user/register-user-infor", data);
 };
+//move to final term 
+export const moveToFinalTerm = (param) => {
+  return axios.post(`api/topic/move-to-final-term?${qs.stringify(param)}`);
+}

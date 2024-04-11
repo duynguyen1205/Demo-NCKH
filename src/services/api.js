@@ -3,6 +3,25 @@ import qs from "query-string";
 
 // gọi tất cả api ở đây
 
+// authenticated
+
+//register email
+export const registerEmail = (email) => {
+  return axios.post(
+    `/api/authentication/register-email?${qs.stringify(email)}`
+  );
+};
+
+//register account
+export const registerAccount = (account) => {
+  return axios.post("/api/authentication/register-account", account);
+};
+
+//login account
+export const loginAccount = (account) => {
+  return axios.post("/api/authentication/login", account);
+};
+
 // get all user except dean
 export const getAllUser = () => {
   return axios.get("/api/user/users");
@@ -10,7 +29,9 @@ export const getAllUser = () => {
 
 // get all user except dean
 export const getAllUserWithoutCreator = (param) => {
-  return axios.get(`/api/user/users-not-participating-topic?${qs.stringify(param)}`);
+  return axios.get(
+    `/api/user/users-not-participating-topic?${qs.stringify(param)}`
+  );
 };
 
 // get category
@@ -98,10 +119,12 @@ export const getReviewedByMember = (param) => {
   );
 };
 
-// get members has review topics 
+// get members has review topics
 export const getMembersHasReview = (param) => {
-  return axios.get(`api/memberreview/member-review-of-topic?${qs.stringify(param)}`)
-}
+  return axios.get(
+    `api/memberreview/member-review-of-topic?${qs.stringify(param)}`
+  );
+};
 
 // create council
 export const councilConfigEarly = (data) => {
@@ -214,7 +237,9 @@ export const getContractType = (param) => {
 };
 // get topic done for council
 export const getReviewDocumentsDone = (param) => {
-  return axios.get(`api/topic/topic-has-been-resolved-for-council?${qs.stringify(param)}`);
+  return axios.get(
+    `api/topic/topic-has-been-resolved-for-council?${qs.stringify(param)}`
+  );
 };
 // mid-term report
 
@@ -247,6 +272,13 @@ export const councilConfigMidterm = (data) => {
 export const uploadReportMidTerm = (data) => {
   return axios.post("api/review/create-evaluate", data);
 };
+
+// get document had upload report
+export const getDocumentMidTerm = (param) => {
+  return axios.get(`api/contract/uploaded-contract?${qs.stringify(param)}`);
+};
+
+// get all department
 export const getAllDepartment = () => {
   return axios.get("/api/Department/all");
 };
@@ -255,13 +287,10 @@ export const getAllDepartment = () => {
 export const uploadInforUser = (data) => {
   return axios.post("api/user/register-user-infor", data);
 };
-
-// get document had upload report
-export const getDocumentMidTerm = (param) => {
-  return axios.get(`api/contract/uploaded-contract?${qs.stringify(param)}`);
-};
-
 //move to final term 
 export const moveToFinalTerm = (param) => {
   return axios.post(`api/topic/move-to-final-term?${qs.stringify(param)}`);
 }
+
+
+

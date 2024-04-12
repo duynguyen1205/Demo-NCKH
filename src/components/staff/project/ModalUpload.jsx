@@ -11,6 +11,8 @@ import {
   Select,
   Upload,
   message,
+  Radio,
+  Space 
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
@@ -83,12 +85,11 @@ const ModalUpload = (props) => {
           } else if (reviewMidtearm === "0") {
             const res = await moveToFinalTerm({
               topicId: data.topicId,
-            })
+            });
 
-            if(res && res.statusCode === 200) {
+            if (res && res.statusCode === 200) {
               navigate("/staff/finalterm");
             }
-           
           }
         }
       } catch (error) {
@@ -127,10 +128,11 @@ const ModalUpload = (props) => {
       try {
         const isCompressedFile =
           file.type ===
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+          file.type === "application/pdf";
         if (!isCompressedFile) {
-          message.error("Chỉ được phép tải lên các file words, docx!");
-          setError("Chỉ được phép tải lên các file words !");
+          message.error("Chỉ được phép tải lên các file docx hoặc pdf!");
+          setError("Chỉ được phép tải lên các file docx hoặc pdf!");
           onError(file);
           return;
         }
@@ -162,7 +164,9 @@ const ModalUpload = (props) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
-
+  const handleRadioChange = (e) => {
+    setReviewMidtearm(e.target.value);
+  };
   // set up initial value for the form
   useEffect(() => {
     form.setFieldsValue(data);
@@ -279,21 +283,16 @@ const ModalUpload = (props) => {
                   },
                 ]}
               >
-                <Select
-                  showSearch
-                  allowClear
-                  onChange={(value) => setReviewMidtearm(value)}
-                  options={[
-                    {
-                      value: "1",
-                      label: "Tiếp tục báo cáo",
-                    },
-                    {
-                      value: "0",
-                      label: "Kết thúc báo cáo",
-                    },
-                  ]}
-                />
+                <Radio.Group
+                  onChange={handleRadioChange}
+                  value={reviewMidtearm}
+                >
+                  <Space direction="vertical">
+<Radio value="1">Tiếp tục báo cáo</Radio>
+                  <Radio value="0">Kết thúc báo cáo</Radio>
+                  </Space>
+                  
+                </Radio.Group>
               </Form.Item>
             </Col>
             {reviewMidtearm === "1" && (
@@ -319,6 +318,7 @@ const ModalUpload = (props) => {
                 label="Biên bản góp ý"
                 labelCol={{ span: 24 }}
               >
+                <p>Chỉ hỗ trợ cái file như docx hoặc pdf</p>
                 <Upload {...propsUpload}>
                   <Button icon={<UploadOutlined />}>Tải tài liệu lên</Button>
                 </Upload>

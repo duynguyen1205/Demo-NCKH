@@ -37,8 +37,6 @@ const dateFormat = "DD/MM/YYYY";
 const UploadDocument = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [total, setTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [data, setDataUser] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataPro, setDataPro] = useState({});
@@ -46,7 +44,6 @@ const UploadDocument = () => {
   const [isModalContractOpen, setIsModalContractOpen] = useState(false);
   const [dataTopic, setDataTopic] = useState([]);
   const [checkTab, setCheckTab] = useState("confirm");
-  const [status, setStatus] = useState(false);
   const staffId = "2D5E2220-EEEF-4FDC-8C98-1B5C5012319C";
   const navigate = useNavigate()
   const getTopicUpload = async () => {
@@ -197,13 +194,8 @@ const UploadDocument = () => {
       const result = await moveToMiddleReport({
         topicId: topicId,
       });
-      if (result && result.isSuccess) {
+      if (result && result.statusCode === 200) {
         message.success("Chuyển sang giai đoạn báo cáo giữa kì thành công");
-        if (status === true) {
-          setStatus(false);
-        } else {
-          setStatus(true);
-        }
         navigate("/staff/midterm");
       }
     } catch (error) {
@@ -348,7 +340,7 @@ const UploadDocument = () => {
   };
   useEffect(() => {
     getTopicUpload();
-  }, [status]);
+  }, []);
   return (
     <div>
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
@@ -367,7 +359,6 @@ const UploadDocument = () => {
           current: current,
           pageSize: pageSize,
           showSizeChanger: true,
-          total: total,
           pageSizeOptions: ["5", "10", "15"],
           showTotal: (total, range) => {
             return (
@@ -378,7 +369,6 @@ const UploadDocument = () => {
           },
         }}
         title={renderHeader}
-        loading={isLoading}
       />
 
       <ModalUpload

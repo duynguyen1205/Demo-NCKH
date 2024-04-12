@@ -4,16 +4,8 @@ import { getFileType } from "../../../services/api";
 const ModalConfirm = (props) => {
   const [checkedList, setCheckedList] = useState([]);
   const [fileType, setFileType] = useState([]);
-  const checkAll = fileType.length === checkedList.length;
-  const indeterminate =
-    checkedList.length > 0 && checkedList.length < fileType.length;
   const onChange = (list) => {
     setCheckedList(list);
-  };
-  const onCheckAllChange = (e) => {
-    setCheckedList(
-      e.target.checked ? fileType.map((option) => option.typeName) : []
-    );
   };
   const onSubmit = () => {
     if (props.state === "approved") {
@@ -79,14 +71,6 @@ const ModalConfirm = (props) => {
         forceRender
         footer={renderFooter}
       >
-        {" "}
-        <Checkbox
-          indeterminate={indeterminate}
-          onChange={onCheckAllChange}
-          checked={checkAll}
-        >
-          Đánh dấu tất cả
-        </Checkbox>
         <Divider />
         <Checkbox.Group
           style={{ display: "flex", flexDirection: "column" }}

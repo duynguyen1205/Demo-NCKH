@@ -59,7 +59,7 @@ console.log("day la data document",{dataReviewDocument});
 
   const getReviewDoc = async () => {
     const res = await getReviewDocuments({
-      userId: userId, // Nguyen Thanh B-chairman
+      userId: userId, // Nguyen Thanh B-chủ tịch hội đồng
       topicId: topicId,
     });
     if (res && res?.data) {

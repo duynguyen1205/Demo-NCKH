@@ -15,12 +15,10 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import {
   getContractType,
-  getDocumentMidTerm,
   uploadContract,
   uploadFile,
 } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
-
 const ModalUploadContract = (props) => {
   const isModalOpen = props.isModalContractOpen;
   const data = props.data;
@@ -30,16 +28,8 @@ const ModalUploadContract = (props) => {
   const [checkedList, setCheckedList] = useState([]);
   const [plainOptions, setPlainOptions] = useState([]);
   const navigate = useNavigate();
-  const checkAll = plainOptions.length === checkedList.length;
-  const indeterminate =
-    checkedList.length > 0 && checkedList.length < plainOptions.length;
   const onChange = (list) => {
     setCheckedList(list);
-  };
-  const onCheckAllChange = (e) => {
-    setCheckedList(
-      e.target.checked ? plainOptions.map((option) => option.value) : []
-    );
   };
 
   const handleOk = () => {
@@ -148,6 +138,7 @@ const ModalUploadContract = (props) => {
     <>
       <Modal
         title="Hợp đồng"
+        className="modalStyle"
         centered
         open={isModalOpen}
         onOk={handleOk}
@@ -181,14 +172,6 @@ const ModalUploadContract = (props) => {
           <Row gutter={20}>
             <Col span={24}>
               <h3>Hợp đồng đính kèm:</h3>
-              <Checkbox
-                indeterminate={indeterminate}
-                onChange={onCheckAllChange}
-                checked={checkAll}
-              >
-                Đánh dấu tất cả
-              </Checkbox>
-              <Divider />
               <Checkbox.Group
                 style={{ display: "flex", flexDirection: "column" }}
                 value={checkedList}
@@ -201,6 +184,7 @@ const ModalUploadContract = (props) => {
                 ))}
               </Checkbox.Group>
               <Divider />
+              <p>Chỉ hỗ trợ cái file như zip hoặc rar</p>
               <Upload {...propsUpload}>
                 <Button
                   disabled={

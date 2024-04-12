@@ -16,24 +16,13 @@ const ModalConfirm = (props) => {
   const [checkedList, setCheckedList] = useState([]);
   const [fileType, setFileType] = useState([]);
   const navigate = useNavigate();
-  const checkAll = fileType.length === checkedList.length;
-  const indeterminate =
-    checkedList.length > 0 && checkedList.length < fileType.length;
   const onChange1 = (list) => {
     setCheckedList(list);
-  };
-  const onCheckAllChange = (e) => {
-    setCheckedList(
-      e.target.checked ? fileType.map((option) => option.typeName) : []
-    );
   };
   const onSubmit = async () => {
     const data = props.data;
     try {
       const res = await createTopicAPI(data);
-      console.log("====================================");
-      console.log("check result: ", res);
-      console.log("====================================");
       if (res && res.statusCode === 200) {
         message.success("Tạo topic thành công");
         props.setFileList([]);
@@ -52,7 +41,6 @@ const ModalConfirm = (props) => {
     props.setOpen(false);
     setCheckCapcha(true);
     if (recaptchaRef.current) {
-      console.log(recaptchaRef.current);
       recaptchaRef.current.reset();
     }
   };
@@ -115,15 +103,8 @@ const ModalConfirm = (props) => {
         forceRender
         footer={renderFooter}
       >
+        <Divider/>
         <h3>Hợp đồng đính kèm:</h3>
-        <Checkbox
-          indeterminate={indeterminate}
-          onChange={onCheckAllChange}
-          checked={checkAll}
-        >
-          Đánh dấu tất cả
-        </Checkbox>
-        <Divider />
         <Checkbox.Group
           style={{ display: "flex", flexDirection: "column" }}
           value={checkedList}

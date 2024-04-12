@@ -298,7 +298,7 @@ const ProjectManagerMidTerm = () => {
   return (
     <div>
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
-        Danh sách đề tài
+        Danh sách đề tài giữa kì
       </h2>
       <Table
         rowClassName={(record, index) =>

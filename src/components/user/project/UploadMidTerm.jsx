@@ -40,7 +40,6 @@ const UploadMidTerm = (props) => {
     };
     try {
       const res = await submitDocumentsMidterm(param);
-      console.log(res);
       setIsSubmit(true);
       if (res && res.isSuccess) {
         setIsSubmit(false);
@@ -137,12 +136,15 @@ const UploadMidTerm = (props) => {
           <Row gutter={20}>
             <Col span={24}>
               <p>File mẫu tham khảo: </p>
-              <a href="https://srms.sgp1.cdn.digitaloceanspaces.com/template-20240404003752374.zip">Ấn để tải</a>
+              <a href="https://srms.sgp1.cdn.digitaloceanspaces.com/template-20240404003752374.zip">
+                Ấn để tải
+              </a>
             </Col>
+            <Divider />
             <Col span={24}>
               <Form.Item
                 name="file"
-                label="Các file liên quan"
+                label="Chỉ hỗ trợ cái file như zip hoặc rar"
                 labelCol={{ span: 24 }}
               >
                 <Upload {...propsUpload}>

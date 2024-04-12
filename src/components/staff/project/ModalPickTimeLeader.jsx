@@ -61,7 +61,7 @@ const ModalPickTimeLeader = (props) => {
   const maxDate = dayjs().add(7, "day");
   const steps = [
     {
-      title: "Lựa chọn chairman",
+      title: "Lựa chọn chủ tịch hội đồng",
       content: (
         <>
           <div>
@@ -144,7 +144,7 @@ const ModalPickTimeLeader = (props) => {
                 >
                   {item.fullName} - {item.position} - {item.degree}{" "}
                   {item.isChairman ? (
-                    <span style={{ color: "red" }}> Chairman</span>
+                    <span style={{ color: "red" }}> Chủ tịch hội đồng</span>
                   ) : null}
                 </List.Item>
               )}
@@ -167,7 +167,7 @@ const ModalPickTimeLeader = (props) => {
   const [current, setCurrent] = useState(0);
   const next = () => {
     if (current === 0 && selectedLeader === null) {
-      message.error("Vui lòng chọn chairman trước khi tiếp tục.");
+      message.error("Vui lòng chọn chủ tịch hội đồng trước khi tiếp tục.");
       return;
     } else if (current === 1 && meetingDetails === "") {
       message.error("Vui lòng chọn ngày và nhập chi tiết trước khi tiếp tục.");

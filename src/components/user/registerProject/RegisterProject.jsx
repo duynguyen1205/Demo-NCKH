@@ -386,6 +386,7 @@ const RegisterProject = () => {
           </Col>
           <Col span={24}>
             <h3>Đính kèm tài liệu liên quan</h3>
+            <p>Chỉ hỗ trợ cái file như zip hoặc rar</p>
             <Form.Item
               labelCol={{
                 span: 12,

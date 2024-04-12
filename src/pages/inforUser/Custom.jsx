@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./formInput.css";
 import FormInput from "./FormInput";
-
-const Step = () => {
-
+import { getAllDepartment, uploadInforUser } from "../../services/api";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { message } from "antd";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+const UserInformation = () => {
+  const [departMent, setDepartMent] = useState([]);
+  const navigate = useNavigate();
   const [values, setValues] = useState({
     fullName: "",
     phoneNumber: "",
@@ -19,10 +25,10 @@ const Step = () => {
       name: "fullName",
       type: "text",
       placeholder: "Vui lòng điền họ và tên.",
-      errorMessage:
-        "Vui lòng điền đầy đủ họ và tên của bạn !",
+      errorMessage: "Vui lòng điền đầy đủ họ và tên của bạn !",
       label: "Họ và tên",
-      pattern: "^[A-Za-z0-9]{3,16}$",
+      pattern:
+        "^[a-zA-ZÀ-Ỹà-ỹẠ-Ỵạ-ỵĂăÂâÁáẤấẮắẠạẦầẰằẶặẨẩẪẫẬậÉéẾếẺẻẼẽẸẹÈèỀềỂểỄễẾếÍíỈỉỊịỊịÓóỐốỚớỌọỒồỜờỎỏỖỗỘộỔổỖỗỚớÚúỤụỨứỪừỮữỬửỰựÝýỲỳỶỷỸỹÝýỲỳỶỷỸỹ ]{1,50}$",
       required: true,
     },
     {
@@ -32,25 +38,27 @@ const Step = () => {
       placeholder: "Vui lòng điền số điện thoại.",
       errorMessage: "Vui lòng điền số điện thoại !",
       label: "Số điện thoại",
+      pattern: "(0[3-5789])([0-9]{8})",
       required: true,
     },
     {
       id: 3,
       name: "departmentId",
-      type: "text",
+      type: "select",
       placeholder: "Vui lòng chọn bộ phận.",
       errorMessage: "Vui lòng chọn bộ phận đang làm việc !",
       label: "Bộ phận làm việc",
       required: true,
+      options: departMent,
     },
     {
       id: 4,
       name: "identityNumber",
-      type: "password",
-      placeholder: "Vui lòng điền chứng minh nhân dân.",
-      errorMessage: "Vui lòng điền CMND !",
-      label: "Chứng minh nhân dân",
-      pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`,
+      type: "text",
+      placeholder: "Vui lòng điền chứng minh nhân dân hoặc căn cước .",
+      errorMessage: "Vui lòng điền chứng minh hoặc căn cước !",
+      label: "Chứng minh nhân dân hoặc căn cước",
+      pattern: "\\d{12}",
       required: true,
     },
     {
@@ -63,28 +71,65 @@ const Step = () => {
       required: true,
     },
     {
-        id: 6,
-        name: "issue",
-        type: "date",
-        placeholder: "Ngày cấp.",
-        errorMessage: "Vui lòng chọn ngày cấp CMND !",
-        label: "Ngày cấp",
-        required: true,
-      },
+      id: 6,
+      name: "issue",
+      type: "date",
+      placeholder: "Ngày cấp.",
+      errorMessage: "Vui lòng chọn ngày cấp CMND !",
+      label: "Ngày cấp",
+      required: true,
+    },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    const token = localStorage.getItem("token");
+    const decoded = jwtDecode(token);
+    const email = decoded.email;
     e.preventDefault();
+    try {
+      const res = await uploadInforUser({
+        fullName: values.fullName,
+        identityNumber: values.identityNumber,
+        issue:  dayjs(values.issue).utc().format(),
+        placeOfIssue: values.placeOfIssue,
+        accountEmail: email,
+        phoneNumber: values.phoneNumber,
+        departmentId: values.departmentId,
+      });
+      console.log('====================================');
+      console.log(res);
+      console.log('====================================');
+      if (res && res.statusCode === 200) {
+        message.success("Đăng kí thông tin cá nhân thành công");
+        navigate("/user");
+      }
+    } catch (err) {
+      console.log("====================================");
+      console.log("Có lỗi tại phần đăng kí thông tin cá nhân: ", err);
+      console.log("====================================");
+    }
   };
 
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
-
+  const getDepartment = async () => {
+    const res = await getAllDepartment();
+    if (res && res?.data) {
+      const newData = res.data.map((item) => ({
+        value: item.departmentId,
+        label: item.departmentName,
+      }));
+      setDepartMent(newData);
+    }
+  };
+  useEffect(() => {
+    getDepartment();
+  }, []);
   return (
     <div className="infor">
-      <form onSubmit={handleSubmit}>
-        <h1>Thông tin cá nhân</h1>
+      <form className="formInfor" onSubmit={handleSubmit}>
+        <h1>Vui lòng điền thông tin cá nhân</h1>
         {inputs.map((input) => (
           <FormInput
             key={input.id}
@@ -93,10 +138,10 @@ const Step = () => {
             onChange={onChange}
           />
         ))}
-        <button>Xác nhận</button>
+        <button className="buttonInfor">Xác nhận</button>
       </form>
     </div>
   );
 };
 
-export default Step;
+export default UserInformation;

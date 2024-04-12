@@ -19,8 +19,10 @@ import ResubmitProject from "./components/user/project/ResubmitProject.jsx";
 import ProjectResubmit from "./components/user/project/ProjectResubmit.jsx";
 import ProjectForTrackStaff from "./components/staff/project/ProjectForTrackStaff.jsx";
 import MidtermProject from "./pages/projectMangerStaff/midterm.jsx";
+import UserInformation from "./pages/inforUser/Custom.jsx";
+
 const Layout = () => {
-  return <>Main Page</>;
+  return <LoginPage/>;
 };
 function App() {
   const router = createBrowserRouter([
@@ -32,6 +34,10 @@ function App() {
     {
       path: "/login",
       element: <LoginPage />,
+    },
+    {
+      path: "/registerInfor",
+      element: <UserInformation />,
     },
     {
       path: "/staff",

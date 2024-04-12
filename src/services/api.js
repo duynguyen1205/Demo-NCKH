@@ -23,8 +23,8 @@ export const loginAccount = (account) => {
 };
 
 // get all user except dean
-export const getAllUser = () => {
-  return axios.get("/api/user/users");
+export const getAllUser = (param) => {
+  return axios.get(`/api/user/users?${qs.stringify(param)}`);
 };
 
 // get all user except dean

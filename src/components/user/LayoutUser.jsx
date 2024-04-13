@@ -4,9 +4,6 @@ import {
   FileSearchOutlined,
   FileSyncOutlined,
   HomeOutlined,
-  ScheduleOutlined,
-  UnorderedListOutlined,
-  UploadOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
@@ -24,7 +21,11 @@ import React, { useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import "./user.scss";
 import logo from "../../assets/logoBV.png";
+import { jwtDecode } from "jwt-decode";
 const { Header, Content, Sider } = Layout;
+const token = localStorage.getItem("token");
+const decoded = jwtDecode(token);
+const role = decoded.role;
 const items = [
   {
     label: <Link to="/user">Đăng kí đề tài</Link>,
@@ -40,6 +41,7 @@ const items = [
     label: <Link to="/user/manager-review">Đề tài thông qua</Link>,
     key: "manager-review",
     icon: <FileSearchOutlined />,
+    hidden: role !== "Dean",
   },
   {
     label: <Link to="/user/track">Theo dõi tiến độ</Link>,
@@ -72,12 +74,8 @@ const LayoutUser = () => {
 
   const itemDropdown = [
     {
-      label: <label>Account Manager</label>,
+      label: <label>Quản lí tài khoản</label>,
       key: "account",
-    },
-    {
-      label: <a href="/">Trang chủ</a>,
-      key: "homepage",
     },
     {
       label: (
@@ -122,7 +120,18 @@ const LayoutUser = () => {
             mode="inline"
             items={items}
             onClick={(e) => setActiveMenu(e.key)}
-          />
+          >
+            {items.map((item) => {
+              if (!item.hidden || role === "Dean") {
+                return (
+                  <Menu.Item key={item.key} icon={item.icon}>
+                    {item.label}
+                  </Menu.Item>
+                );
+              }
+              return null;
+            })}
+          </Menu>
         </Sider>
       </ConfigProvider>
       <Layout className="site-layout">

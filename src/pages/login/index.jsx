@@ -67,7 +67,13 @@ const Login = () => {
       }
     }
   };
-
+  useEffect(() => {
+    const token = localStorage.getItem("token") !== null ? true : false;
+    console.log("token", token);
+    if (token) {
+      navigation(-1);
+    }
+  }, []);
   return (
     <>
       <div className={toggle ? "container sign-up-mode" : "container"}>

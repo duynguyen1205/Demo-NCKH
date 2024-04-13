@@ -27,7 +27,6 @@ const Login = () => {
           password: values.password,
         };
         const res = await loginAccount(data);
-        console.log(res);
         if (res && res.isSuccess) {
           localStorage.setItem("token", res.data.token);
           if (res.data.isRegisteredInfor === false) {

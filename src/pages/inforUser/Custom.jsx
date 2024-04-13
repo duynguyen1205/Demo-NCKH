@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 const UserInformation = () => {
   const [departMent, setDepartMent] = useState([]);
   const navigate = useNavigate();
@@ -96,9 +97,6 @@ const UserInformation = () => {
         phoneNumber: values.phoneNumber,
         departmentId: values.departmentId,
       });
-      console.log('====================================');
-      console.log(res);
-      console.log('====================================');
       if (res && res.statusCode === 200) {
         message.success("Đăng kí thông tin cá nhân thành công");
         navigate("/user");

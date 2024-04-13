@@ -20,9 +20,10 @@ import ProjectResubmit from "./components/user/project/ProjectResubmit.jsx";
 import ProjectForTrackStaff from "./components/staff/project/ProjectForTrackStaff.jsx";
 import MidtermProject from "./pages/projectMangerStaff/midterm.jsx";
 import UserInformation from "./pages/inforUser/Custom.jsx";
+import ProtectedRoute from "./components/ProtectedRoute/index.jsx";
 
 const Layout = () => {
-  return <LoginPage/>;
+  return <LoginPage />;
 };
 function App() {
   const router = createBrowserRouter([
@@ -41,8 +42,11 @@ function App() {
     },
     {
       path: "/staff",
-      element: <LayoutStaff />,
-      errorElement: <NotFound />,
+      element: (
+        <ProtectedRoute>
+          <LayoutStaff />
+        </ProtectedRoute>
+      ),
       children: [
         {
           index: true,

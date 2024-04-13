@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, Button, message } from "antd";
 import "./login.css";
 import Img from "./img/log.svg";
@@ -66,6 +66,13 @@ const Login = () => {
       console.log("Error tại đăng kí account ", error);
     }
   };
+  useEffect(() => {
+    const token = localStorage.getItem("token") !== null ? true : false;
+    console.log("token", token);
+    if (token) {
+      navigation(-1);
+    }
+  }, []);
   return (
     <>
       <div className={toggle ? "container sign-up-mode" : "container"}>

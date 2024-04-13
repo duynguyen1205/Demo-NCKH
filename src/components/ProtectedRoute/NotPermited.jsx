@@ -11,7 +11,7 @@ const NotPermited = () => {
       subTitle="Xin lỗi, bạn không có quyền vào trang này"
       extra={
         <Button type="primary" onClick={() => navigation(-1)}>
-          Back Home
+          Quay trở lại
         </Button>
       }
     />

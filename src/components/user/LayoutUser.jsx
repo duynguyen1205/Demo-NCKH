@@ -24,8 +24,12 @@ import logo from "../../assets/logoBV.png";
 import { jwtDecode } from "jwt-decode";
 const { Header, Content, Sider } = Layout;
 const token = localStorage.getItem("token");
-const decoded = jwtDecode(token);
-const role = decoded.role;
+let decoded;
+if (token !== null) {
+  decoded = jwtDecode(token);
+}
+const role = decoded?.role;
+
 const items = [
   {
     label: <Link to="/user">Đăng kí đề tài</Link>,

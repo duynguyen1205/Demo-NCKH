@@ -44,7 +44,6 @@ const ModalMeetingInfor = (props) => {
         open={isModalOpen}
         onCancel={handleCancel}
         maskClosable={false}
-        forceRender
         footer={[
           <Button key="back" onClick={handleCancel}>
             Thoát

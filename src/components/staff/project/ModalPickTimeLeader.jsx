@@ -59,6 +59,10 @@ const ModalPickTimeLeader = (props) => {
   };
   // set up initial value for the form
   const maxDate = dayjs().add(7, "day");
+  const disabledDate = (current) => {
+    // Disable Saturdays (6) and Sundays (0)
+    return current && (current.day() === 6 || current.day() === 0);
+  };
   const steps = [
     {
       title: "Lựa chọn chủ tịch hội đồng",
@@ -102,6 +106,7 @@ const ModalPickTimeLeader = (props) => {
                     minDate={today}
                     maxDate={maxDate}
                     onChange={handleDateChange}
+                    disabled={disabledDate}
                   />
                 </Form.Item>
               </Col>

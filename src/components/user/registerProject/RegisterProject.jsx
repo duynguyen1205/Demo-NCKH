@@ -310,7 +310,7 @@ const RegisterProject = () => {
                 },
               ]}
             >
-              <DatePicker format={dateFormat} minDate={today} />
+              <DatePicker format={dateFormat} minDate={today} placeholder="Chọn ngày"/>
             </Form.Item>
           </Col>
           <Col span={24}>

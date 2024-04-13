@@ -26,7 +26,6 @@ const ProjectForTrack = () => {
   const [dataTopicForMember, setdataTopicForMember] = useState([]);
   const [isModalInforOpen, setIsModalInforOpen] = useState(false);
   const [data, setDataUser] = useState({});
-
   const getProjectProcess = async () => {
     try {
       const res = await getTopicByUserId({

@@ -25,6 +25,7 @@ const ModalInfor = (props) => {
   const [checked, setChecked] = useState(true);
   const [reason, setReason] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [plainText, setPlainText] = useState("")
   const [state, setState] = useState();
   const topicId = props.data.topicId;
   let checkEnd;
@@ -44,6 +45,7 @@ const ModalInfor = (props) => {
           topicFileName: res.data.topicFileName,
           topicFileLink: res.data.topicFileLink,
         });
+        setPlainText(res.data.description);
         form.setFieldsValue(res.data);
         checkEnd = res.data.topicFileLink.endsWith(".docx");
       }
@@ -250,7 +252,7 @@ const ModalInfor = (props) => {
                 label="Mô tả chi tiết"
                 labelCol={{ span: 24 }}
               >
-                <Input disabled />
+                <div dangerouslySetInnerHTML={{ __html: plainText }} />
               </Form.Item>
             </Col>
             <Col span={24}>

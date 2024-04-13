@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, Button, message, Statistic } from "antd";
 import "./login.css";
 import Img from "./img/log.svg";
@@ -69,7 +69,6 @@ const Login = () => {
   };
   useEffect(() => {
     const token = localStorage.getItem("token") !== null ? true : false;
-    console.log("token", token);
     if (token) {
       navigation(-1);
     }

@@ -23,7 +23,7 @@ import UserInformation from "./pages/inforUser/Custom.jsx";
 import ProtectedRoute from "./components/ProtectedRoute/index.jsx";
 
 const Layout = () => {
-  return <LoginPage />;
+  return <LoginPage/>;
 };
 function App() {
   const router = createBrowserRouter([

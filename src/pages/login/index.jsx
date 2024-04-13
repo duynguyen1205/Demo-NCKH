@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Form, Input, Button, message } from "antd";
+import { useState } from "react";
+import { Form, Input, Button, message, Statistic } from "antd";
 import "./login.css";
 import Img from "./img/log.svg";
 import Re from "./img/register.svg";
@@ -10,10 +10,12 @@ import {
   registerEmail,
 } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+const { Countdown } = Statistic;
 const Login = () => {
   const [toggle, setToggle] = useState(false);
   const [action, setAction] = useState("login");
-  const [email, setEmail] = useState();
+  const [email, setEmail] = useState(null);
+  const [waiting, setWaiting] = useState(false);
   const navigation = useNavigate();
   const handleToggle = (action) => {
     setAction(action);
@@ -29,13 +31,7 @@ const Login = () => {
         const res = await loginAccount(data);
         if (res && res.isSuccess) {
           localStorage.setItem("token", res.data.token);
-          if (res.data.isRegisteredInfor === false) {
-            navigation("/registerInfor");
-            message.info("Vui lòng đăng kí thông tin để tiếp tục");
-          } else {
-            message.success("Đăng nhập thành công");
-            navigation("/user");
-          }
+          navigation("/user");
         }
       } else if (action === "register") {
         const data = {
@@ -55,15 +51,20 @@ const Login = () => {
   };
   const handleSendOTP = async () => {
     // Xử lý logic khi người dùng nhấn nút "Gửi mã OTP"
-    try {
-      const res = await registerEmail({
-        email: email,
-      });
-      if (res && res.isSuccess) {
-        message.success("Vui lòng check mail để lấy mã otp");
+    if (email === null) {
+      message.error("Vui lòng nhập email");
+    } else {
+      setWaiting(true);
+      try {
+        const res = await registerEmail({
+          email: email,
+        });
+        if (res && res.isSuccess) {
+          message.success("Vui lòng check mail để lấy mã otp");
+        }
+      } catch (error) {
+        console.log("Error tại đăng kí account ", error);
       }
-    } catch (error) {
-      console.log("Error tại đăng kí account ", error);
     }
   };
   useEffect(() => {
@@ -126,8 +127,8 @@ const Login = () => {
                     >
                       {waiting ? (
                         <Countdown
-                          value={Date.now() + 2 * 60 * 1000}
-                          onFinish={() => setWaiting(false)}
+                          value={Date.now() + 2 * 60 * 1000} 
+                          onFinish={() => setWaiting(false)} 
                           format="mm:ss"
                         />
                       ) : (

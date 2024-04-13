@@ -28,7 +28,7 @@ const decoded = jwtDecode(token);
 const role = decoded.role;
 const items = [
   {
-    label: <Link to="/user">Bảng điều khiển</Link>,
+    label: <Link to="/user">Đăng kí đề tài</Link>,
     key: "dashboard",
     icon: <HomeOutlined />,
   },

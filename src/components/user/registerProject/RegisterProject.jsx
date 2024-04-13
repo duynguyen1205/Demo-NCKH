@@ -132,7 +132,9 @@ const RegisterProject = () => {
     }
   };
   const getUser = async () => {
-    const res = await getAllUser();
+    const res = await getAllUser({
+      userId: "a813f937-8c3a-40e8-b39e-7b1e0dd962f7",
+    });
     if (res && res?.data) {
       setListUser(res?.data);
     }

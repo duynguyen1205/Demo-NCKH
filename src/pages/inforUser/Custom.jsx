@@ -91,7 +91,7 @@ const UserInformation = () => {
       const res = await uploadInforUser({
         fullName: values.fullName,
         identityNumber: values.identityNumber,
-        issue: dayjs(values.issue).utc().format(),
+        issue: dayjs(values.issue).local().format(),
         placeOfIssue: values.placeOfIssue,
         accountEmail: email,
         phoneNumber: values.phoneNumber,

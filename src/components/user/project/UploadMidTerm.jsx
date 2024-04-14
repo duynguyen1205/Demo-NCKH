@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Checkbox,
   Col,
   ConfigProvider,
   Divider,
@@ -12,15 +13,22 @@ import {
   message,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { submitDocumentsMidterm, uploadFile } from "../../../services/api";
-import { useNavigate } from "react-router-dom";
+import {
+  getFileType,
+  submitDocumentsMidterm,
+  uploadFile,
+} from "../../../services/api";
 
 const UploadMidTerm = (props) => {
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
   const [newTopicFiles, setFileList] = useState({});
-  const navigate = useNavigate();
+  const [fileType, setFileType] = useState([]);
+  const [checkedList, setCheckedList] = useState([]);
+  const onChange = (list) => {
+    setCheckedList(list);
+  };
   const handleOk = () => {
     form.submit();
   };
@@ -28,7 +36,20 @@ const UploadMidTerm = (props) => {
     props.setIsModalOpen(false);
     setFileList({});
   };
-
+  const listFileType = async () => {
+    try {
+      const res = await getFileType({
+        stateNumber: 2,
+      });
+      if (res && res.isSuccess) {
+        setFileType(res.data);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("error: ", error);
+      console.log("====================================");
+    }
+  };
   const onSubmit = async () => {
     if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải file lên");
@@ -103,7 +124,9 @@ const UploadMidTerm = (props) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
-
+  useEffect(() => {
+    listFileType();
+  }, []);
   return (
     <>
       <Modal
@@ -125,7 +148,11 @@ const UploadMidTerm = (props) => {
               },
             }}
           >
-            <Button type="primary" onClick={handleOk}>
+            <Button
+              disabled={fileType.length === checkedList.length ? false : true}
+              type="primary"
+              onClick={handleOk}
+            >
               Gửi
             </Button>
           </ConfigProvider>,
@@ -140,6 +167,18 @@ const UploadMidTerm = (props) => {
                 Ấn để tải
               </a>
             </Col>
+            <Divider />
+            <Checkbox.Group
+              style={{ display: "flex", flexDirection: "column" }}
+              value={checkedList}
+              onChange={onChange}
+            >
+              {fileType.map((option) => (
+                <Checkbox key={option.typeName} value={option.typeName}>
+                  {option.typeName}
+                </Checkbox>
+              ))}
+            </Checkbox.Group>
             <Divider />
             <Col span={24}>
               <Form.Item

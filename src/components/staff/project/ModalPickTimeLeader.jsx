@@ -198,7 +198,7 @@ const ModalPickTimeLeader = (props) => {
 
     const data = {
       topicId: topicId,
-      meetingTime: dayjs(meetingDate).utc().format(),
+      meetingTime: dayjs(meetingDate).local().format(),
       councils: councilArray,
       meetingDetail: meetingDetails,
     };

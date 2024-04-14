@@ -40,8 +40,8 @@ export const getAllCategory = () => {
 };
 
 // get file type
-export const getFileType = () => {
-  return axios.get("api/filetype");
+export const getFileType = (param) => {
+  return axios.get(`api/filetype?${qs.stringify(param)}`);
 };
 
 // register project

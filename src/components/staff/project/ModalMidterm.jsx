@@ -24,7 +24,7 @@ const ModalMidTerm = (props) => {
     try {
       const data = {
         topicId: props.data.topicId,
-        deadline: dayjs(selectedTime).utc().format(),
+        deadline: dayjs(selectedTime).local().format(),
       };
       const res = await makeDeadlineSubmit(data);
       if (res && res.isSuccess) {

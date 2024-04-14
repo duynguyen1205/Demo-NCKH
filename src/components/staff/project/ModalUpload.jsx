@@ -76,7 +76,7 @@ const ModalUpload = (props) => {
           if (reviewMidtearm === "1") {
             const timeMidterm = {
               topicId: data.topicId,
-              deadline: dayjs(meetingDate).utc().format(),
+              deadline: dayjs(meetingDate).local().format(),
             };
             const res = await makeDeadlineSubmit(timeMidterm);
             if (res && res.isSuccess) {
@@ -102,7 +102,7 @@ const ModalUpload = (props) => {
         topicId: data.topicId,
         decisionOfCouncil: Number(values.decisionOfCouncil),
         resultFileLink: newTopicFiles.fileLink,
-        deadline: dayjs(meetingDate).utc().format(),
+        deadline: dayjs(meetingDate).local().format(),
       };
       try {
         const res = await uploadResult(param);

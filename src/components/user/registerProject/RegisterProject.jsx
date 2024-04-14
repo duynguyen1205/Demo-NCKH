@@ -33,13 +33,13 @@ import "./register.scss";
 import ModalConfirm from "./ModalConfirm";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
-const today = dayjs();
+const today = dayjs().add(1, "day");
 const RegisterProject = () => {
   const [open, setOpen] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [category, setCategory] = useState([]);
   const [listUser, setListUser] = useState([]);
-  const [newTopicFiles, setFileList] = useState([]);
+  const [newTopicFiles, setFileList] = useState({});
   const [addMember, setAddMember] = useState([]);
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
@@ -100,12 +100,10 @@ const RegisterProject = () => {
           onError(response, file);
           message.error(`${file.name} không tải lên thành công.`);
         } else {
-          setFileList((fileList) => [
-            {
-              fileName: response.data.fileName,
-              fileLink: response.data.fileLink,
-            },
-          ]);
+          setFileList({
+            fileName: response.data.fileName,
+            fileLink: response.data.fileLink,
+          });
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
@@ -158,12 +156,12 @@ const RegisterProject = () => {
       newItem.role = Number(newItem.role);
       return newItem;
     });
-    const creatorId = userId; 
-    const { categoryId, topicName, description, budget, startTime } = values;
+    const creatorId = userId;
     if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải các tài liệu liên quan lên");
       return;
     }
+    const { categoryId, topicName, description, budget, startTime } = values;
     const data = {
       categoryId: categoryId,
       creatorId: creatorId,
@@ -171,11 +169,10 @@ const RegisterProject = () => {
       description: description,
       budget: budget.toString(),
       memberList: newData,
-      topicFileName: newTopicFiles[0].fileName,
-      topicFileLink: newTopicFiles[0].fileLink,
-      startTime: dayjs(startTime).utc().format(),
+      topicFileName: newTopicFiles.fileName,
+      topicFileLink: newTopicFiles.fileLink,
+      startTime: dayjs(startTime).local().format(),
     };
-
     if (data !== null) {
       setOpenConfirm(true);
       setData(data);
@@ -311,7 +308,11 @@ const RegisterProject = () => {
                 },
               ]}
             >
-              <DatePicker format={dateFormat} minDate={today} placeholder="Chọn ngày"/>
+              <DatePicker
+                format={dateFormat}
+                minDate={today}
+                placeholder="Chọn ngày"
+              />
             </Form.Item>
           </Col>
           <Col span={24}>

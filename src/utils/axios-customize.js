@@ -12,6 +12,15 @@ instance.defaults.headers.common = {
 instance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    if (
+      typeof window !== "undefined" &&
+      window &&
+      window.localStorage &&
+      window.localStorage.getItem("token")
+    ) {
+      config.headers.Authorization =
+        "Bearer " + window.localStorage.getItem("token");
+    }
     return config;
   },
   function (error) {

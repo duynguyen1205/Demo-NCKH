@@ -27,8 +27,10 @@ const token = localStorage.getItem("token");
 let decoded;
 if (token !== null) {
   decoded = jwtDecode(token);
+  localStorage.setItem("userId", decoded?.userid);
 }
 const role = decoded?.role;
+const name = decoded?.fullname;
 
 const items = [
   {
@@ -154,11 +156,7 @@ const LayoutUser = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  {path === "manager-review" ? (
-                    <p>Gia Phát</p>
-                  ) : (
-                    <p>Quang Anh</p>
-                  )}
+                  <p>{name}</p>
                   <Avatar />
                 </Space>
               </a>

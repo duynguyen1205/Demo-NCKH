@@ -1,10 +1,8 @@
 import {
-  CheckOutlined,
-  CloseOutlined,
   InfoCircleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Space, Table, Tabs, Tag } from "antd";
+import { Button, Input, Space, Table, Tabs, Tag, ConfigProvider  } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "../../staff/project/project.scss";
@@ -15,6 +13,7 @@ import {
   getTopicReviewerAPI,
   getReviewedByMember,
 } from "../../../services/api";
+import viVN from 'antd/lib/locale/vi_VN';
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -267,11 +266,15 @@ const ProjectManagerUser = () => {
     }
     console.log("parms: ", pagination, filters, sorter, extra);
   };
+  const customLocale = {
+    emptyText: 'Không có dữ liệu',
+  };
   return (
     <div>
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
         Danh sách đề tài chờ sơ duyệt
       </h2>
+      <ConfigProvider locale={viVN}>
       <Table
         rowClassName={(record, index) =>
           index % 2 === 0 ? "table-row-light" : "table-row-dark"
@@ -281,6 +284,7 @@ const ProjectManagerUser = () => {
         dataSource={dataTopicForMember}
         onChange={onChange}
         rowKey={"_id"}
+        {...customLocale}
         pagination={{
           current: current,
           pageSize: pageSize,
@@ -296,6 +300,7 @@ const ProjectManagerUser = () => {
         }}
         title={renderHeader}
       />
+      </ConfigProvider>
       <ModalInfor
         currentTab={activeTab}
         data={data}

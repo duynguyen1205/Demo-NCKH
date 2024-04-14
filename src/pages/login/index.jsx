@@ -31,7 +31,14 @@ const Login = () => {
         const res = await loginAccount(data);
         if (res && res.isSuccess) {
           localStorage.setItem("token", res.data.token);
-          navigation("/user");
+          if (res.data.isRegisteredInfor === false) {
+            message.info("Vui lòng đăng kí thông tin trước khi tiếp tục");
+            navigation("/registerInfor");
+          } else {
+            navigation("/user");
+          }
+        } else {
+          message.error("Vui lòng kiểm tra lại thông tin");
         }
       } else if (action === "register") {
         const data = {
@@ -126,8 +133,8 @@ const Login = () => {
                     >
                       {waiting ? (
                         <Countdown
-                          value={Date.now() + 2 * 60 * 1000} 
-                          onFinish={() => setWaiting(false)} 
+                          value={Date.now() + 2 * 60 * 1000}
+                          onFinish={() => setWaiting(false)}
                           format="mm:ss"
                         />
                       ) : (

@@ -8,18 +8,18 @@ import qs from "query-string";
 //register email
 export const registerEmail = (email) => {
   return axios.post(
-    `/api/authentication/register-email?${qs.stringify(email)}`
+    `/api/account/register-email?${qs.stringify(email)}`
   );
 };
 
 //register account
 export const registerAccount = (account) => {
-  return axios.post("/api/authentication/register-account", account);
+  return axios.post("/api/account/register-account", account);
 };
 
 //login account
 export const loginAccount = (account) => {
-  return axios.post("/api/authentication/login", account);
+  return axios.post("/api/account/login", account);
 };
 
 // get all user except dean
@@ -94,10 +94,8 @@ export const viewDeanDecesion = (param) => {
 };
 
 // get topic waiting for member approval
-export const getTopicForMemberApproval = (param) => {
-  return axios.get(
-    `/api/topic/pre-topic-waiting-review-formation?${qs.stringify(param)}`
-  );
+export const getTopicForMemberApproval = () => {
+  return axios.get("/api/topic/pre-topic-waiting-review-formation");
 };
 
 // MemberReview topic
@@ -106,10 +104,8 @@ export const memberReviewAPI = (data) => {
 };
 
 // get topic waiting for member approval
-export const getTopicForCouncil = (param) => {
-  return axios.get(
-    `api/topic/early-topic-waiting-council-formation?${qs.stringify(param)}`
-  );
+export const getTopicForCouncil = () => {
+  return axios.get("api/topic/early-topic-waiting-council-formation");
 };
 
 //get topic member has already reviewed
@@ -137,17 +133,13 @@ export const getTopicDetailAPI = (param) => {
 };
 
 // get topic waiting for member review approval
-export const getTopicWaitingMember = (param) => {
-  return axios.get(
-    `api/topic/pre-topic-waiting-review-for-staff?${qs.stringify(param)}`
-  );
+export const getTopicWaitingMember = () => {
+  return axios.get("api/topic/pre-topic-waiting-review-for-staff");
 };
 
 //get topic waiting for upload results after meeting
-export const getTopicUploadDoc = (param) => {
-  return axios.get(
-    `api/topic/all-topic-waiting-upload-meeting-minutes?${qs.stringify(param)}`
-  );
+export const getTopicUploadDoc = () => {
+  return axios.get("api/topic/all-topic-waiting-upload-meeting-minutes");
 };
 
 //get topic waiting for upload contract
@@ -185,10 +177,8 @@ export const getTopicForCouncilMeeting = (param) => {
 };
 
 // get topic waiting for resubmit
-export const getTopicWaitingResubmit = (param) => {
-  return axios.get(
-    `api/topic/early-topic-waiting-resubmit?${qs.stringify(param)}`
-  );
+export const getTopicWaitingResubmit = () => {
+  return axios.get("api/topic/early-topic-waiting-resubmit");
 };
 
 // reset deadline for resubmit
@@ -287,10 +277,7 @@ export const getAllDepartment = () => {
 export const uploadInforUser = (data) => {
   return axios.post("api/user/register-user-infor", data);
 };
-//move to final term 
+//move to final term
 export const moveToFinalTerm = (param) => {
   return axios.post(`api/topic/move-to-final-term?${qs.stringify(param)}`);
-}
-
-
-
+};

@@ -43,6 +43,7 @@ const RegisterProject = () => {
   const [addMember, setAddMember] = useState([]);
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
+  const userId = localStorage.getItem("userId");
   const showUserModal = () => {
     setOpen(true);
   };
@@ -133,7 +134,7 @@ const RegisterProject = () => {
   };
   const getUser = async () => {
     const res = await getAllUser({
-      userId: "a813f937-8c3a-40e8-b39e-7b1e0dd962f7",
+      userId: userId,
     });
     if (res && res?.data) {
       setListUser(res?.data);
@@ -157,7 +158,7 @@ const RegisterProject = () => {
       newItem.role = Number(newItem.role);
       return newItem;
     });
-    const creatorId = "a813f937-8c3a-40e8-b39e-7b1e0dd962f7"; // Ngô Minh G
+    const creatorId = userId; 
     const { categoryId, topicName, description, budget, startTime } = values;
     if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải các tài liệu liên quan lên");

@@ -9,7 +9,10 @@ import {
   Row,
   message,
 } from "antd";
-import { createDeanMakeDecesion, createMemberDecision } from "../../../services/api";
+import {
+  createDeanMakeDecesion,
+  createMemberDecision,
+} from "../../../services/api";
 import { useLocation } from "react-router-dom";
 const { TextArea } = Input;
 const ModalReject = (props) => {
@@ -17,6 +20,7 @@ const ModalReject = (props) => {
   const [isSubmit, setIsSubmit] = useState(false);
   const location = useLocation();
   const data = props.data;
+  const userId = localStorage.getItem("userId");
   const handleOk = () => {
     form.submit();
   };
@@ -28,7 +32,7 @@ const ModalReject = (props) => {
   const onSubmit = async (values) => {
     if (location.pathname === "/user/manager") {
       const param = {
-        memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
+        memberReviewId: userId,
         topicId: data.topicId,
         isApproved: false,
         reason: values.comment,
@@ -103,7 +107,7 @@ const ModalReject = (props) => {
             <Col span={24}>
               <Form.Item
                 name="topicId"
-                label="ID đề tài"
+                label="Mã đề tài"
                 labelCol={{ span: 24 }}
               >
                 <Input disabled />

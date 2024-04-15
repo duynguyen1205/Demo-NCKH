@@ -32,11 +32,11 @@ const Login = () => {
         const res = await loginAccount(data);
         if (res && res.isSuccess) {
           localStorage.setItem("token", res.data.token);
-          if (res.data.isRegisteredInfor === false) {
+          const decoded = jwtDecode(res.data.token);
+          if (decoded?.userid === undefined && decoded.role !== "Staff") {
             message.info("Vui lòng đăng kí thông tin trước khi tiếp tục");
             navigation("/registerInfor");
           } else {
-            const decoded = jwtDecode(res.data.token);
             localStorage.setItem("userId", decoded?.userid);
             if(decoded.role === "Dean") {
               navigation("/user/manager");

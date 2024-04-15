@@ -13,12 +13,15 @@ const FormInput = (props) => {
       <label>{label}</label>
       {inputProps.type === "select" ? (
         <select
-        className="selectInfor"
+          className="selectInfor"
           {...inputProps}
           onChange={onChange}
           onBlur={handleFocus}
           focused={focused.toString()}
         >
+          <option value="" disabled selected hidden>
+            {inputProps.placeholder}
+          </option>
           {inputProps.options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

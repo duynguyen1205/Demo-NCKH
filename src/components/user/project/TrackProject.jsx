@@ -49,6 +49,9 @@ const TrackProject = () => {
       const res = await trackReseach({
         topicId: topicId,
       });
+      console.log('====================================');
+      console.log(res);
+      console.log('====================================');
       if (res && res.isSuccess) {
         setDataProcess(res.data);
         if (res.data?.state === "MidtermReport") {

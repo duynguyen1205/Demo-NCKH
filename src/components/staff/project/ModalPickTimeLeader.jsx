@@ -106,7 +106,7 @@ const ModalPickTimeLeader = (props) => {
                     minDate={today}
                     maxDate={maxDate}
                     onChange={handleDateChange}
-                    disabled={disabledDate}
+                    disabledDate={disabledDate}
                   />
                 </Form.Item>
               </Col>

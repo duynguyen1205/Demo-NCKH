@@ -6,7 +6,6 @@ import {
   ConfigProvider,
   Divider,
   Form,
-  Input,
   Modal,
   Row,
   Upload,
@@ -138,7 +137,6 @@ const ModalUploadContract = (props) => {
     <>
       <Modal
         title="Hợp đồng"
-        className="modalStyle"
         centered
         open={isModalOpen}
         onOk={handleOk}
@@ -168,7 +166,7 @@ const ModalUploadContract = (props) => {
         ]}
       >
         <Divider />
-        <Form form={form} name="basic1" onFinish={onSubmit}>
+        <Form form={form} name="basic12" onFinish={onSubmit} className="fomr">
           <Row gutter={20}>
             <Col span={24}>
               <h3>Hợp đồng đính kèm:</h3>

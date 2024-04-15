@@ -29,7 +29,6 @@ const AddMemberApprove = () => {
   const [showFullData, setShowFullData] = useState({});
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [maxSelectedMembers, setMaxSelectedMembers] = useState();
-  const [coreMember, setCoreMember] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [newData, setNewData] = useState([]);
   const isRowDisabled = (record) => {
@@ -372,9 +371,9 @@ const AddMemberApprove = () => {
                 const hasJoinedParticipant = selectedUser.some(
                   (row) => row.isDuplicate
                 );
-                if (!hasJoinedParticipant) {
+                if (!hasJoinedParticipant ) {
                   message.error(
-                    "Vui lòng chọn ít nhất một người đã từng phê duyệt đề tài."
+                    "Vui lòng chọn một người đã từng phê duyệt đề tài."
                   );
                   return;
                 } else {

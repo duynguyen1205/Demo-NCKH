@@ -27,6 +27,7 @@ const ProjectManagerUser = () => {
   const [status, setStatus] = useState(false);
   const [activeTab, setActiveTab] = useState("notpassyet");
   const [dataTopicForMember, setdataTopicForMember] = useState([]);
+  const userId = localStorage.getItem("userId");
   useEffect(() => {
     getTopicReviewer();
   }, [status]);
@@ -45,7 +46,7 @@ const ProjectManagerUser = () => {
   const getTopicReviewer = async () => {
     try {
       const res = await getTopicReviewerAPI({
-        memberId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87", // Nguyen Van A
+        memberId: userId, // Nguyen Van A
       });
       if (res && res?.data) {
         setdataTopicForMember(res.data);
@@ -59,7 +60,7 @@ const ProjectManagerUser = () => {
   const getTopicHadReviwed = async () => {
     try {
       const res = await getReviewedByMember({
-        memberId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87", // Nguyen Van A
+        memberId: userId, // Nguyen Van A
       });
       if (res && res?.data) {
         setdataTopicForMember(res.data);

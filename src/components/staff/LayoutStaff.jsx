@@ -78,6 +78,7 @@ const LayoutStaff = () => {
     message.success("Đăng xuất thành công");
     navigate("/login");
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
   };
 
   const itemDropdown = [

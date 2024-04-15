@@ -4,6 +4,7 @@ import "./login.css";
 import Img from "./img/log.svg";
 import Re from "./img/register.svg";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { jwtDecode } from "jwt-decode";
 import {
   loginAccount,
   registerAccount,
@@ -35,7 +36,17 @@ const Login = () => {
             message.info("Vui lòng đăng kí thông tin trước khi tiếp tục");
             navigation("/registerInfor");
           } else {
-            navigation("/user");
+            const decoded = jwtDecode(res.data.token);
+            localStorage.setItem("userId", decoded?.userid);
+            if(decoded.role === "Dean") {
+              navigation("/user/manager");
+            } 
+            else if(decoded.role === "User") {
+              navigation("/user");
+            }
+            else if(decoded.role === "Staff") {
+              navigation("/staff");
+            }
           }
         } else {
           message.error("Vui lòng kiểm tra lại thông tin");

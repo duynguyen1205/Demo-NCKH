@@ -8,7 +8,7 @@ const RoleBaseRouter = (props) => {
   const role = decoded.role;
   if (
     (isStaffRoute && role === "Staff") ||
-    (!isStaffRoute && (role === "User" || role === "Staff"))
+    (!isStaffRoute && (role === "User" || role === "Dean" || role === "Staff"))
   ) {
     return <>{props.children}</>;
   } else {

@@ -23,50 +23,15 @@ import "./user.scss";
 import logo from "../../assets/logoBV.png";
 import { jwtDecode } from "jwt-decode";
 const { Header, Content, Sider } = Layout;
-const token = localStorage.getItem("token");
-let decoded;
-if (token !== null) {
-  decoded = jwtDecode(token);
-  localStorage.setItem("userId", decoded?.userid);
-}
-const role = decoded?.role;
-const name = decoded?.fullname;
-
-const items = [
-  {
-    label: <Link to="/user">Đăng kí đề tài</Link>,
-    key: "dashboard",
-    icon: <HomeOutlined />,
-  },
-  {
-    label: <Link to="/user/manager">Đề tài sơ duyệt</Link>,
-    key: "manager",
-    icon: <FileProtectOutlined />,
-  },
-  {
-    label: <Link to="/user/manager-review">Đề tài thông qua</Link>,
-    key: "manager-review",
-    icon: <FileSearchOutlined />,
-    hidden: role !== "Dean",
-  },
-  {
-    label: <Link to="/user/track">Theo dõi tiến độ</Link>,
-    key: "track",
-    icon: <FileDoneOutlined />,
-  },
-  {
-    label: <Link to="/user/review">Xem đề tài</Link>,
-    key: "review",
-    icon: <FileSyncOutlined />,
-  },
-  {
-    label: <Link to="/user/profile">Hồ sơ cá nhân 1</Link>,
-    key: "profile",
-    icon: <UserOutlined />,
-  },
-];
 
 const LayoutUser = () => {
+  const token = localStorage.getItem("token");
+  let decoded;
+  if (token !== null) {
+    decoded = jwtDecode(token);
+  }
+  const role = decoded?.role;
+  const name = decoded?.fullname;
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -76,8 +41,42 @@ const LayoutUser = () => {
     message.success("Đăng xuất thành công");
     navigate("/login");
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
   };
-
+  const items = [
+    {
+      label: <Link to="/user">Đăng kí đề tài</Link>,
+      key: "dashboard",
+      icon: <HomeOutlined />,
+      hidden: role !== "User",
+    },
+    {
+      label: <Link to="/user/manager">Đề tài sơ duyệt</Link>,
+      key: "manager",
+      icon: <FileProtectOutlined />,
+    },
+    {
+      label: <Link to="/user/manager-review">Đề tài thông qua</Link>,
+      key: "manager-review",
+      icon: <FileSearchOutlined />,
+      hidden: role !== "Dean",
+    },
+    {
+      label: <Link to="/user/track">Theo dõi tiến độ</Link>,
+      key: "track",
+      icon: <FileDoneOutlined />,
+    },
+    {
+      label: <Link to="/user/review">Xem đề tài</Link>,
+      key: "review",
+      icon: <FileSyncOutlined />,
+    },
+    {
+      label: <Link to="/user/profile">Hồ sơ cá nhân 1</Link>,
+      key: "profile",
+      icon: <UserOutlined />,
+    },
+  ];
   const itemDropdown = [
     {
       label: <label>Quản lí tài khoản</label>,
@@ -156,7 +155,7 @@ const LayoutUser = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <p>{name}</p>
+                  <p>{name} </p>
                   <Avatar />
                 </Space>
               </a>

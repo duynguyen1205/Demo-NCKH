@@ -30,7 +30,7 @@ const ResubmitProject = () => {
   const [status, setStatus] = useState(false);
   const userId = "7dc9eb1d-3b80-434b-9b7e-85dd78e5011d";
   const [dataReviewDocument, setDataReviewDocument] = useState([]);
-console.log("day la data document",{dataReviewDocument});
+
   const location = useLocation();
   let topicId = location.pathname.split("/");
   topicId = topicId[4];
@@ -59,7 +59,7 @@ console.log("day la data document",{dataReviewDocument});
 
   const getReviewDoc = async () => {
     const res = await getReviewDocuments({
-      userId: userId, // Nguyen Thanh B-chủ tịch hội đồng
+      userId: userId, 
       topicId: topicId,
     });
     if (res && res?.data) {

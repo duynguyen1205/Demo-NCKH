@@ -2,12 +2,18 @@ import React, { useState } from "react";
 import { Modal, Calendar, theme, Divider, message } from "antd";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { makeDeadlineSubmit } from "../../../services/api";
+import {
+  makeDeadlineFinalSubmit,
+  makeDeadlineSubmit,
+} from "../../../services/api";
+import { useLocation } from "react-router-dom";
 dayjs.extend(utc);
 const ModalMidTerm = (props) => {
   const { token } = theme.useToken();
   const [selectedTime, setSelectedTime] = useState();
-
+  const location = useLocation();
+  const path = location.pathname.split("/");
+  const check = path[2];
   const closeModal = () => {
     props.setIsModalOpen(false);
   };
@@ -26,7 +32,12 @@ const ModalMidTerm = (props) => {
         topicId: props.data.topicId,
         deadline: dayjs(selectedTime).local().format(),
       };
-      const res = await makeDeadlineSubmit(data);
+      let res;
+      if (check === "finalterm") {
+        res = await makeDeadlineFinalSubmit(data);
+      } else {
+        res = await makeDeadlineSubmit(data);
+      }
       if (res && res.isSuccess) {
         message.success("Tạo deadline thành công");
         closeModal();

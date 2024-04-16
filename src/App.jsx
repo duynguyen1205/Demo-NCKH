@@ -21,6 +21,7 @@ import ProjectForTrackStaff from "./components/staff/project/ProjectForTrackStaf
 import MidtermProject from "./pages/projectMangerStaff/midterm.jsx";
 import UserInformation from "./pages/inforUser/Custom.jsx";
 import ProtectedRoute from "./components/ProtectedRoute/index.jsx";
+import FinaltermProject from "./pages/projectMangerStaff/finalterm.jsx";
 
 const Layout = () => {
   return <LoginPage />;
@@ -90,7 +91,7 @@ function App() {
           children: [
             {
               index: true,
-              element: <Project />,
+              element: <FinaltermProject />,
             },
             {
               path: "add-council/:projectId",

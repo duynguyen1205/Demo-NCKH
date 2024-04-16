@@ -28,6 +28,7 @@ const TrackProject = () => {
   const [dataProcess, setDataProcess] = useState({});
   const [status, setStatus] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const renderExtra = (step) => {
     if (step === currentStep) {
       return <SyncOutlined spin style={{ color: "blue" }} />;
@@ -49,9 +50,9 @@ const TrackProject = () => {
       const res = await trackReseach({
         topicId: topicId,
       });
-      console.log('====================================');
+      console.log("====================================");
       console.log(res);
-      console.log('====================================');
+      console.log("====================================");
       if (res && res.isSuccess) {
         setDataProcess(res.data);
         if (res.data?.state === "MidtermReport") {
@@ -69,6 +70,7 @@ const TrackProject = () => {
   useEffect(() => {
     getProjectProcess();
   }, [status]);
+
   return (
     <div>
       <h2
@@ -83,7 +85,7 @@ const TrackProject = () => {
       </h2>
       <Space direction="vertical">
         <Collapse
-        
+          defaultActiveKey={[currentStep.toString()]}
           collapsible={isCollapseDisabled(1)}
           items={[
             {
@@ -181,7 +183,8 @@ const TrackProject = () => {
                       {
                         title: "Staff tải hợp đồng lên",
                         status:
-                          dataProcess?.state === "MidtermReport" || dataProcess?.state === "FinaltermReport"
+                          dataProcess?.state === "MidtermReport" ||
+                          dataProcess?.state === "FinaltermReport"
                             ? "finished"
                             : "wait",
                         icon: <ContactsOutlined />,
@@ -195,7 +198,7 @@ const TrackProject = () => {
           ]}
         />
         <Collapse
-          eKey={currentStep}
+          defaultActiveKey={[currentStep.toString()]}
           collapsible={isCollapseDisabled(2)}
           items={[
             {
@@ -297,6 +300,7 @@ const TrackProject = () => {
           ]}
         />
         <Collapse
+          defaultActiveKey={[currentStep.toString()]}
           collapsible={isCollapseDisabled(3)}
           items={[
             {
@@ -318,7 +322,6 @@ const TrackProject = () => {
             },
           ]}
         />
-        
       </Space>
       <Button
         shape="round"

@@ -7,9 +7,7 @@ import qs from "query-string";
 
 //register email
 export const registerEmail = (email) => {
-  return axios.post(
-    `/api/account/register-email?${qs.stringify(email)}`
-  );
+  return axios.post("/api/account/register-email", email);
 };
 
 //register account
@@ -234,7 +232,7 @@ export const getReviewDocumentsDone = (param) => {
 // mid-term report
 
 // get topic mid-term report
-export const getMidTermReport = (param) => {
+export const getMidTermReport = () => {
   return axios.get("api/topic/middle-topic-waiting-configure-conference");
 };
 
@@ -277,7 +275,24 @@ export const getAllDepartment = () => {
 export const uploadInforUser = (data) => {
   return axios.post("api/user/register-user-infor", data);
 };
+
 //move to final term
 export const moveToFinalTerm = (param) => {
   return axios.post(`api/topic/move-to-final-term?${qs.stringify(param)}`);
+};
+
+// get topic final term
+
+export const getFinalTerm = () => {
+  return axios.get("api/topic/final-topic-waiting-make-schedule");
+}
+
+// get topic final term waiting council
+export const getFinalTermReport = () => {
+  return axios.get("api/topic/final-topic-waiting-configure-conference");
+};
+
+// make deadline submit documents
+export const makeDeadlineFinalSubmit = (data) => {
+  return axios.post("api/review/make-final-review-schedule", data);
 };

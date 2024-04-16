@@ -38,13 +38,11 @@ const Login = () => {
             navigation("/registerInfor");
           } else {
             localStorage.setItem("userId", decoded?.userid);
-            if(decoded.role === "Dean") {
+            if (decoded.role === "Dean") {
               navigation("/user/manager");
-            } 
-            else if(decoded.role === "User") {
+            } else if (decoded.role === "User") {
               navigation("/user");
-            }
-            else if(decoded.role === "Staff") {
+            } else if (decoded.role === "Staff") {
               navigation("/staff");
             }
           }
@@ -74,9 +72,7 @@ const Login = () => {
     } else {
       setWaiting(true);
       try {
-        const res = await registerEmail({
-          email: email,
-        });
+        const res = await registerEmail(email);
         if (res && res.isSuccess) {
           message.success("Vui lòng check mail để lấy mã otp");
         }

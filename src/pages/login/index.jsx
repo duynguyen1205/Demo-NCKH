@@ -83,9 +83,9 @@ const Login = () => {
   };
   useEffect(() => {
     const token = localStorage.getItem("token") !== null ? true : false;
-    if (token) {
-      navigation(-1);
-    }
+    // if (token) {
+    //   // navigation(-1);
+    // }
   }, []);
   return (
     <>

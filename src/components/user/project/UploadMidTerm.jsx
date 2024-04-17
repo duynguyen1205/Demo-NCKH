@@ -15,6 +15,7 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import {
   getFileType,
+  submitDocumentsFinalterm,
   submitDocumentsMidterm,
   uploadFile,
 } from "../../../services/api";
@@ -39,7 +40,7 @@ const UploadMidTerm = (props) => {
   const listFileType = async () => {
     try {
       const res = await getFileType({
-        stateNumber: 2,
+        stateNumber: props.state,
       });
       if (res && res.isSuccess) {
         setFileType(res.data);
@@ -55,13 +56,20 @@ const UploadMidTerm = (props) => {
       message.error("Xin hãy tải file lên");
       return;
     }
-    const param = {
+    const data = {
       topicId: props.topicId,
       newFile: newTopicFiles,
     };
     try {
-      const res = await submitDocumentsMidterm(param);
+      let res;
+      if (props.state === 2) {
+        res = await submitDocumentsMidterm(data);
+      }
+      else {
+        res = await submitDocumentsFinalterm(data);
+      }
       setIsSubmit(true);
+      console.log(res);
       if (res && res.isSuccess) {
         setIsSubmit(false);
         message.success("Tải file lên thành công");
@@ -130,7 +138,9 @@ const UploadMidTerm = (props) => {
   return (
     <>
       <Modal
-        title="Đăng kí báo cáo giữa kì"
+        title={
+          props.state === 2 ? "Đăng kí báo cáo giữa kì" : "Nộp tài liệu cuối kì"
+        }
         centered
         open={isModalOpen}
         onOk={handleOk}
@@ -161,13 +171,20 @@ const UploadMidTerm = (props) => {
         <Divider />
         <Form form={form} name="basic" onFinish={onSubmit}>
           <Row gutter={20}>
-            <Col span={24}>
-              <p>File mẫu tham khảo: </p>
-              <a href="https://srms.sgp1.cdn.digitaloceanspaces.com/template-20240404003752374.zip">
-                Ấn để tải
-              </a>
-            </Col>
-            <Divider />
+            {props.state === 2 ? (
+              <>
+                <Col span={24}>
+                  <p>File mẫu tham khảo: </p>
+                  <a href="https://srms.sgp1.cdn.digitaloceanspaces.com/template-20240404003752374.zip">
+                    Ấn để tải
+                  </a>
+                </Col>
+                <Divider />
+              </>
+            ) : (
+              <></>
+            )}
+
             <Checkbox.Group
               style={{ display: "flex", flexDirection: "column" }}
               value={checkedList}

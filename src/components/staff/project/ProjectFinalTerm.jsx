@@ -213,7 +213,7 @@ const ProjectManagerFinalTerm = () => {
                     }}
                     type="primary"
                     onClick={() => {
-                      navigate(`/staff/midterm/add-council/${record.topicId}`);
+                      navigate(`/staff/finalterm/add-council/${record.topicId}`);
                     }}
                   >
                     Gửi hội đồng

@@ -12,7 +12,7 @@ import {
   Upload,
   message,
   Radio,
-  Space 
+  Space,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
@@ -53,7 +53,6 @@ const ModalUpload = (props) => {
     setFileList({});
     form.resetFields();
   };
-
   const onSubmit = async (values) => {
     if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải biên bản cuộc họp lên");
@@ -104,8 +103,13 @@ const ModalUpload = (props) => {
         resultFileLink: newTopicFiles.fileLink,
         deadline: dayjs(meetingDate).local().format(),
       };
+
       try {
-        const res = await uploadResult(param);
+        let res;
+        if (data.state === "FinaltermReport") {
+        } else {
+          res = await uploadResult(param);
+        }
         console.log(res);
         setIsSubmit(true);
         if (res && res.isSuccess) {
@@ -288,10 +292,9 @@ const ModalUpload = (props) => {
                   value={reviewMidtearm}
                 >
                   <Space direction="vertical">
-<Radio value="1">Tiếp tục báo cáo</Radio>
-                  <Radio value="0">Kết thúc báo cáo</Radio>
+                    <Radio value="1">Tiếp tục báo cáo</Radio>
+                    <Radio value="0">Kết thúc báo cáo</Radio>
                   </Space>
-                  
                 </Radio.Group>
               </Form.Item>
             </Col>

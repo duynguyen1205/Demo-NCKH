@@ -21,6 +21,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   councilConfigEarly,
+  councilConfigFinalterm,
   councilConfigMidterm,
 } from "../../../services/api";
 import utc from "dayjs/plugin/utc";
@@ -214,10 +215,15 @@ const ModalPickTimeLeader = (props) => {
           console.error("Lỗi trong councilConfigMidterm:", error);
           throw error;
         });
+      } else if (checkTerm === "finalterm") {
+        res = await councilConfigFinalterm(data).catch((error) => {
+          console.error("Lỗi trong councilConfigFinalterm:", error);
+          throw error;
+        });
       }
       if (res && res.isSuccess) {
         message.success("Tạo hội đồng đánh giá thành công");
-        navigate("/staff");
+        navigate("/staff/upload-document");
       } else {
         console.log("====================================");
         console.log(res);

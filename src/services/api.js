@@ -246,7 +246,7 @@ export const makeDeadlineSubmit = (data) => {
   return axios.post("api/review/make-middle-review-schedule", data);
 };
 
-// submit documents
+// submit documents mid-term 
 export const submitDocumentsMidterm = (data) => {
   return axios.post("api/document/create-middle-document", data);
 };
@@ -296,3 +296,14 @@ export const getFinalTermReport = () => {
 export const makeDeadlineFinalSubmit = (data) => {
   return axios.post("api/review/make-final-review-schedule", data);
 };
+
+// submit documents final-term 
+export const submitDocumentsFinalterm = (data) => {
+  return axios.post("api/document/create-final-document", data);
+};
+
+// create final-term council
+export const councilConfigFinalterm = (data) => {
+  return axios.post("api/review/config-final", data);
+};
+

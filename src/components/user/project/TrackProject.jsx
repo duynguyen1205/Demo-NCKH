@@ -55,7 +55,10 @@ const TrackProject = () => {
       console.log("====================================");
       if (res && res.isSuccess) {
         setDataProcess(res.data);
-        if (res.data?.state === "MidtermReport") {
+        if(res.data?.state === "PreliminaryReview") {
+          setCurrentStep("1");
+        }
+        else if (res.data?.state === "MidtermReport") {
           setCurrentStep("2");
         } else if (res.data?.state === "FinaltermReport") {
           setCurrentStep("3");
@@ -380,12 +383,14 @@ const TrackProject = () => {
                             {
                               title:
                                 dataProcess.finalTermReportProcess
-                                  .waitingForUploadEvaluate === "Done"
-                                  ? "Staff đã tải lên quyết định"
+                                  .waitingForUploadMeetingMinutes
+                                  === "Done"
+                                  ? "Bảo vệ thành công"
                                   : "Staff tải lên quyết định",
                               status:
                                 dataProcess.finalTermReportProcess
-                                  .waitingForUploadEvaluate === "Done"
+                                  .waitingForUploadMeetingMinutes
+                                  === "Done"
                                   ? "finished"
                                   : "wait",
                               icon: <CloudUploadOutlined />,
@@ -400,16 +405,12 @@ const TrackProject = () => {
                             //       : "wait",
                             //   icon: <ContactsOutlined />,
                             // },
-                            {
-                              title: "Staff tải hợp đồng lên",
-                              status: "wait",
-                              icon: <ContactsOutlined />,
-                            },
+                           
                           ]}
                         />
                       </>
                     ) : (
-                      <div>Staff chưa đăng kí thời hạn các file liên quan</div>
+                      <div>Staff chưa đăng kí thời hạn nộp các file liên quan</div>
                     ),
                   extra: renderExtra(3),
                 },

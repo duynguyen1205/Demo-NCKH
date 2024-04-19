@@ -21,6 +21,7 @@ import {
   uploadFile,
   uploadReportMidTerm,
   uploadResult,
+  uploadResultFinal,
 } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "antd";
@@ -53,6 +54,7 @@ const ModalUpload = (props) => {
     setFileList({});
     form.resetFields();
   };
+
   const onSubmit = async (values) => {
     if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải biên bản cuộc họp lên");
@@ -107,6 +109,7 @@ const ModalUpload = (props) => {
       try {
         let res;
         if (data.state === "FinaltermReport") {
+          res = await uploadResultFinal(param)
         } else {
           res = await uploadResult(param);
         }

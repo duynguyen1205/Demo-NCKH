@@ -149,7 +149,7 @@ export const getTopicUploadContract = (param) => {
 
 // upload contract result for topic
 export const uploadResult = (data) => {
-  return axios.post("/api/review/update-meeting-result", data);
+  return axios.post("/api/review/update-early-meeting-result", data);
 };
 
 // upload contract contract for topic
@@ -307,3 +307,7 @@ export const councilConfigFinalterm = (data) => {
   return axios.post("api/review/config-final", data);
 };
 
+// upload final-term contract 
+export const uploadResultFinal = (data) => {
+  return axios.post("/api/review/update-final-meeting-result", data);
+};

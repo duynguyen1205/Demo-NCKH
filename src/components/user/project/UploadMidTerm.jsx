@@ -62,14 +62,13 @@ const UploadMidTerm = (props) => {
     };
     try {
       let res;
-      if (props.state === 2) {
+      if (props.state === "2") {
         res = await submitDocumentsMidterm(data);
       }
       else {
         res = await submitDocumentsFinalterm(data);
       }
       setIsSubmit(true);
-      console.log(res);
       if (res && res.isSuccess) {
         setIsSubmit(false);
         message.success("Tải file lên thành công");
@@ -134,12 +133,12 @@ const UploadMidTerm = (props) => {
   };
   useEffect(() => {
     listFileType();
-  }, []);
+  }, [props.state]);
   return (
     <>
       <Modal
         title={
-          props.state === 2 ? "Đăng kí báo cáo giữa kì" : "Nộp tài liệu cuối kì"
+          props.state === "2" ? "Đăng kí báo cáo giữa kì" : "Nộp tài liệu cuối kì"
         }
         centered
         open={isModalOpen}

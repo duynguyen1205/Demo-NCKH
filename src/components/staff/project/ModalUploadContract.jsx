@@ -74,7 +74,6 @@ const ModalUploadContract = (props) => {
       if (res && res.message) {
         setIsSubmit(false);
         message.success("Tải hợp đồng lên thành công");
-        navigate("/staff");
       }
     } catch (error) {
       console.log("====================================");

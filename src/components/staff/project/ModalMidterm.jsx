@@ -18,7 +18,6 @@ import {
 } from "../../../services/api";
 import { useLocation } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
-import viVN from "antd/lib/locale/vi_VN";
 import locale from 'antd/locale/vi_VN';
 dayjs.extend(utc);
 const ModalMidTerm = (props) => {
@@ -48,7 +47,7 @@ const ModalMidTerm = (props) => {
       } else {
         const data = {
           topicId: props.data.topicId,
-          deadline: dayjs(selectedTime).local().format(),
+          documentSupplementationDeadline: dayjs(selectedTime).local().format(),
           directiveMinutes: directiveMinutes,
         };
         console.log(check === "finalterm");

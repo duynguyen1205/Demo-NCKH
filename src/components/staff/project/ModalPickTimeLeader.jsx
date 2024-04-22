@@ -255,7 +255,7 @@ const ModalPickTimeLeader = (props) => {
             )}
             {current < steps.length - 1 && (
               <Button type="primary" onClick={() => next()}>
-                Tiêp tục
+                Tiếp tục
               </Button>
             )}
 

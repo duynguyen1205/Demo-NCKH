@@ -42,6 +42,7 @@ const ModalUpload = (props) => {
   const [review, setReview] = useState();
   const [reviewMidtearm, setReviewMidtearm] = useState();
   const [meetingDate, setMeetingDate] = useState(today);
+  const [errorMessage, setError] = useState("");
   const data = props.data;
   const state = data.state === "MidtermReport" ? true : false;
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ const ModalUpload = (props) => {
           if (reviewMidtearm === "1") {
             const timeMidterm = {
               topicId: data.topicId,
-              deadline: dayjs(meetingDate).local().format(),
+              documentSupplementationDeadline: dayjs(meetingDate).local().format(),
             };
             const res = await makeDeadlineSubmit(timeMidterm);
             if (res && res.isSuccess) {
@@ -166,6 +167,7 @@ const ModalUpload = (props) => {
     },
     onRemove: (file) => {
       setFileList({});
+      setError("")
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -328,6 +330,7 @@ const ModalUpload = (props) => {
                 <Upload {...propsUpload}>
                   <Button icon={<UploadOutlined />}>Tải tài liệu lên</Button>
                 </Upload>
+                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
               </Form.Item>
             </Col>
           </Row>

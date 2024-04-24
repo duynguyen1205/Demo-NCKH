@@ -55,7 +55,7 @@ const TrackProject = () => {
       console.log("====================================");
       if (res && res.isSuccess) {
         setDataProcess(res.data);
-        if(res.data?.state === "PreliminaryReview") {
+        if(res.data?.state === "PreliminaryReview" || res.data?.state === "EarlyTermReport") {
           setCurrentStep("1");
         }
         else if (res.data?.state === "MidtermReport") {

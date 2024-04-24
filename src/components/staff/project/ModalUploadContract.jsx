@@ -74,6 +74,7 @@ const ModalUploadContract = (props) => {
       if (res && res.message) {
         setIsSubmit(false);
         message.success("Tải hợp đồng lên thành công");
+        props.confirm(data.topicId);
       }
     } catch (error) {
       console.log("====================================");

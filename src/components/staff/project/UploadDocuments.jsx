@@ -272,7 +272,6 @@ const UploadDocument = () => {
                   onClick={() => {
                     setDataUser(record);
                     setIsModalContractOpen(true);
-                    confirm(record.topicId)
                   }}
                 />
               </>
@@ -374,6 +373,7 @@ const UploadDocument = () => {
         setDataUser={setDataUser}
         isModalContractOpen={isModalContractOpen}
         setIsModalContractOpen={setIsModalContractOpen}
+        confirm = {confirm}
       />
     </div>
   );

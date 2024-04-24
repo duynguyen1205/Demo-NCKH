@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Modal, Calendar, theme, Divider, message, Upload, Button } from "antd";
+import {
+  Modal,
+  Calendar,
+  theme,
+  Divider,
+  message,
+  Upload,
+  Button,
+  ConfigProvider,
+} from "antd";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import {
@@ -9,6 +18,8 @@ import {
 } from "../../../services/api";
 import { useLocation } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
+import viVN from "antd/lib/locale/vi_VN";
+import locale from 'antd/locale/vi_VN';
 dayjs.extend(utc);
 const ModalMidTerm = (props) => {
   const today = dayjs();
@@ -102,6 +113,18 @@ const ModalMidTerm = (props) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
+  const disabledDate = (current) => {
+    // Get current day of the week (0 is Sunday, 6 is Saturday)
+    const dayOfWeek = current.day();
+    // Disable Saturday (6) and Sunday (0)
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return true;
+    }
+
+    // Disable holidays
+    const holidays = ["2024-04-30", "2024-05-01", "2024-04-29"];
+    return holidays.some((holiday) => current.isSame(holiday, "day"));
+  };
   return (
     <div style={wrapperStyle}>
       <Modal
@@ -114,13 +137,21 @@ const ModalMidTerm = (props) => {
         maskClosable={false}
       >
         <div style={{ height: 450 }}>
-          <Calendar fullscreen={false} onChange={onChange} />
+          <ConfigProvider locale={locale}>
+            <Calendar
+              locale={locale}
+              mode="month"
+              fullscreen={false}
+              onChange={onChange}
+              disabledDate={disabledDate}
+            />
+          </ConfigProvider>
           <p>
             Ngày: <span>{selectedTime?.format("DD-MM-YYYY")}</span>
           </p>
           <p>Chỉ hỗ trợ cái file như docx hoặc pdf</p>
           <Upload {...propsUpload}>
-            <Button icon={<UploadOutlined />}>Tải tài liệu lên</Button>
+            <Button icon={<UploadOutlined />}>Tải lên quyết định</Button>
           </Upload>
         </div>
       </Modal>

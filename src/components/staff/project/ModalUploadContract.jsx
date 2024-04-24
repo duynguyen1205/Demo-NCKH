@@ -173,6 +173,7 @@ const ModalUploadContract = (props) => {
                 style={{ display: "flex", flexDirection: "column" }}
                 value={checkedList}
                 onChange={onChange}
+                disabled={Object.values(newTopicFiles).length === 0 ? true : false}
               >
                 {plainOptions.map((option) => (
                   <Checkbox key={option.value} value={option.value}>

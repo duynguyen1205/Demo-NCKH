@@ -314,7 +314,7 @@ const TrackProject = () => {
               items={[
                 {
                   key: "3",
-                  label: "Đăng kí đề tài",
+                  label: "Báo cáo cuối kì",
                   children:
                     dataProcess.finalTermReportProcess !== null ? (
                       <>

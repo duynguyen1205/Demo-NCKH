@@ -188,6 +188,7 @@ const UploadMidTerm = (props) => {
               style={{ display: "flex", flexDirection: "column" }}
               value={checkedList}
               onChange={onChange}
+              disabled={Object.values(newTopicFiles).length === 0 ? true : false}
             >
               {fileType.map((option) => (
                 <Checkbox key={option.typeName} value={option.typeName}>

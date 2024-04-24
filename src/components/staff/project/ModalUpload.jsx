@@ -295,6 +295,7 @@ const ModalUpload = (props) => {
                 <Radio.Group
                   onChange={handleRadioChange}
                   value={reviewMidtearm}
+                  disabled={Object.values(newTopicFiles).length === 0 ? true : false}
                 >
                   <Space direction="vertical">
                     <Radio value="1">Tiếp tục báo cáo</Radio>

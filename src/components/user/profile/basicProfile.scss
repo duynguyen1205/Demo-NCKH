@@ -1,0 +1,20 @@
+.parent-container {
+  display: flex;
+  justify-content: center;
+  height: 100vh; /* Đảm bảo form được căn giữa theo chiều dọc của màn hình */
+}
+
+.form-container {
+  max-width: 700px;
+  width: 100%; /* Đảm bảo form không vượt quá kích thước tối đa */
+}
+
+.input-item {
+  flex-grow: 1; /* Các input sẽ mở rộng để chiếm hết không gian có sẵn */
+
+   
+}
+
+.ant-picker{
+  width: 100%; /* Cài đặt độ rộng tuyệt đối cho datePicker */
+}

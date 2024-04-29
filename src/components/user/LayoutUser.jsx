@@ -72,7 +72,7 @@ const LayoutUser = () => {
       icon: <FileSyncOutlined />,
     },
     {
-      label: <Link to="/user/profile">Hồ sơ cá nhân 1</Link>,
+      label: <Link to="/user/profile">Hồ sơ cá nhân</Link>,
       key: "profile",
       icon: <UserOutlined />,
     },

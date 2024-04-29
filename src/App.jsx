@@ -22,6 +22,7 @@ import MidtermProject from "./pages/projectMangerStaff/midterm.jsx";
 import UserInformation from "./pages/inforUser/Custom.jsx";
 import ProtectedRoute from "./components/ProtectedRoute/index.jsx";
 import FinaltermProject from "./pages/projectMangerStaff/finalterm.jsx";
+import UserProfile from "./components/user/profile/userProfile.jsx";
 
 const Layout = () => {
   return <LoginPage />;
@@ -186,7 +187,7 @@ function App() {
         },
         {
           path: "profile",
-          element: <>Thông tin cá nhân</>,
+          element: <UserProfile/>,
         },
       ],
     },

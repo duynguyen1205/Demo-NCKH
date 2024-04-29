@@ -17,7 +17,6 @@ import {  UploadOutlined } from "@ant-design/icons";
 // import { uploadFileSingle, uploadResult } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 import {  uploadFile, chairmanReject } from "../../../services/api";
-import { useForm } from "antd/es/form/Form";
 
 const ModalChairmanReject = (props) => {
   const isModalOpen = props.isModalOpen;

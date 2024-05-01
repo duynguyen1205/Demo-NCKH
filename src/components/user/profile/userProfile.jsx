@@ -1,6 +1,8 @@
 import React from "react";
 import { Tabs } from "antd";
 import BasicProfile from "./basicProfile";
+import QualicationTable from "./qualification";
+import ProcessWorkTable from "./workProcess";
 
 const items = [
   {
@@ -11,12 +13,12 @@ const items = [
   {
     key: "2",
     label: "Trình độ chuyên môn",
-    children: "Content of Tab Pane 2",
+    children: <QualicationTable/>,
   },
   {
     key: "3",
     label: "Quá trình công tác",
-    children: "Content of Tab Pane 3",
+    children: <ProcessWorkTable/>,
   },
   {
     key: "4",

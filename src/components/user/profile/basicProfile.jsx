@@ -11,6 +11,7 @@ import {
 } from "antd";
 import React, { useState } from "react";
 import "./basicProfile.scss";
+import { EditOutlined } from "@ant-design/icons";
 const BasicProfile = () => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
@@ -19,7 +20,13 @@ const BasicProfile = () => {
     <>
       <div className="header">
         <h3>Thông tin các nhân</h3>
-        <Button onClick={() => setComponentDisabled(false)}>Chỉnh sửa</Button>
+        <Button
+          type="primary"
+          icon={<EditOutlined />}
+          onClick={() => setComponentDisabled(!componentDisabled)}
+        >
+          {componentDisabled ? "Chỉnh sửa " : "Hủy bỏ"}
+        </Button>
       </div>
 
       <Divider />

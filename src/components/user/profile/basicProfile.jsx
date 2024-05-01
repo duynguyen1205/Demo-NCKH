@@ -1,4 +1,5 @@
 import {
+  Button,
   Checkbox,
   Col,
   DatePicker,
@@ -13,10 +14,14 @@ import "./basicProfile.scss";
 const BasicProfile = () => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
-  const [componentDisabled, setComponentDisabled] = useState(false);
+  const [componentDisabled, setComponentDisabled] = useState(true);
   return (
     <>
-      <h3>Chỉnh sửa thông tin các nhân</h3>
+      <div className="header">
+        <h3>Thông tin các nhân</h3>
+        <Button onClick={() => setComponentDisabled(false)}>Chỉnh sửa</Button>
+      </div>
+
       <Divider />
       <div className="parent-container">
         <div className="form-container">
@@ -111,6 +116,7 @@ const BasicProfile = () => {
                   />
                 </Form.Item>
               </Col>
+              <Button type="primary">Cập nhật thông tin</Button>
             </Row>
           </Form>
         </div>

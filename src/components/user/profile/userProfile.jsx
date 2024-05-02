@@ -4,6 +4,7 @@ import BasicProfile from "./basicProfile";
 import QualicationTable from "./qualification";
 import ProcessWorkTable from "./workProcess";
 import CertificateTable from "./certificateTable"
+import ProductPage from "./productSci";
 const items = [
   {
     key: "1",
@@ -28,7 +29,7 @@ const items = [
   {
     key: "5",
     label: "Sản phẩm khoa học",
-    children: "Content of Tab Pane 3",
+    children: <ProductPage/>,
   },
 ];
 const UserProfile = () => {

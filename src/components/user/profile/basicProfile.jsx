@@ -72,7 +72,7 @@ const BasicProfile = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please select gender!",
+                      message: "Xin hãy chọn giới tính!",
                     },
                   ]}
                 >

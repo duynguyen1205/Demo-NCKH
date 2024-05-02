@@ -3,7 +3,7 @@ import { Tabs } from "antd";
 import BasicProfile from "./basicProfile";
 import QualicationTable from "./qualification";
 import ProcessWorkTable from "./workProcess";
-
+import CertificateTable from "./certificateTable"
 const items = [
   {
     key: "1",
@@ -23,11 +23,11 @@ const items = [
   {
     key: "4",
     label: "Chứng chỉ ngoại ngữ",
-    children: "Content of Tab Pane 3",
+    children: <CertificateTable/>,
   },
   {
     key: "5",
-    label: "Trình độ khoa học",
+    label: "Sản phẩm khoa học",
     children: "Content of Tab Pane 3",
   },
 ];

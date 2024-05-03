@@ -20,6 +20,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import UploadMidTerm from "./UploadMidTerm";
+import UploadFileFinal from "./modalUploadFinal";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD-MM-YYYY";
 const TrackProject = () => {
@@ -28,7 +29,7 @@ const TrackProject = () => {
   const [dataProcess, setDataProcess] = useState({});
   const [status, setStatus] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isModalFinalOpen, setIsModalFinalOpen] = useState(false);
   const renderExtra = (step) => {
     if (step === currentStep) {
       return <SyncOutlined spin style={{ color: "blue" }} />;
@@ -51,14 +52,16 @@ const TrackProject = () => {
         topicId: topicId,
       });
       console.log("====================================");
-      console.log(res);
+      console.log("Track project: ", res.data);
       console.log("====================================");
       if (res && res.isSuccess) {
         setDataProcess(res.data);
-        if(res.data?.state === "PreliminaryReview" || res.data?.state === "EarlyTermReport") {
+        if (
+          res.data?.state === "PreliminaryReview" ||
+          res.data?.state === "EarlyTermReport"
+        ) {
           setCurrentStep("1");
-        }
-        else if (res.data?.state === "MidtermReport") {
+        } else if (res.data?.state === "MidtermReport") {
           setCurrentStep("2");
         } else if (res.data?.state === "FinaltermReport") {
           setCurrentStep("3");
@@ -223,8 +226,7 @@ const TrackProject = () => {
                                   <>
                                     <p>
                                       Trạng thái: Trưởng nhóm cần nộp form trước
-                                      ngày{" "} 
-                                      {/* 25-04-2024 */}
+                                      ngày {/* 25-04-2024 */}
                                       {dayjs(
                                         item.deadlineForDocumentSupplementation
                                       ).format(dateFormat)}
@@ -324,7 +326,7 @@ const TrackProject = () => {
                             <p>
                               {" "}
                               Trạng thái: Trưởng nhóm cần nộp các file liên quan
-                              trước ngày{" "}  {/* 25-04-2024 */}
+                              trước ngày{" "}
                               {dayjs(
                                 dataProcess.finalTermReportProcess
                                   .deadlineForDocumentSupplementation
@@ -384,14 +386,12 @@ const TrackProject = () => {
                             {
                               title:
                                 dataProcess.finalTermReportProcess
-                                  .waitingForUploadMeetingMinutes
-                                  === "Done"
+                                  .waitingForUploadMeetingMinutes === "Done"
                                   ? "Bảo vệ thành công"
                                   : "Staff tải lên quyết định",
                               status:
                                 dataProcess.finalTermReportProcess
-                                  .waitingForUploadMeetingMinutes
-                                  === "Done"
+                                  .waitingForUploadMeetingMinutes === "Done"
                                   ? "finished"
                                   : "wait",
                               icon: <CloudUploadOutlined />,
@@ -406,25 +406,98 @@ const TrackProject = () => {
                             //       : "wait",
                             //   icon: <ContactsOutlined />,
                             // },
-                           
                           ]}
                         />
                       </>
                     ) : (
-                      <div>Staff chưa đăng kí thời hạn nộp các file liên quan</div>
+                      <div>
+                        Staff chưa đăng kí thời hạn nộp các file liên quan
+                      </div>
                     ),
                   extra: renderExtra(3),
                 },
               ]}
             />
             <Collapse
-              collapsible={isCollapseDisabled(4)}
+              collapsible={isCollapseDisabled(3)}
               defaultActiveKey={currentStep === "4" ? ["4"] : ""}
               items={[
                 {
                   key: "4",
                   label: "Tổng kết",
-
+                  children: (
+                    <>
+                      {dataProcess.finalTermReportProcess
+                        .deadlineForDocumentSupplementation ? (
+                        <>
+                          <p>
+                            {" "}
+                            Trạng thái: Trưởng nhóm nộp file tính ngày công
+                          </p>
+                          <ConfigProvider
+                            theme={{
+                              token: {
+                                colorPrimary: "#55E6A0",
+                              },
+                            }}
+                          >
+                            <Button
+                              type="primary"
+                              style={{
+                                marginBottom: "10px",
+                              }}
+                              onClick={() => setIsModalOpen(true)}
+                            >
+                              Nộp tài liệu
+                            </Button>
+                          </ConfigProvider>
+                        </>
+                      ) : (
+                        // <p>Trạng thái: </p>
+                        <Button
+                              type="primary"
+                              style={{
+                                marginBottom: "10px",
+                              }}
+                              onClick={() => setIsModalFinalOpen(true)}
+                            >
+                              Nộp tài liệu
+                            </Button>
+                      )}
+                      <Steps
+                        size="small"
+                        labelPlacement="vertical"
+                        items={[
+                          {
+                            title:
+                              dataProcess.finalTermReportProcess
+                                .waitingForDocumentSupplementation === "Done"
+                                ? "Đã nộp tài liệu cuối kì"
+                                : "Nộp tài liệu cuối kì",
+                            status:
+                              dataProcess.finalTermReportProcess
+                                .waitingForDocumentSupplementation === "Done"
+                                ? "finished"
+                                : "wait",
+                            icon: <FileProtectOutlined />,
+                          },
+                          {
+                            title:
+                              dataProcess.finalTermReportProcess
+                                .waitingForConfigureConference === "Done"
+                                ? "Staff đã tải lên quyết định"
+                                : "Staff tải lên quyết định",
+                            status:
+                              dataProcess.finalTermReportProcess
+                                .waitingForConfigureConference === "Done"
+                                ? "finished"
+                                : "wait",
+                            icon: <CloudUploadOutlined />,
+                          },
+                        ]}
+                      />
+                    </>
+                  ),
                   extra: renderExtra(4),
                 },
               ]}
@@ -449,6 +522,13 @@ const TrackProject = () => {
         topicId={topicId}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
+        status={status}
+        setStatus={setStatus}
+      />
+      <UploadFileFinal
+        topicId={topicId}
+        isModalOpen={isModalFinalOpen}
+        setIsModalOpen={setIsModalFinalOpen}
         status={status}
         setStatus={setStatus}
       />

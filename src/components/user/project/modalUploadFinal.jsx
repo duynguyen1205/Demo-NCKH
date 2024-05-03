@@ -20,36 +20,19 @@ import {
   uploadFile,
 } from "../../../services/api";
 
-const UploadMidTerm = (props) => {
+const UploadFileFinal = (props) => {
+  console.log(props);
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
   const [newTopicFiles, setFileList] = useState({});
-  const [fileType, setFileType] = useState([]);
-  const [checkedList, setCheckedList] = useState([]);
-  const onChange = (list) => {
-    setCheckedList(list);
-  };
+
   const handleOk = () => {
     form.submit();
   };
   const handleCancel = () => {
     props.setIsModalOpen(false);
     setFileList({});
-  };
-  const listFileType = async () => {
-    try {
-      const res = await getFileType({
-        stateNumber: props.state,
-      });
-      if (res && res.isSuccess) {
-        setFileType(res.data);
-      }
-    } catch (error) {
-      console.log("====================================");
-      console.log("error: ", error);
-      console.log("====================================");
-    }
   };
   const onSubmit = async () => {
     if (Object.values(newTopicFiles).length === 0) {
@@ -61,24 +44,6 @@ const UploadMidTerm = (props) => {
       newFile: newTopicFiles,
     };
     try {
-      let res;
-      if (props.state === "2") {
-        res = await submitDocumentsMidterm(data);
-      }
-      else {
-        res = await submitDocumentsFinalterm(data);
-      }
-      setIsSubmit(true);
-      if (res && res.isSuccess) {
-        setIsSubmit(false);
-        message.success("Tải file lên thành công");
-        handleCancel();
-        if (props.status) {
-          props.setStatus(false);
-        } else {
-          props.setStatus(true);
-        }
-      }
     } catch (error) {
       console.log("====================================");
       console.log("có lỗi tại upload result", error);
@@ -93,13 +58,10 @@ const UploadMidTerm = (props) => {
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
         const isCompressedFile =
-          file.type === "application/x-rar-compressed" ||
-          file.type === "application/x-zip-compressed" ||
-          file.type === "application/x-compressed";
+          file.type ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         if (!isCompressedFile) {
-          message.error(
-            "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
-          );
+          message.error("Chỉ được phép tải lên file có định dạng xlsx");
           onError(file);
           return;
         }
@@ -131,15 +93,10 @@ const UploadMidTerm = (props) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
-  useEffect(() => {
-    listFileType();
-  }, [props.state]);
   return (
     <>
       <Modal
-        title={
-          props.state === "2" ? "Đăng kí báo cáo giữa kì" : "Nộp tài liệu cuối kì"
-        }
+        title="Nộp file tổng kết"
         centered
         open={isModalOpen}
         onOk={handleOk}
@@ -157,11 +114,7 @@ const UploadMidTerm = (props) => {
               },
             }}
           >
-            <Button
-              disabled={fileType.length === checkedList.length ? false : true}
-              type="primary"
-              onClick={handleOk}
-            >
+            <Button type="primary" onClick={handleOk}>
               Gửi
             </Button>
           </ConfigProvider>,
@@ -170,37 +123,20 @@ const UploadMidTerm = (props) => {
         <Divider />
         <Form form={form} name="basic" onFinish={onSubmit}>
           <Row gutter={20}>
-            {props.state === 2 ? (
-              <>
-                <Col span={24}>
-                  <p>File mẫu tham khảo: </p>
-                  <a href="https://srms.sgp1.cdn.digitaloceanspaces.com/template-20240404003752374.zip">
-                    Ấn để tải
-                  </a>
-                </Col>
-                <Divider />
-              </>
-            ) : (
-              <></>
-            )}
+            <>
+              <Col span={24}>
+                <p>File mẫu tham khảo (file đã tích hợp công thức tính):</p>
+                <a href="https://srms1.sgp1.cdn.digitaloceanspaces.com/thu_lao_NCKH-20240504000432756.xlsx">
+                  Ấn để tải
+                </a>
+              </Col>
+            </>
 
-            <Checkbox.Group
-              style={{ display: "flex", flexDirection: "column" }}
-              value={checkedList}
-              onChange={onChange}
-              disabled={Object.values(newTopicFiles).length === 0 ? true : false}
-            >
-              {fileType.map((option) => (
-                <Checkbox key={option.typeName} value={option.typeName}>
-                  {option.typeName}
-                </Checkbox>
-              ))}
-            </Checkbox.Group>
             <Divider />
             <Col span={24}>
               <Form.Item
                 name="file"
-                label="Chỉ hỗ trợ các file như zip hoặc rar"
+                label="Chỉ hỗ trợ file xlsx"
                 labelCol={{ span: 24 }}
               >
                 <Upload {...propsUpload}>
@@ -214,4 +150,4 @@ const UploadMidTerm = (props) => {
     </>
   );
 };
-export default UploadMidTerm;
+export default UploadFileFinal;

@@ -201,7 +201,7 @@ export const getReviewDocuments = (param) => {
 
 // upload Resubmit Document For Leader
 export const uploadResubmit = (data) => {
-  return axios.post("/api/attachment/create", data);
+  return axios.post("/api/document/resubmit-early-document", data);
 };
 
 // chairman approve
@@ -248,7 +248,7 @@ export const makeDeadlineSubmit = (data) => {
 
 // submit documents mid-term 
 export const submitDocumentsMidterm = (data) => {
-  return axios.post("api/document/create-middle-document", data);
+  return axios.post("api/document/supplemention-middle-document", data);
 };
 
 // create mid-term council
@@ -299,7 +299,7 @@ export const makeDeadlineFinalSubmit = (data) => {
 
 // submit documents final-term 
 export const submitDocumentsFinalterm = (data) => {
-  return axios.post("api/document/create-final-document", data);
+  return axios.post("api/document/supplemention-final-document", data);
 };
 
 // create final-term council
@@ -310,4 +310,9 @@ export const councilConfigFinalterm = (data) => {
 // upload final-term contract 
 export const uploadResultFinal = (data) => {
   return axios.post("/api/review/update-final-meeting-result", data);
+};
+
+// resubmit final-term document
+export const resubmitFinalDocument = (data) => {
+  return axios.post("/api/review/resubmit-final-document", data);
 };

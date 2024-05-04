@@ -246,7 +246,7 @@ export const makeDeadlineSubmit = (data) => {
   return axios.post("api/review/make-middle-review-schedule", data);
 };
 
-// submit documents mid-term 
+// submit documents mid-term
 export const submitDocumentsMidterm = (data) => {
   return axios.post("api/document/supplemention-middle-document", data);
 };
@@ -285,7 +285,7 @@ export const moveToFinalTerm = (param) => {
 
 export const getFinalTerm = () => {
   return axios.get("api/topic/final-topic-waiting-make-schedule");
-}
+};
 
 // get topic final term waiting council
 export const getFinalTermReport = () => {
@@ -297,7 +297,7 @@ export const makeDeadlineFinalSubmit = (data) => {
   return axios.post("api/review/make-final-review-schedule", data);
 };
 
-// submit documents final-term 
+// submit documents final-term
 export const submitDocumentsFinalterm = (data) => {
   return axios.post("api/document/supplemention-final-document", data);
 };
@@ -307,7 +307,7 @@ export const councilConfigFinalterm = (data) => {
   return axios.post("api/review/config-final", data);
 };
 
-// upload final-term contract 
+// upload final-term contract
 export const uploadResultFinal = (data) => {
   return axios.post("/api/review/update-final-meeting-result", data);
 };
@@ -315,4 +315,24 @@ export const uploadResultFinal = (data) => {
 // resubmit final-term document
 export const resubmitFinalDocument = (data) => {
   return axios.post("/api/review/resubmit-final-document", data);
+};
+
+// get topics has submit file money
+export const getTopicHasSubmitFileMoney = () => {
+  return axios.get("/api/topic/final-topic-waiting-censorship-remuneration");
+};
+
+//get topic has submit file money detais
+export const getTopicHasSubmitFileMoneyDetail = (param) => {
+  return axios.get(`/api/remuneration?${qs.stringify(param)}`);
+};
+
+// leader submit file
+export const postLeaderSubmitFile = (data) => {
+  return axios.post("/api/remuneration/submit", data);
+};
+
+// staff submit decision file
+export const staffSubmitDecisionFile = (data) => {
+  return axios.post("/api/remuneration/censorship", data);
 };

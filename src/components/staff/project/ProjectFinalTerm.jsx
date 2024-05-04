@@ -21,7 +21,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
-import { getFinalTerm, getFinalTermReport } from "../../../services/api";
+import { getFinalTerm, getFinalTermReport, getTopicHasSubmitFileMoney } from "../../../services/api";
 import ModalMidTerm from "./ModalMidterm";
 import { useNavigate } from "react-router-dom";
 const ProjectManagerFinalTerm = () => {
@@ -48,6 +48,11 @@ const ProjectManagerFinalTerm = () => {
     {
       key: "taohoidong",
       label: `Thêm thành viên hội đồng`,
+      children: <></>,
+    },
+    {
+      key: "tongket",
+      label: `Tổng kết đề tài`,
       children: <></>,
     },
   ];
@@ -213,7 +218,9 @@ const ProjectManagerFinalTerm = () => {
                     }}
                     type="primary"
                     onClick={() => {
-                      navigate(`/staff/finalterm/add-council/${record.topicId}`);
+                      navigate(
+                        `/staff/finalterm/add-council/${record.topicId}`
+                      );
                     }}
                   >
                     Gửi hội đồng
@@ -251,6 +258,18 @@ const ProjectManagerFinalTerm = () => {
       console.log("có lỗi tại getTopicWaitCouncil: " + error);
     }
   };
+  const getTopicSumarizeTerm = async () => {
+    try {
+      const res = await getTopicHasSubmitFileMoney();
+      setIsLoading(true);
+      if (res && res?.data) {
+        setData(res.data);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log("có lỗi tại getTopicFinalTerm: " + error);
+    }
+  };
   useEffect(() => {
     getTopicFinalTerm();
   }, [isModalOpen]);
@@ -264,6 +283,8 @@ const ProjectManagerFinalTerm = () => {
           if (value === "notyet") {
             getTopicFinalTerm();
           } else if (value === "wait") {
+          } else if (value === "tongket") {
+            getTopicSumarizeTerm();
           } else {
             getTopicWaitCouncil();
           }

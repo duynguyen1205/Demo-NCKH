@@ -35,7 +35,7 @@ const Login = () => {
           const decoded = jwtDecode(res.data.token);
           if (decoded?.userid === undefined && decoded.role !== "Staff") {
             message.info("Vui lòng đăng kí thông tin trước khi tiếp tục");
-            navigation("/registerInfor");
+            navigation("/user/profile");
           } else {
             localStorage.setItem("userId", decoded?.userid);
             if (decoded.role === "Dean") {
@@ -71,8 +71,11 @@ const Login = () => {
       message.error("Vui lòng nhập email");
     } else {
       setWaiting(true);
+      const data = {
+        email: email,
+      }
       try {
-        const res = await registerEmail(email);
+        const res = await registerEmail(data);
         if (res && res.isSuccess) {
           message.success("Vui lòng check mail để lấy mã otp");
         }

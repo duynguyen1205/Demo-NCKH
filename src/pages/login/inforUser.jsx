@@ -22,7 +22,6 @@ const InforUser = () => {
   const onFinish = async () => {
     try {
       setLoading(true);
-
       if (res && res.status === 200) {
         form.resetFields();
         setLoading(false);

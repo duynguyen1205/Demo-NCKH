@@ -39,10 +39,6 @@ function App() {
       element: <LoginPage />,
     },
     {
-      path: "/registerInfor",
-      element: <UserInformation />,
-    },
-    {
       path: "/staff",
       element: (
         <ProtectedRoute>

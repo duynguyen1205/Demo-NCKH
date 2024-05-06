@@ -8,7 +8,7 @@ const NotPermited = () => {
     <Result
       status="403"
       title="403"
-      subTitle="Xin lỗi, bạn không có quyền vào trang này"
+      subTitle="Xin lỗi, bạn không được phép vào trang này"
       extra={
         <Button type="primary" onClick={() => navigation(-1)}>
           Quay trở lại

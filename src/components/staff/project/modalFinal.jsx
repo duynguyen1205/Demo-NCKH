@@ -55,15 +55,13 @@ const ModalFinal = (props) => {
         isAccept: review === "1" ? true : false,
       };
       const res = await staffSubmitDecisionFile(dataSubmit);
-      console.log("====================================");
-      console.log(res);
-      console.log("====================================");
       setIsSubmit(true);
       if (res && res.isSuccess) {
         setIsSubmit(false);
         if (res && res.statusCode === 200) {
           message.success("Tải biên bản lên thành công");
         }
+        handleCancel();
       }
     } catch (error) {
       console.log("====================================");

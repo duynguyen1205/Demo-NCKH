@@ -34,7 +34,7 @@ const items = [
 ];
 const UserProfile = () => {
   return (
-    <div style={{ backgroundColor: "white", border: "2px" }}>
+    <div style={{ backgroundColor: "white", border: "2px", height: "1000px"  }}>
       <Tabs centered defaultActiveKey="1" items={items} />
     </div>
   );

@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  AutoComplete,
-  Modal,
-  Select,
-  Button,
-  Form,
-  Input,
-  Space,
-} from "antd";
+import { AutoComplete, Modal, Select, Button, Form, Input, Space } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
   const [form] = Form.useForm();
@@ -27,7 +19,7 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
 
   return (
     <Modal
-      width={910}
+      width={926}
       title="Thêm thành viên"
       open={open}
       onOk={onOk}
@@ -41,9 +33,7 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
       <Form form={form} onFinish={onFinish} autoComplete="off">
         <Form.List
           name="item"
-          initialValue={[
-            { email: "", role: "", taskDescription: "" },
-          ]}
+          initialValue={[{ email: "", role: "", taskDescription: "" }]}
         >
           {(fields, { add, remove }) => (
             <>
@@ -68,8 +58,8 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
                   >
                     <AutoComplete options={options} filterOption={true}>
                       <Input
-                        style={{ width: 210 }}
-                        placeholder="Tìm nhà khoa học"
+                        style={{ width: 220 }}
+                        placeholder="Tìm thành viên"
                       />
                     </AutoComplete>
                   </Form.Item>
@@ -85,7 +75,7 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
                   >
                     <Select
                       style={{
-                        width: 130,
+                        width: 120,
                       }}
                       options={[
                         {
@@ -98,7 +88,6 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
                         },
                       ]}
                       placeholder="Vai trò"
-
                     />
                   </Form.Item>
                   <Form.Item
@@ -121,7 +110,7 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
               ))}
               <Form.Item>
                 <Button
-                disabled ={fields.length >= 10}
+                  disabled={fields.length >= 10}
                   type="dashed"
                   onClick={() => add()}
                   block
@@ -129,7 +118,7 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
                 >
                   Thêm thành viên
                 </Button>
-                {fields.length >=10 ? "Tối đa 10 thành viên" : ""}
+                {fields.length >= 10 ? "Tối đa 10 thành viên" : ""}
               </Form.Item>
             </>
           )}

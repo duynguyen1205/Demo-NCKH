@@ -52,7 +52,7 @@ const ProjectManager = () => {
     },
     {
       key: "chohoidong",
-      label: `Chờ hội đồng`,
+      label: `Xem xét`,
       children: <></>,
     },
   ];
@@ -148,7 +148,7 @@ const ProjectManager = () => {
 
   const columns = [
     {
-      title: "ID",
+      title: "Mã Đề Tài",
       key: "index",
       dataIndex: "topicId",
       width: "10%",
@@ -202,7 +202,7 @@ const ProjectManager = () => {
                     }}
                     type="primary"
                     onClick={() => {
-                      navigate(`/staff/manager/add-member/${record.topicId}`);
+                      navigate(`/staff/earlyterm/add-member/${record.topicId}`);
                     }}
                   />
                 </Tooltip>
@@ -217,7 +217,7 @@ const ProjectManager = () => {
                     }}
                     type="primary"
                     onClick={() => {
-                      navigate(`/staff/manager/add-council/${record.topicId}`);
+                      navigate(`/staff/earlyterm/add-council/${record.topicId}`);
                     }}
                   >
                     Gửi hội đồng

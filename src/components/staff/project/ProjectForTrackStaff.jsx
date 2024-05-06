@@ -1,14 +1,12 @@
-import {
-  FundViewOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import { Button, Input, Space, Table } from "antd";
+import { FundViewOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, ConfigProvider, Input, Space, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "./project.scss";
 import { useNavigate } from "react-router-dom";
 import "../../user/project/table.scss";
-import {  getTopicOngoing } from "../../../services/api";
+import { getTopicOngoing } from "../../../services/api";
+import viVN from "antd/lib/locale/vi_VN";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -22,7 +20,7 @@ const ProjectForTrackStaff = () => {
 
   const getProjectProcess = async () => {
     try {
-      const res = await getTopicOngoing()
+      const res = await getTopicOngoing();
       if (res && res.isSuccess) {
         setdataTopicForMember(res.data);
       }
@@ -124,7 +122,7 @@ const ProjectForTrackStaff = () => {
 
   const columns = [
     {
-      title: "ID",
+      title: "STT",
       key: "index",
       render: (text, record, index) => index + 1,
       color: "red",
@@ -160,8 +158,8 @@ const ProjectForTrackStaff = () => {
         };
         return (
           <div>
-            <FundViewOutlined 
-               onClick={() => {
+            <FundViewOutlined
+              onClick={() => {
                 navigate(`/staff/track/track-topic/${record.topicId}`);
               }}
               style={style2}
@@ -204,6 +202,7 @@ const ProjectForTrackStaff = () => {
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
         Theo dõi tiến độ đề tài
       </h2>
+      <ConfigProvider locale={viVN}>
       <Table
         rowClassName={(record, index) =>
           index % 2 === 0 ? "table-row-light" : "table-row-dark"
@@ -227,6 +226,7 @@ const ProjectForTrackStaff = () => {
           },
         }}
       />
+      </ConfigProvider>
     </div>
   );
 };

@@ -1,14 +1,40 @@
-import { Button, Col, Divider, Form, Input, Modal, Row } from "antd";
+import {
+  Button,
+  Col,
+  ConfigProvider,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  Row,
+  message,
+} from "antd";
 import { useEffect, useState } from "react";
-import { getTopicDetailAPI } from "../../../services/api";
+import {
+  createDeanMakeDecesion,
+  createMemberDecision,
+  getTopicDetailAPI,
+} from "../../../services/api";
+import { useLocation } from "react-router-dom";
+import ModalConfirm from "./ModalConfirm";
 
 const ModalInfor = (props) => {
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
-  const [topicLink, setTopicLink] = useState([]);
-  const data = props.data;
+  const [topicLink, setTopicLink] = useState({});
+  const [checked, setChecked] = useState(true);
+  const [reason, setReason] = useState(null);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [plainText, setPlainText] = useState("");
+  const [state, setState] = useState();
   const topicId = props.data.topicId;
+  const userId = localStorage.getItem("userId");
+  const { TextArea } = Input;
+  let checkEnd;
+  const location = useLocation();
   const handleCancel = () => {
+    form.setFieldsValue("");
+    setChecked(true);
     props.setIsModalOpen(false);
   };
   const getTopicDetail = async () => {
@@ -17,22 +43,161 @@ const ModalInfor = (props) => {
         topicId: topicId,
       });
       if (res && res.isSuccess) {
-        setTopicLink(
-          res.data.topicFiles.map((item) => ({
-            name: item.topicFileName,
-            link: item.topicFileLink,
-          }))
-        );
+        setTopicLink({
+          topicFileName: res.data.topicFileName,
+          topicFileLink: res.data.topicFileLink,
+        });
+        setPlainText(res.data.description);
         form.setFieldsValue(res.data);
+        checkEnd = res.data.topicFileLink.endsWith(".docx");
       }
     } catch (error) {
       console.log("Error getting topic detail: ", error);
     }
   };
+  // member approval accept
+  const handleOnClickApprove = async () => {
+    if (location.pathname === "/user/manager") {
+      const param = {
+        memberReviewId: userId,
+        topicId: topicId,
+        isApproved: true,
+        reasonOfDecision: reason,
+      };
+      await createMemberDecision(param)
+        .then((data) => {
+          if (props.status === true) {
+            props.setStatus(false);
+          } else {
+            props.setStatus(true);
+          }
+          handleCancel();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      const param = {
+        diciderId: userId,
+        topicId: topicId,
+        deanDecision: true,
+        reasonOfDecision: reason,
+      };
+      await createDeanMakeDecesion(param)
+        .then((data) => {
+          if (props.status === true) {
+            props.setStatus(false);
+          } else {
+            props.setStatus(true);
+          }
+          handleCancel();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+  // member approval rejected
+  const handleOnClickRejected = async () => {
+    if (reason === null) {
+      message.error("Vui lòng nhập lí do từ chối");
+      return;
+    } else {
+      if (location.pathname === "/user/manager") {
+        const param = {
+          memberReviewId: userId,
+          topicId: topicId,
+          isApproved: false,
+          reasonOfDecision: reason,
+        };
+        await createMemberDecision(param)
+          .then((data) => {
+            message.success("Tạo đánh giá thành công");
+            if (props.status === true) {
+              props.setStatus(false);
+            } else {
+              props.setStatus(true);
+            }
+            handleCancel();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        const param = {
+          diciderId: userId,
+          topicId: topicId,
+          deanDecision: false,
+          reasonOfDecision: reason,
+        };
+        await createDeanMakeDecesion(param)
+          .then((data) => {
+            message.success("Tạo đánh giá thành công");
+            if (props.status === true) {
+              props.setStatus(false);
+            } else {
+              props.setStatus(true);
+            }
+            handleCancel();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+  };
+  const renderFooter = () => (
+    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <Button shape="round" type="primary" onClick={handleCancel}>
+        Quay về
+      </Button>
+      {props.currentTab === "notpassyet" && (
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#55E6A0",
+            },
+          }}
+        >
+          <Button
+            disabled={checked}
+            shape="round"
+            type="primary"
+            danger
+            onClick={() => {
+              if (reason === null) {
+                message.error("Vui lòng nhập lí do từ chối");
+                return;
+              } else {
+                setOpenConfirm(true);
+                setState("rejected");
+              }
+            }}
+            style={{ margin: "0 10px" }}
+          >
+            Từ chối
+          </Button>
+          <Button
+            disabled={checked}
+            shape="round"
+            type="primary"
+            onClick={() => {
+              setState("approved");
+              setOpenConfirm(true);
+            }}
+          >
+            Thông qua
+          </Button>
+        </ConfigProvider>
+      )}
+    </div>
+  );
+
   // set up initial value for the form
   useEffect(() => {
     getTopicDetail();
   }, [isModalOpen === true]);
+
   return (
     <>
       <Modal
@@ -42,11 +207,7 @@ const ModalInfor = (props) => {
         onCancel={handleCancel}
         maskClosable={false}
         forceRender
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Thoát
-          </Button>,
-        ]}
+        footer={renderFooter}
       >
         <Divider />
         <Form form={form} name="basic">
@@ -93,7 +254,7 @@ const ModalInfor = (props) => {
                 label="Mô tả chi tiết"
                 labelCol={{ span: 24 }}
               >
-                <Input disabled />
+                <div dangerouslySetInnerHTML={{ __html: plainText }} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -102,24 +263,50 @@ const ModalInfor = (props) => {
                 label="Tài liệu đính kèm"
                 labelCol={{ span: 24 }}
               >
-                {topicLink.map((item, index) => (
-                  <span key={index}>
-                    <a
-                      key={index}
-                      href={item.link}
-                      target="_blank"
-                      rel={item.name}
-                    >
-                      {item.name}
-                    </a>
-                    <br />
-                  </span>
-                ))}
+                <span>
+                  <a
+                    href={
+                      checkEnd
+                        ? `https://view.officeapps.live.com/op/view.aspx?src=` +
+                          topicLink.topicFileLink
+                        : topicLink.topicFileLink
+                    }
+                    target="_blank"
+                    rel={topicLink.topicFileName}
+                    onClick={() => setChecked(false)}
+                  >
+                    {topicLink.topicFileName}
+                  </a>
+                </span>
               </Form.Item>
             </Col>
+            {props.currentTab === "notpassyet" && (
+              <Col span={24}>
+                <Form.Item
+                  name="reason"
+                  label="Ghi chú"
+                  labelCol={{ span: 24 }}
+                >
+                  <TextArea
+                    autoSize={{
+                      minRows: 2,
+                      maxRows: 5,
+                    }}
+                    onChange={(event) => setReason(event.target.value)}
+                  />
+                </Form.Item>
+              </Col>
+            )}
           </Row>
         </Form>
       </Modal>
+      <ModalConfirm
+        openConfirm={openConfirm}
+        setOpen={setOpenConfirm}
+        state={state}
+        approved={handleOnClickApprove}
+        rejected={handleOnClickRejected}
+      />
     </>
   );
 };

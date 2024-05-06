@@ -1,10 +1,9 @@
-import { CheckCircleFilled, FieldTimeOutlined } from "@ant-design/icons";
+import { CheckCircleFilled } from "@ant-design/icons";
 import { MdAccessTime } from "react-icons/md";
 import { FaUserTie } from "react-icons/fa";
 import {
   Button,
   Col,
-  ConfigProvider,
   Divider,
   Form,
   Input,
@@ -20,8 +19,12 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { councilConfig } from "../../../services/api";
-import utc from 'dayjs/plugin/utc';
+import {
+  councilConfigEarly,
+  councilConfigFinalterm,
+  councilConfigMidterm,
+} from "../../../services/api";
+import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 dayjs.extend(customParseFormat);
@@ -36,8 +39,9 @@ const ModalPickTimeLeader = (props) => {
   const [meetingDetails, setMeetingDetails] = useState("");
   const [council, setCouncil] = useState([]);
   const location = useLocation();
-  let topicId = location.pathname.split("/");
-  topicId = topicId[4];
+  let path = location.pathname.split("/");
+  let topicId = path[4];
+  let checkTerm = path[2];
   const navigate = useNavigate();
   const handleRadioChange = (itemId) => {
     const updatedDataUser = props.dataUser.map((user) => ({
@@ -56,9 +60,13 @@ const ModalPickTimeLeader = (props) => {
   };
   // set up initial value for the form
   const maxDate = dayjs().add(7, "day");
+  const disabledDate = (current) => {
+    // Disable Saturdays (6) and Sundays (0)
+    return current && (current.day() === 6 || current.day() === 0);
+  };
   const steps = [
     {
-      title: "Lựa chọn chairman",
+      title: "Lựa chọn chủ tịch hội đồng",
       content: (
         <>
           <div>
@@ -99,6 +107,7 @@ const ModalPickTimeLeader = (props) => {
                     minDate={today}
                     maxDate={maxDate}
                     onChange={handleDateChange}
+                    disabledDate={disabledDate}
                   />
                 </Form.Item>
               </Col>
@@ -129,7 +138,9 @@ const ModalPickTimeLeader = (props) => {
         <>
           <div>
             {" "}
-            <p style={{ fontSize: "18px", marginBottom: "8px" }}>Danh sách thành viên hội đồng</p>
+            <p style={{ fontSize: "18px", marginBottom: "8px" }}>
+              Danh sách thành viên hội đồng
+            </p>
             <List
               dataSource={council}
               bordered
@@ -139,12 +150,12 @@ const ModalPickTimeLeader = (props) => {
                 >
                   {item.fullName} - {item.position} - {item.degree}{" "}
                   {item.isChairman ? (
-                    <span style={{ color: "red" }}> Chairman</span>
+                    <span style={{ color: "red" }}> Chủ tịch hội đồng</span>
                   ) : null}
                 </List.Item>
               )}
             />
-            <div style={{marginTop: "8px"}}>
+            <div style={{ marginTop: "8px" }}>
               <p style={{ fontSize: "18px", marginBottom: "8px" }}>
                 Ngày họp: {meetingDate && meetingDate.format(dateFormat)}
               </p>
@@ -162,7 +173,7 @@ const ModalPickTimeLeader = (props) => {
   const [current, setCurrent] = useState(0);
   const next = () => {
     if (current === 0 && selectedLeader === null) {
-      message.error("Vui lòng chọn chairman trước khi tiếp tục.");
+      message.error("Vui lòng chọn chủ tịch hội đồng trước khi tiếp tục.");
       return;
     } else if (current === 1 && meetingDetails === "") {
       message.error("Vui lòng chọn ngày và nhập chi tiết trước khi tiếp tục.");
@@ -185,23 +196,38 @@ const ModalPickTimeLeader = (props) => {
       councilId: user.id,
       isChairman: user.isChairman,
     }));
-    
+
     const data = {
       topicId: topicId,
-      meetingTime: dayjs(meetingDate).utc().format(),
+      meetingTime: dayjs(meetingDate).local().format(),
       councils: councilArray,
       meetingDetail: meetingDetails,
-    }
-   
+    };
+    let res;
     try {
-      const res = await councilConfig(data);
-      if(res && res.isSuccess) {
+      if (checkTerm === "earlyterm") {
+        res = await councilConfigEarly(data).catch((error) => {
+          console.error("Lỗi trong councilConfigEarly:", error);
+          throw error;
+        });
+      } else if (checkTerm === "midterm") {
+        res = await councilConfigMidterm(data).catch((error) => {
+          console.error("Lỗi trong councilConfigMidterm:", error);
+          throw error;
+        });
+      } else if (checkTerm === "finalterm") {
+        res = await councilConfigFinalterm(data).catch((error) => {
+          console.error("Lỗi trong councilConfigFinalterm:", error);
+          throw error;
+        });
+      }
+      if (res && res.statusCode === 200) {
         message.success("Tạo hội đồng đánh giá thành công");
-        navigate("/staff/manager");
+        navigate("/staff/upload-document");
       } else {
-        console.log('====================================');
-        console.log(res.message);
-        console.log('====================================');
+        console.log("====================================");
+        console.log(res);
+        console.log("====================================");
         message.error("Tạo hội đồng không thành công");
       }
     } catch (error) {
@@ -229,15 +255,12 @@ const ModalPickTimeLeader = (props) => {
             )}
             {current < steps.length - 1 && (
               <Button type="primary" onClick={() => next()}>
-                Tiêp tục
+                Tiếp tục
               </Button>
             )}
 
             {current === steps.length - 1 && (
-              <Button
-                type="primary"
-                onClick={handleSubmit}
-              >
+              <Button type="primary" onClick={handleSubmit}>
                 Xác nhận
               </Button>
             )}

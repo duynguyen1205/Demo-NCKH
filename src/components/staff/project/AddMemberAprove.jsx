@@ -1,15 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Badge,
-  Button,
-  ConfigProvider,
-  Input,
-  List,
-  Popover,
-  Space,
-  Table,
-  message,
-} from "antd";
+import { Button, ConfigProvider, Input, List, Space, Table, Tag, message } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import "../../user/project/table.scss";
@@ -20,7 +10,11 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import ModalPickTimeLeader from "./ModalPickTimeLeader";
-import { getAllUser } from "../../../services/api";
+import {
+  getAllUser,
+  getAllUserWithoutCreator,
+  getMembersHasReview,
+} from "../../../services/api";
 import ModalPickTime from "./ModalPickTime";
 const AddMemberApprove = () => {
   const searchInput = useRef(null);
@@ -55,8 +49,9 @@ const AddMemberApprove = () => {
   };
   // check path
   const location = useLocation();
-  let path = location.pathname.split("/");
-  path = path[3];
+  let checkPath = location.pathname.split("/");
+  let path = checkPath[3];
+  let topicID = checkPath[4];
   // search in table
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
@@ -147,6 +142,7 @@ const AddMemberApprove = () => {
         text
       ),
   });
+  const isCouncil = path === "add-council" ? true : false;
   const columns = [
     {
       title: "Tên",
@@ -154,7 +150,6 @@ const AddMemberApprove = () => {
       ...getColumnSearchProps("fullName"),
       sorter: (a, b) => a.fullName.length - b.fullName.length,
     },
-
     {
       title: "Chức vụ",
       dataIndex: "position",
@@ -176,6 +171,7 @@ const AddMemberApprove = () => {
           )}
         </Space>
       ),
+      width: "21%",
     },
     {
       title: "Số điện thoại",
@@ -191,6 +187,21 @@ const AddMemberApprove = () => {
           )}
         </Space>
       ),
+    },
+    {
+      title: "Phê duyệt",
+      dataIndex: "isDuplicate",
+      key: "isDuplicate",
+      sorter: (a, b) =>
+        a.isDuplicate === b.isDuplicate ? 0 : a.isDuplicate ? -1 : 1,
+      render: (text, record) => {
+        if (isCouncil) {
+          const color = record.isDuplicate ? "green" : "red";
+          const status = record.isDuplicate ? "Đã tham gia" : "Chưa tham gia";
+          return <Tag color={color}>{status}</Tag>;
+        }
+        return null;
+      },
     },
     {
       title: "",
@@ -209,16 +220,51 @@ const AddMemberApprove = () => {
       ),
     },
   ];
+
+  const mergeArrays = (arr1, arr2) => {
+    // Duyệt qua từng phần tử của mảng 2
+    const resultArray = arr2.map((item2) => {
+      // Kiểm tra xem phần tử có tồn tại trong mảng 1 không
+      const isDuplicate = arr1.some((item1) => item1.id === item2.id);
+      // Trả về phần tử kèm thuộc tính isDuplicate
+      return { ...item2, isDuplicate };
+    });
+
+    return resultArray;
+  };
+
   const getUserAPI = async () => {
     try {
-      const res = await getAllUser();
+      const res = await getAllUserWithoutCreator({
+        topicId: topicID,
+      });
       setIsLoading(true);
       if (res && res?.data) {
-        const dataKey = res.data.map((item) => ({
+        let dataKey1 = res.data.map((item) => ({
           ...item,
           key: item.id,
         }));
-        setUser(dataKey);
+        if (isCouncil) {
+          try {
+            const res = await getMembersHasReview({
+              topicId: topicID,
+            });
+            setIsLoading(true);
+            if (res && res?.data) {
+              const dataKey = res.data.map((item) => ({
+                ...item,
+                key: item.id,
+              }));
+              const mergeArray = mergeArrays(dataKey, dataKey1);
+              setUser(mergeArray);
+              setIsLoading(false);
+            }
+          } catch (error) {
+            console.error("Error fetching get user:", error);
+          }
+        } else {
+          setUser(dataKey1);
+        }
         setIsLoading(false);
       }
     } catch (error) {
@@ -232,7 +278,6 @@ const AddMemberApprove = () => {
     if (current === 1 && newData.length > 1) setUser(newData);
   }, [current]);
   const navigate = useNavigate();
-
   // hide email and phone munber
   const maskEmail = (accountEmail) => {
     const [username, domain] = accountEmail.split("@");
@@ -300,7 +345,7 @@ const AddMemberApprove = () => {
         shape="round"
         type="primary"
         danger
-        onClick={() => navigate("/staff/manager")}
+        onClick={() => navigate(-1)}
         style={{ margin: "0 10px" }}
       >
         Quay về
@@ -323,7 +368,17 @@ const AddMemberApprove = () => {
               shape="round"
               type="primary"
               onClick={() => {
-                setIsModalOpen(true);
+                const hasJoinedParticipant = selectedUser.some(
+                  (row) => row.isDuplicate
+                );
+                if (!hasJoinedParticipant ) {
+                  message.error(
+                    "Vui lòng chọn một người đã từng phê duyệt đề tài."
+                  );
+                  return;
+                } else {
+                  setIsModalOpen(true);
+                }
               }}
             >
               Thêm thành viên đánh giá
@@ -348,18 +403,8 @@ const AddMemberApprove = () => {
       </ConfigProvider>
     </div>
   );
-  const listUser = (
-    <div>
-      <List
-        bordered
-        dataSource={selectedUser}
-        renderItem={(selectedUser) => (
-          <List.Item>
-            {selectedUser.fullName} - {selectedUser.position}
-          </List.Item>
-        )}
-      />
-    </div>
+  const filteredColumns = columns.filter(
+    (column) => isCouncil || column.dataIndex !== "isDuplicate"
   );
   return (
     <div>
@@ -407,13 +452,6 @@ const AddMemberApprove = () => {
         )}
       </div>
 
-      <span
-        style={{
-          marginLeft: 8,
-        }}
-      >
-        {" "}
-      </span>
       <div>
         <Table
           rowClassName={(record, index) =>
@@ -423,8 +461,11 @@ const AddMemberApprove = () => {
           rowSelection={{
             ...rowSelection,
           }}
-          columns={columns}
+          scroll={{
+            y: 340,
+          }}
           dataSource={showFullData ? user : maskedData}
+          columns={filteredColumns}
           onChange={onChange}
           pagination={{
             current: current,

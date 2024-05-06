@@ -10,11 +10,10 @@ const ModalInforMeeting = (props) => {
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
   const topicId = props.data.topicId;
-  const userId = "3d0b8c68-5e1f-46d6-96a4-71b0229a1e95";
+  const userId = "7dc9eb1d-3b80-434b-9b7e-85dd78e5011d";
   const handleCancel = () => {
     props.setIsModalOpen(false);
   };
-  console.log("day la props",props);
   const getTopicDetail = async () => {
     try {
       const res = await getInforMeetingForCouncil({
@@ -22,12 +21,6 @@ const ModalInforMeeting = (props) => {
         userId: userId,
       });
       if (res && res.isSuccess) {
-        // setTopicLink(
-        //   res.data.topicFiles.map((item) => ({
-        //     name: item.topicFileName,
-        //     link: item.topicFileLink,
-        //   }))
-        // );
         const data = {
             topicName:res.data.topicName,
             reviewId: res.data.reviewMeetingInfors[0].reviewId,

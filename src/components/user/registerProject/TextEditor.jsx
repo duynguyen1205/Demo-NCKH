@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
@@ -37,18 +37,31 @@ const customStyles = `
     height: 100px; /* Chiều cao mong muốn */
   }
 `;
+
 const TextEditor = ({ value, onChange, placeholder }) => {
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleChange = (content, delta, source, editor) => {
+    const text = editor.getText().trim();
+    if (text.length < 100 || text.length > 1000) {
+      setErrorMessage("Nội dung phải có từ 100 đến 1000 kí tự.");
+    } else {
+      onChange(content);
+      setErrorMessage("");
+    }
+  };
   return (
     <>
-     <style>{customStyles}</style>
+      <style>{customStyles}</style>
       <ReactQuill
         theme="snow"
         value={value || ""}
         modules={modules}
         formats={formats}
-        onChange={onChange}
+        onChange={handleChange}
         placeholder={placeholder}
       />
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
     </>
   );
 };

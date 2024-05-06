@@ -18,8 +18,14 @@ import ProjectForTrack from "./components/user/project/ProjectForTrack.jsx";
 import ResubmitProject from "./components/user/project/ResubmitProject.jsx";
 import ProjectResubmit from "./components/user/project/ProjectResubmit.jsx";
 import ProjectForTrackStaff from "./components/staff/project/ProjectForTrackStaff.jsx";
+import MidtermProject from "./pages/projectMangerStaff/midterm.jsx";
+import UserInformation from "./pages/inforUser/Custom.jsx";
+import ProtectedRoute from "./components/ProtectedRoute/index.jsx";
+import FinaltermProject from "./pages/projectMangerStaff/finalterm.jsx";
+import UserProfile from "./components/user/profile/userProfile.jsx";
+
 const Layout = () => {
-  return <>Main Page</>;
+  return <LoginPage />;
 };
 function App() {
   const router = createBrowserRouter([
@@ -34,15 +40,18 @@ function App() {
     },
     {
       path: "/staff",
-      element: <LayoutStaff />,
-      errorElement: <NotFound />,
+      element: (
+        <ProtectedRoute>
+          <LayoutStaff />
+        </ProtectedRoute>
+      ),
       children: [
         {
           index: true,
           element: <StaffPage />,
         },
         {
-          path: "manager",
+          path: "earlyterm",
           element: <Outlet />,
           children: [
             {
@@ -52,6 +61,34 @@ function App() {
             {
               path: "add-member/:projectId",
               element: <AddMemberApprove />,
+            },
+            {
+              path: "add-council/:projectId",
+              element: <AddMemberApprove />,
+            },
+          ],
+        },
+        {
+          path: "midterm",
+          element: <Outlet />,
+          children: [
+            {
+              index: true,
+              element: <MidtermProject />,
+            },
+            {
+              path: "add-council/:projectId",
+              element: <AddMemberApprove />,
+            },
+          ],
+        },
+        {
+          path: "finalterm",
+          element: <Outlet />,
+          children: [
+            {
+              index: true,
+              element: <FinaltermProject />,
             },
             {
               path: "add-council/:projectId",
@@ -85,7 +122,11 @@ function App() {
     },
     {
       path: "/user",
-      element: <LayoutUser />,
+      element: (
+        <ProtectedRoute>
+          <LayoutUser />
+        </ProtectedRoute>
+      ),
       errorElement: <NotFound />,
       children: [
         {
@@ -127,7 +168,7 @@ function App() {
           ],
         },
         {
-          path: "upload",
+          path: "review",
           element: <Outlet />,
           children: [
             {
@@ -135,14 +176,14 @@ function App() {
               element: <ProjectResubmit />,
             },
             {
-              path: "upload-document/:projectId",
+              path: "review-topic/:projectId",
               element: <ResubmitProject />,
             },
           ],
         },
         {
           path: "profile",
-          element: <>Thông tin cá nhân</>,
+          element: <UserProfile/>,
         },
       ],
     },

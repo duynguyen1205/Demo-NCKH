@@ -7,13 +7,10 @@ import {
 } from "@ant-design/icons";
 import {
   Button,
-  ConfigProvider,
   Input,
-  Popconfirm,
   Space,
   Table,
   Tabs,
-  Tag,
   Tooltip,
   message,
 } from "antd";
@@ -26,17 +23,17 @@ import {
   getTopicUploadContract,
   getTopicUploadDoc,
   getTopicWaitingResubmit,
+  moveToMiddleReport,
 } from "../../../services/api";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import ModalUploadContract from "./ModalUploadContract";
+import { useNavigate } from "react-router-dom";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 const UploadDocument = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [total, setTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [data, setDataUser] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataPro, setDataPro] = useState({});
@@ -45,6 +42,7 @@ const UploadDocument = () => {
   const [dataTopic, setDataTopic] = useState([]);
   const [checkTab, setCheckTab] = useState("confirm");
   const staffId = "2D5E2220-EEEF-4FDC-8C98-1B5C5012319C";
+  const navigate = useNavigate()
   const getTopicUpload = async () => {
     try {
       const res = await getTopicUploadDoc({
@@ -74,6 +72,7 @@ const UploadDocument = () => {
       const res = await getTopicWaitingResubmit({
         staffId: staffId,
       });
+
       if (res && res.isSuccess) {
         setDataTopic(res.data);
       }
@@ -187,17 +186,23 @@ const UploadDocument = () => {
         text
       ),
   });
-  const confirm = (e) => {
-    console.log(e);
-    message.success("Click on Yes");
+  const confirm = async (topicId) => {
+    try {
+      const result = await moveToMiddleReport({
+        topicId: topicId,
+      });
+      if (result && result.statusCode === 200) {
+        message.success("Chuyển sang giai đoạn báo cáo giữa kì thành công");
+        navigate("/staff/midterm");
+      }
+    } catch (error) {
+      console.log("có lỗi tại ", error);
+    }
   };
-  const cancel = (e) => {
-    console.log(e);
-    message.error("Click on No");
-  };
+  const cancel = () => {};
   const columns = [
     {
-      title: "Id",
+      title: "Mã đề tài",
       key: "index",
       dataIndex: "code",
       width: "10%",
@@ -210,9 +215,20 @@ const UploadDocument = () => {
       width: "30%",
     },
     {
-      title: "Lĩnh Vực",
-      dataIndex: "categoryName",
-      key: "categoryName",
+      title: "Giai đoạn",
+      dataIndex: "state",
+      key: "state",
+      render: (text, record, index) => {
+        return (
+          <>
+            {record.state === "EarlytermReport"
+              ? "Đăng kí đề tài"
+              : record.state === "MidtermReport"
+              ? "Báo cáo giữa kì"
+              : "Báo cáo cuối kì"}
+          </>
+        );
+      },
     },
     {
       title: "Ngày tạo",
@@ -258,17 +274,6 @@ const UploadDocument = () => {
                     setIsModalContractOpen(true);
                   }}
                 />
-                <Popconfirm
-                  placement="topRight"
-                  title="Xác nhận"
-                  description="Xác nhận kết thúc giai đoạn này ?"
-                  onConfirm={confirm}
-                  onCancel={cancel}
-                  okText="Đồng ý"
-                  cancelText="Không"
-                >
-                  <CheckOutlined style={{ fontSize: "20px", color: "blue" }} />
-                </Popconfirm>
               </>
             )}
           </div>
@@ -299,7 +304,6 @@ const UploadDocument = () => {
   //search
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -341,7 +345,6 @@ const UploadDocument = () => {
           current: current,
           pageSize: pageSize,
           showSizeChanger: true,
-          total: total,
           pageSizeOptions: ["5", "10", "15"],
           showTotal: (total, range) => {
             return (
@@ -352,7 +355,6 @@ const UploadDocument = () => {
           },
         }}
         title={renderHeader}
-        loading={isLoading}
       />
 
       <ModalUpload
@@ -371,6 +373,7 @@ const UploadDocument = () => {
         setDataUser={setDataUser}
         isModalContractOpen={isModalContractOpen}
         setIsModalContractOpen={setIsModalContractOpen}
+        confirm = {confirm}
       />
     </div>
   );

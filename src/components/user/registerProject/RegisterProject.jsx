@@ -28,24 +28,22 @@ import {
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import ModalAddMember from "./ModalAddMember";
-import {
-  createTopicAPI,
-  getAllCategory,
-  getAllUser,
-  uploadFile,
-} from "../../../services/api";
+import { getAllCategory, getAllUser, uploadFile } from "../../../services/api";
 import "./register.scss";
-import { useNavigate } from "react-router-dom";
+import ModalConfirm from "./ModalConfirm";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
-const today = dayjs();
+const today = dayjs().add(1, "day");
 const RegisterProject = () => {
   const [open, setOpen] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const [category, setCategory] = useState([]);
   const [listUser, setListUser] = useState([]);
-  const [newTopicFiles, setFileList] = useState([]);
+  const [newTopicFiles, setFileList] = useState({});
   const [addMember, setAddMember] = useState([]);
-  const navigate = useNavigate();
+  const [data, setData] = useState({});
+  const [error, setError] = useState(null);
+  const userId = localStorage.getItem("userId");
   const showUserModal = () => {
     setOpen(true);
   };
@@ -66,53 +64,61 @@ const RegisterProject = () => {
       />
     </div>
   );
-
   const selectAfter = (
     <Select
       defaultValue={"VND"}
       style={{
-        width: 100,
+        width: 104,
       }}
     >
-      <Option value="VND">VND</Option>
+      <Option value="VND">triệu VND</Option>
     </Select>
   );
   const [form] = Form.useForm();
   //props của upload
   const props = {
     name: "file",
-    multiple: true,
+    multiple: false,
+    maxCount: 1,
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
         // Thực hiện tải lên file thông qua API của bạn
+        const isCompressedFile =
+          file.type === "application/x-rar-compressed" ||
+          file.type === "application/x-zip-compressed" ||
+          file.type === "application/x-compressed";
+        if (!isCompressedFile) {
+          message.error(
+            "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
+          );
+          setError("Chỉ được phép tải lên các file đã nén (zip hoặc rar)!");
+          onError(file);
+          return;
+        }
         const response = await uploadFile(file);
-        if (response.data[0].fileLink === null) {
+        if (response.data.fileLink === null) {
           onError(response, file);
-          message.error(`${file.name} file uploaded unsuccessfully.`);
+          message.error(`${file.name} không tải lên thành công.`);
         } else {
-          setFileList((fileList) => [
-            ...fileList,
-            {
-              uid: file.uid,
-              fileName: response.data[0].fileName,
-              fileLink: response.data[0].fileLink,
-            },
-          ]);
+          setFileList({
+            fileName: response.data.fileName,
+            fileLink: response.data.fileLink,
+          });
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
-          message.success(`${file.name} file uploaded successfully.`);
+          message.success(`${file.name} tải lên thành công.`);
         }
       } catch (error) {
         // Gọi onError để thông báo lỗi nếu có vấn đề khi tải lên
         onError(error);
         // Hiển thị thông báo lỗi
-        message.error(`${file.name} file upload failed.`);
+        message.error(`${file.name} không tải lên thành công.`);
       }
     },
     onRemove: (file) => {
-      const fileFilter = newTopicFiles.filter((x) => x.uid !== file.uid);
-      setFileList(fileFilter);
+      setFileList([]);
+      setError(null);
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -125,7 +131,9 @@ const RegisterProject = () => {
     }
   };
   const getUser = async () => {
-    const res = await getAllUser();
+    const res = await getAllUser({
+      userId: userId,
+    });
     if (res && res?.data) {
       setListUser(res?.data);
     }
@@ -148,9 +156,12 @@ const RegisterProject = () => {
       newItem.role = Number(newItem.role);
       return newItem;
     });
-    const creatorId = "a813f937-8c3a-40e8-b39e-7b1e0dd962f7"; // Ngô Minh G
+    const creatorId = userId;
+    if (Object.values(newTopicFiles).length === 0) {
+      message.error("Xin hãy tải các tài liệu liên quan lên");
+      return;
+    }
     const { categoryId, topicName, description, budget, startTime } = values;
-    const updatedFileFilter = newTopicFiles.map(({ uid, ...rest }) => rest);
     const data = {
       categoryId: categoryId,
       creatorId: creatorId,
@@ -158,20 +169,13 @@ const RegisterProject = () => {
       description: description,
       budget: budget.toString(),
       memberList: newData,
-      newTopicFiles: updatedFileFilter,
-      startTime: dayjs(startTime).utc().format(),
+      topicFileName: newTopicFiles.fileName,
+      topicFileLink: newTopicFiles.fileLink,
+      startTime: dayjs(startTime).local().format(),
     };
-    try {
-      const res = await createTopicAPI(data);
-      if (res && res.isSuccess) {
-        message.success("Tạo topic thành công");
-        setFileList([]);
-        setAddMember([]);
-        form.resetFields();
-        navigate("/user/track");
-      }
-    } catch (error) {
-      console.error("lỗi thêm mới topic", error.message);
+    if (data !== null) {
+      setOpenConfirm(true);
+      setData(data);
     }
   };
   const checkUser = addMember.length > 0;
@@ -196,12 +200,13 @@ const RegisterProject = () => {
               rules={[
                 {
                   required: true,
-                  message: "Xin hãy nhập tên đề tài",
+                  message:
+                    "Xin hãy nhập tên đề tài ( tối thiểu 10 kí tự, tối đa 100 kí tự )",
                 },
               ]}
               labelCol={{ span: 24 }}
             >
-              <Input />
+              <Input minLength={"10"} maxLength={"100"} />
             </Form.Item>
           </Col>
           <Col span={24}>
@@ -211,7 +216,8 @@ const RegisterProject = () => {
               rules={[
                 {
                   required: true,
-                  message: "Xin hãy nhập tóm tắt nội dung đề tài",
+                  message:
+                    "Xin hãy nhập tóm tắt nội dung đề tài ( tối thiểu 10 kí tự, tối đa 1000 kí tự )",
                 },
               ]}
               labelCol={{ span: 24 }}
@@ -302,7 +308,11 @@ const RegisterProject = () => {
                 },
               ]}
             >
-              <DatePicker format={dateFormat} minDate={today} />
+              <DatePicker
+                format={dateFormat}
+                minDate={today}
+                placeholder="Chọn ngày"
+              />
             </Form.Item>
           </Col>
           <Col span={24}>
@@ -380,6 +390,7 @@ const RegisterProject = () => {
           </Col>
           <Col span={24}>
             <h3>Đính kèm tài liệu liên quan</h3>
+            <p>Chỉ hỗ trợ cái file như zip hoặc rar</p>
             <Form.Item
               labelCol={{
                 span: 12,
@@ -392,6 +403,7 @@ const RegisterProject = () => {
               >
                 <Button icon={<InboxOutlined />}>Tải tài liệu lên</Button>
               </Upload>
+              {error && <p style={{ color: "red" }}>{error}</p>}
             </Form.Item>
             <Form.Item>
               <ConfigProvider
@@ -424,6 +436,16 @@ const RegisterProject = () => {
         open={open}
         onCancel={hideUserModal}
         data={listUser}
+        setAddMember={setAddMember}
+      />
+      {/*Modal xác nhận cuối cùng*/}
+      <ModalConfirm
+        data={data}
+        setData={setData}
+        openConfirm={openConfirm}
+        setOpen={setOpenConfirm}
+        form={form}
+        setFileList={setFileList}
         setAddMember={setAddMember}
       />
     </>

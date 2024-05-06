@@ -5,10 +5,22 @@ const instance = axios.create({
   baseURL: baseURL,
 });
 
+instance.defaults.headers.common = {
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+};
 // Add a request interceptor
 instance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    if (
+      typeof window !== "undefined" &&
+      window &&
+      window.localStorage &&
+      window.localStorage.getItem("token")
+    ) {
+      config.headers.Authorization =
+        "Bearer " + window.localStorage.getItem("token");
+    }
     return config;
   },
   function (error) {

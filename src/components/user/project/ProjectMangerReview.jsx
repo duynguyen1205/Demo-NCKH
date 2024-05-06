@@ -4,36 +4,26 @@ import {
   InfoCircleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, ConfigProvider, Input, Space, Table, Tabs } from "antd";
+import { Button, Tag, Input, Space, Table, Tabs } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "../../staff/project/project.scss";
-import { useNavigate } from "react-router-dom";
 import ModalInfor from "./ModalInfor";
 import "./table.scss";
-import ModalReject from "./ModalReject";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
-import {
-  createDeanMakeDecesion,
-  getTopicForDean,
-  viewDeanDecesion,
-} from "../../../services/api";
-// import ModalInfor from "../../modalInfor.jsx";
+import { getTopicForDean, viewDeanDecesion } from "../../../services/api";
 const ProjectManagerUserReview = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [total, setTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalRejOpen, setIsModalRejOpen] = useState(false);
   const [data, setDataUser] = useState({});
-  const [dataPro, setDataPro] = useState({});
   const [status, setStatus] = useState(false);
   const [dataTopicForDean, setdataTopicForDean] = useState([]);
   const [currentTab, setCurrentTab] = useState("notpassyet");
+  const userId = localStorage.getItem("userId");
   const items = [
     {
       key: "notpassyet",
@@ -135,28 +125,9 @@ const ProjectManagerUserReview = () => {
         text
       ),
   });
-  const handleOnClickApprove = (id) => {
-    const param = {
-      diciderId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87",
-      topicId: id,
-      deanDecision: true,
-      rejectReason: null,
-    };
-    createDeanMakeDecesion(param)
-      .then((data) => {
-        if (status === true) {
-          setStatus(false);
-        } else {
-          setStatus(true);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const columns = [
     {
-      title: "ID",
+      title: "Mã đề tài",
       key: "topicId",
       dataIndex: "code",
       width: "10%",
@@ -188,59 +159,31 @@ const ProjectManagerUserReview = () => {
           fontSize: "1.5em",
           cursor: "pointer",
         };
-        const style2 = {
-          color: "green",
-          fontSize: "1.5em",
-          margin: "0 20px",
-          cursor: "pointer",
-        };
-        const style3 = {
-          color: "red",
-          fontSize: "1.5em",
-          cursor: "pointer",
-        };
+        const color = record.deanDecision ? "green" : "red";
+        const status = record.deanDecision ? "Đồng ý" : "Từ chối";
         return (
           <div style={{ textAlign: "center" }}>
-                <InfoCircleOutlined
-                  style={style1}
-                  onClick={() => {
-                    setIsModalOpen(true);
-                    setDataUser(record);
-                  }}
-                />
-              {currentTab == "passed" &&
-                dataTopicForDean &&
-                dataTopicForDean.length > 0 && (
-                  <>
-                    <p
-                      style={{
-                        backgroundColor: record.deanDecision ? "green" : "red",
-                        color: "white",
-                        display: "inline-block",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        marginTop: "8px",
-                        margin: "0 10px",
-                      }}
-                    >
-                      {record.deanDecision ? "Đồng ý" : "Từ chối"}
-                    </p>
-                  </>
-                )}
-
-              {currentTab == "notpassyet" && (
+            <InfoCircleOutlined
+              style={style1}
+              onClick={() => {
+                setIsModalOpen(true);
+                setDataUser(record);
+              }}
+            />
+            {currentTab == "passed" &&
+              dataTopicForDean &&
+              dataTopicForDean.length > 0 && (
                 <>
-                  <CheckOutlined
-                    onClick={() => handleOnClickApprove(record.topicId)}
-                    style={style2}
-                  />
-                  <CloseOutlined
-                    style={style3}
-                    onClick={() => {
-                      setDataPro(record);
-                      setIsModalRejOpen(true);
+                  <Tag
+                    style={{
+                      marginLeft: "10px",
+                      fontSize: "13px",
+                      padding: "5px 8px",
                     }}
-                  />
+                    color={color}
+                  >
+                    {status}
+                  </Tag>
                 </>
               )}
           </div>
@@ -251,7 +194,7 @@ const ProjectManagerUserReview = () => {
   ];
   const getTopicForDeanAPI = async () => {
     const res = await getTopicForDean({
-      deanId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87", // Nguyen Van A
+      deanId: userId,
     });
     if (res && res?.data) {
       setdataTopicForDean(res.data);
@@ -259,7 +202,7 @@ const ProjectManagerUserReview = () => {
   };
   const getTopicHadReviewed = async () => {
     const res = await viewDeanDecesion({
-      deanId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87", // Nguyen Van A
+      deanId: userId,
     });
     if (res && res?.data) {
       setdataTopicForDean(res.data);
@@ -327,7 +270,6 @@ const ProjectManagerUserReview = () => {
           current: current,
           pageSize: pageSize,
           showSizeChanger: true,
-          total: total,
           pageSizeOptions: ["5", "10", "15"],
           showTotal: (total, range) => {
             return (
@@ -338,19 +280,13 @@ const ProjectManagerUserReview = () => {
           },
         }}
         title={renderHeader}
-        loading={isLoading}
       />
       <ModalInfor
+        currentTab={currentTab}
         data={data}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-      />
-      <ModalReject
-        userId = "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87"
-        data={dataPro}
-        isModalRejOpen={isModalRejOpen}
-        setIsModalRejOpen={setIsModalRejOpen}
-        status = {status}
+        status={status}
         setStatus={setStatus}
       />
     </div>

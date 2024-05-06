@@ -1,23 +1,19 @@
 import {
-  CheckOutlined,
-  CloseOutlined,
   InfoCircleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, ConfigProvider, Input, Space, Table, Tabs } from "antd";
+import { Button, Input, Space, Table, Tabs, Tag, ConfigProvider  } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "../../staff/project/project.scss";
-import { useNavigate } from "react-router-dom";
 import ModalInfor from "./ModalInfor";
 import "./table.scss";
-import ModalReject from "./ModalReject";
 // sơ duyệt
 import {
   getTopicReviewerAPI,
-  createMemberDecision,
   getReviewedByMember,
 } from "../../../services/api";
+import viVN from 'antd/lib/locale/vi_VN';
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -26,20 +22,18 @@ const dateFormat = "DD/MM/YYYY";
 const ProjectManagerUser = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalRejOpen, setIsModalRejOpen] = useState(false);
   const [data, setDataUser] = useState({});
-  const [dataPro, setDataPro] = useState({});
   const [status, setStatus] = useState(false);
-  const [activeTab, setActiveTab] = useState("notyet");
+  const [activeTab, setActiveTab] = useState("notpassyet");
   const [dataTopicForMember, setdataTopicForMember] = useState([]);
+  const userId = localStorage.getItem("userId");
   useEffect(() => {
     getTopicReviewer();
   }, [status]);
   const items = [
     {
-      key: "notyet",
+      key: "notpassyet",
       label: `Chưa duyệt`,
       children: <></>,
     },
@@ -52,7 +46,7 @@ const ProjectManagerUser = () => {
   const getTopicReviewer = async () => {
     try {
       const res = await getTopicReviewerAPI({
-        memberId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87", // Nguyen Van A
+        memberId: userId, // Nguyen Van A
       });
       if (res && res?.data) {
         setdataTopicForMember(res.data);
@@ -66,7 +60,7 @@ const ProjectManagerUser = () => {
   const getTopicHadReviwed = async () => {
     try {
       const res = await getReviewedByMember({
-        memberId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87", // Nguyen Van A
+        memberId: userId, // Nguyen Van A
       });
       if (res && res?.data) {
         setdataTopicForMember(res.data);
@@ -166,28 +160,9 @@ const ProjectManagerUser = () => {
         text
       ),
   });
-  const handleOnClickApprove = (id) => {
-    const param = {
-      memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
-      topicId: id,
-      isApproved: true,
-      reason: null,
-    };
-    createMemberDecision(param)
-      .then((data) => {
-        if (data) {
-          setStatus(true);
-        } else {
-          setStatus(false);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const columns = [
     {
-      title: "ID",
+      title: "STT",
       key: "index",
       render: (text, record, index) => index + 1,
       color: "red",
@@ -220,17 +195,8 @@ const ProjectManagerUser = () => {
           fontSize: "1.5em",
           cursor: "pointer",
         };
-        const style2 = {
-          color: "green",
-          fontSize: "1.5em",
-          margin: "0 10px",
-          cursor: "pointer",
-        };
-        const style3 = {
-          color: "red",
-          fontSize: "1.5em",
-          cursor: "pointer",
-        };
+        const color = record.memberDecision ? "green" : "red";
+        const status = record.memberDecision ? "Đồng ý" : "Từ chối";
         return (
           <div style={{ textAlign: "center" }}>
             <InfoCircleOutlined
@@ -240,37 +206,18 @@ const ProjectManagerUser = () => {
                 setDataUser(record);
               }}
             />
-            {activeTab === "notyet" && (
-              <>
-                {" "}
-                <CheckOutlined
-                  onClick={() => handleOnClickApprove(record.topicId)}
-                  style={style2}
-                />
-                <CloseOutlined
-                  style={style3}
-                  onClick={() => {
-                    setDataPro(record);
-                    setIsModalRejOpen(true);
-                  }}
-                />
-              </>
-            )}
             {activeTab === "done" && (
               <>
-                <p
+                <Tag
                   style={{
-                    backgroundColor: record.memberDecision ? "green" : "red",
-                    color: "white",
-                    display: "inline-block",
-                    padding: "5px 10px",
-                    borderRadius: "5px",
-                    marginTop: "8px",
-                    margin: "0 10px",
+                    marginLeft: "10px",
+                    fontSize: "13px",
+                    padding: "5px 8px",
                   }}
+                  color={color}
                 >
-                  {record.memberDecision ? "Đồng ý" : "Từ chối"}
-                </p>
+                  {status}
+                </Tag>
               </>
             )}
           </div>
@@ -320,11 +267,15 @@ const ProjectManagerUser = () => {
     }
     console.log("parms: ", pagination, filters, sorter, extra);
   };
+  const customLocale = {
+    emptyText: 'Không có dữ liệu',
+  };
   return (
     <div>
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
         Danh sách đề tài chờ sơ duyệt
       </h2>
+      <ConfigProvider locale={viVN}>
       <Table
         rowClassName={(record, index) =>
           index % 2 === 0 ? "table-row-light" : "table-row-dark"
@@ -334,6 +285,7 @@ const ProjectManagerUser = () => {
         dataSource={dataTopicForMember}
         onChange={onChange}
         rowKey={"_id"}
+        {...customLocale}
         pagination={{
           current: current,
           pageSize: pageSize,
@@ -348,18 +300,13 @@ const ProjectManagerUser = () => {
           },
         }}
         title={renderHeader}
-        loading={isLoading}
       />
+      </ConfigProvider>
       <ModalInfor
+        currentTab={activeTab}
         data={data}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-      />
-      <ModalReject
-        userId="31C63D57-EEB2-4E03-BC8D-1689D5FB3D87"
-        data={dataPro}
-        isModalRejOpen={isModalRejOpen}
-        setIsModalRejOpen={setIsModalRejOpen}
         status={status}
         setStatus={setStatus}
       />

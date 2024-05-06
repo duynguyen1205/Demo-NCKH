@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Checkbox,
   Col,
   ConfigProvider,
   Divider,
   Form,
-  Input,
   Modal,
   Row,
   Upload,
   message,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { uploadContract, uploadFile } from "../../../services/api";
+import {
+  getContractType,
+  uploadContract,
+  uploadFile,
+} from "../../../services/api";
 import { useNavigate } from "react-router-dom";
-
 const ModalUploadContract = (props) => {
   const isModalOpen = props.isModalContractOpen;
+  const data = props.data;
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
-  const [newTopicFiles, setFileList] = useState([]);
-  const data = props.data;
-  const navigate = useNavigate()
+  const [newTopicFiles, setFileList] = useState({});
+  const [checkedList, setCheckedList] = useState([]);
+  const [plainOptions, setPlainOptions] = useState([]);
+  const navigate = useNavigate();
+  const onChange = (list) => {
+    setCheckedList(list);
+  };
+
   const handleOk = () => {
     form.submit();
   };
@@ -31,29 +40,45 @@ const ModalUploadContract = (props) => {
     setFileList([]);
     form.resetFields();
   };
+  const getTopicType = async () => {
+    try {
+      const res = await getContractType({
+        contractTypeSateNumber: 0,
+      });
+      if (res && res.isSuccess) {
+        const newOptions = res.data.map((item) => ({
+          value: item.typeName,
+        }));
+        setPlainOptions(newOptions);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log(error);
+      console.log("====================================");
+    }
+  };
 
-  const onSubmit = async (values) => { 
-    if(newTopicFiles.length <= 0) {
+  const onSubmit = async () => {
+    if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải biên bản cuộc họp lên");
       return;
     }
     const param = {
       topicId: data.topicId,
-      newFiles: newTopicFiles,
-    }
-    console.log(param)
+      contractName: newTopicFiles.fileName,
+      contractLink: newTopicFiles.fileLink,
+    };
     try {
       const res = await uploadContract(param);
       setIsSubmit(true);
-      if(res && res.message) {
+      if (res && res.message) {
         setIsSubmit(false);
-        message.success("Tải hợp đồng lên thành công");
-        navigate("/staff")
+        props.confirm(data.topicId);
       }
     } catch (error) {
-      console.log('====================================');
+      console.log("====================================");
       console.log("có lỗi tại upload result", error.message);
-      console.log('====================================');
+      console.log("====================================");
     }
   };
   const propsUpload = {
@@ -61,35 +86,42 @@ const ModalUploadContract = (props) => {
     multiple: true,
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
+        const isCompressedFile =
+          file.type === "application/x-rar-compressed" ||
+          file.type === "application/x-zip-compressed";
+        if (!isCompressedFile) {
+          message.error(
+            "Chỉ được phép tải lên các file đã nén (zip hoặc rar)!"
+          );
+          onError(file);
+          return;
+        }
         // Thực hiện tải lên file thông qua API của bạn
         const response = await uploadFile(file);
-        if (response.data[0].fileLink === null) {
+        if (response.data.fileLink === null) {
           onError(response, file);
-          message.error(`${file.name} file uploaded unsuccessfully.`);
+          message.error(`${file.name} file tải lên không thành công.`);
         } else {
-          setFileList((fileList) => [
-            ...fileList,
-            {
-              uid: file.uid,
-              fileName: response.data[0].fileName,
-              fileLink: response.data[0].fileLink,
-            },
-          ]);
+          setFileList({
+            fileName: response.data.fileName,
+            fileLink: response.data.fileLink,
+          });
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
-          message.success(`${file.name} file uploaded successfully.`);
+          message.success(`${file.name} file tải lên thành công.`);
         }
       } catch (error) {
         // Gọi onError để thông báo lỗi nếu có vấn đề khi tải lên
         onError(error);
         // Hiển thị thông báo lỗi
-        message.error(`${file.name} file upload failed.`);
+        message.error(
+          `${file.name} file tải lên thất bại vui lòng thử lại sau.`
+        );
       }
     },
     onRemove: (file) => {
-      const fileFilter = newTopicFiles.filter((x) => x.uid !== file.uid);
-      setFileList(fileFilter);
+      setFileList([]);
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -98,7 +130,7 @@ const ModalUploadContract = (props) => {
 
   // set up initial value for the form
   useEffect(() => {
-    form.setFieldsValue(data);
+    getTopicType();
   }, [data]);
   return (
     <>
@@ -121,41 +153,45 @@ const ModalUploadContract = (props) => {
               },
             }}
           >
-            <Button type="primary" onClick={handleOk}>
+            <Button
+              key="send"
+              type="primary"
+              onClick={handleOk}
+              disabled={
+                plainOptions.length === checkedList.length ? false : true
+              }
+            >
               Gửi
             </Button>
           </ConfigProvider>,
         ]}
       >
         <Divider />
-        <Form form={form} name="basic" onFinish={onSubmit}>
+        <Form form={form} name="basic12" onFinish={onSubmit} className="fomr">
           <Row gutter={20}>
-            <Col span={12}>
-              <Form.Item name="code" label="ID đề tài" labelCol={{ span: 24 }}>
-                <Input disabled />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="topicName"
-                label="Tên đề tài"
-                labelCol={{ span: 24 }}
-              >
-                <Input disabled />
-              </Form.Item>
-            </Col>
             <Col span={24}>
-              <Form.Item
-                name="comment"
-                label="Hợp đồng"
-                labelCol={{ span: 24 }}
+              <h3>Hợp đồng đính kèm:</h3>
+              <Checkbox.Group
+                style={{ display: "flex", flexDirection: "column" }}
+                value={checkedList}
+                onChange={onChange}
+                disabled={Object.values(newTopicFiles).length === 0 ? true : false}
               >
-                <Upload {...propsUpload}>
-                  <Button icon={<UploadOutlined />}>
-                    Ấn vào để tải hợp đồng lên
-                  </Button>
-                </Upload>
-              </Form.Item>
+                {plainOptions.map((option) => (
+                  <Checkbox key={option.value} value={option.value}>
+                    {option.value}
+                  </Checkbox>
+                ))}
+              </Checkbox.Group>
+              <Divider />
+              <p>Chỉ hỗ trợ cái file như zip hoặc rar</p>
+              <Upload {...propsUpload}>
+                <Button
+                  icon={<UploadOutlined />}
+                >
+                  Tải hợp đồng lên
+                </Button>
+              </Upload>
             </Col>
           </Row>
         </Form>

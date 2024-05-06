@@ -1,6 +1,9 @@
 import {
+  CalendarOutlined,
   FileDoneOutlined,
+  FlagOutlined,
   HomeOutlined,
+  HourglassOutlined,
   UnorderedListOutlined,
   UploadOutlined,
   UserOutlined,
@@ -19,6 +22,7 @@ import React, { useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import "./staff.scss";
 import logo from "../../assets/logoBV.png";
+import { jwtDecode } from "jwt-decode";
 const { Header, Content, Sider } = Layout;
 const items = [
   {
@@ -27,9 +31,26 @@ const items = [
     icon: <HomeOutlined />,
   },
   {
-    label: <Link to="/staff/manager">Quản lý</Link>,
+    label: <span>Quản lý đề tài</span>,
     key: "manager",
     icon: <UnorderedListOutlined />,
+    children: [
+      {
+        label: <Link to="/staff/earlyterm">Đầu kì</Link>,
+        key: "earlyterm",
+        icon: <CalendarOutlined />,
+      },
+      {
+        label: <Link to="/staff/midterm">Giữa kì</Link>,
+        key: "midterm",
+        icon: <HourglassOutlined />,
+      },
+      {
+        label: <Link to="/staff/finalterm">Cuối kì</Link>,
+        key: "finalterm",
+        icon: <FlagOutlined />,
+      },
+    ],
   },
   {
     label: <Link to="/staff/upload-document">Tải tài liệu lên </Link>,
@@ -39,7 +60,7 @@ const items = [
   {
     label: <Link to="/staff/track">Theo dõi tiến độ</Link>,
     key: "track",
-    icon: <FileDoneOutlined  />,
+    icon: <FileDoneOutlined />,
   },
   {
     label: <Link to="/staff/profile">Hồ sơ cá nhân</Link>,
@@ -55,23 +76,25 @@ const LayoutStaff = () => {
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const navigate = useNavigate();
   const handleLogout = async () => {
-    message.success("Logged out successfully");
+    message.success("Đăng xuất thành công");
     navigate("/login");
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
   };
-
+  const name = jwtDecode(localStorage.getItem("token")).role;
   const itemDropdown = [
     {
       label: <label>Account Manager</label>,
       key: "account",
     },
     {
-      label: <a href="/">Home Page</a>,
+      label: <a href="/">Trang chủ</a>,
       key: "homepage",
     },
     {
       label: (
         <label style={{ cursor: "pointer" }} onClick={() => handleLogout()}>
-          Log out
+          Đăng xuất
         </label>
       ),
       key: "logout",
@@ -130,7 +153,7 @@ const LayoutStaff = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <p>Duy Nguyễn</p>
+                  <p>{name}</p>
                   <Avatar />
                 </Space>
               </a>

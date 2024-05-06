@@ -1,10 +1,14 @@
 import {
+  CalendarOutlined,
   CheckOutlined,
   CloudUploadOutlined,
   ContactsOutlined,
   FileDoneOutlined,
   FileProtectOutlined,
+  FileTextOutlined,
+  ScheduleOutlined,
   SolutionOutlined,
+  UploadOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
@@ -12,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { Collapse, Spin, Space, Steps, Button } from "antd";
 import "./track.scss";
 import { useLocation, useNavigate } from "react-router-dom";
-import {trackReseach } from "../../../services/api";
+import { trackReseach } from "../../../services/api";
 
 const TrackProjectStaff = () => {
   const navigate = useNavigate();
@@ -41,6 +45,11 @@ const TrackProjectStaff = () => {
       });
       if (res && res.isSuccess) {
         setDataProcess(res.data);
+        if(res.data?.state === "MidtermReport") {
+          setCurrentStep(2)
+        } else if (res.data?.state === "FinaltermReport") {
+          setCurrentStep(3)
+        }
       }
     } catch (error) {
       console.log("====================================");
@@ -83,16 +92,30 @@ const TrackProjectStaff = () => {
                         icon: <FileProtectOutlined />,
                       },
                       {
-                        title: "Trưởng khoa duyệt",
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForDean === "Accept"
+                            ? "Trưởng khoa đã duyệt"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "Trưởng khoa đã từ chối"
+                            : "Trưởng khoa duyệt",
                         status:
                           dataProcess?.preliminaryReviewProcess
                             ?.waitingForDean === "Accept"
                             ? "finished"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "error"
                             : "wait",
                         icon: <SolutionOutlined />,
                       },
                       {
-                        title: "Staff thêm thành viên sơ duyệt",
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "Staff đã thêm thành viên sơ duyệt"
+                            : "Staff thêm thành viên sơ duyệt",
                         status:
                           dataProcess?.preliminaryReviewProcess
                             ?.waitingForCouncilFormation === "Done"
@@ -101,7 +124,11 @@ const TrackProjectStaff = () => {
                         icon: <UserAddOutlined />,
                       },
                       {
-                        title: "Thành viên sơ duyệt đánh giá",
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "Thông qua"
+                            : "Thành viên sơ duyệt đánh giá",
                         status:
                           dataProcess?.preliminaryReviewProcess
                             ?.waitingForCouncilDecision === "Accept"
@@ -110,7 +137,11 @@ const TrackProjectStaff = () => {
                         icon: <FileDoneOutlined />,
                       },
                       {
-                        title: "Staff tạo hội đồng đánh giá",
+                        title:
+                          dataProcess?.earlyTermReportProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "Staff đã tạo hội đồng đánh giá"
+                            : "Staff tạo hội đồng đánh giá",
                         status:
                           dataProcess?.earlyTermReportProcess
                             ?.waitingForCouncilFormation === "Done"
@@ -127,6 +158,16 @@ const TrackProjectStaff = () => {
                             : "wait",
                         icon: <CloudUploadOutlined />,
                       },
+                      // nếu resubmit thì mới hiện
+                      // {
+                      //   title: "Staff tải hợp đồng lên",
+                      //   status:
+                      //     dataProcess?.earlyTermReportProcess
+                      //       ?.waitingForContractSigning === "Accept"
+                      //       ? "finished"
+                      //       : "wait",
+                      //   icon: <ContactsOutlined />,
+                      // },
                       {
                         title: "Staff tải hợp đồng lên",
                         status:
@@ -148,9 +189,69 @@ const TrackProjectStaff = () => {
           collapsible={isCollapseDisabled(2)}
           items={[
             {
-              key: "2",
+              key: "1",
               label: "Báo cáo giữa kì",
-
+              children: (
+                <>
+                  <p>Trạng thái: </p>
+                  <Steps
+                    size="small"
+                    labelPlacement="vertical"
+                    items={[
+                      {
+                        title: "Nộp đề tài",
+                        status: "finished",
+                        icon: <ScheduleOutlined />,
+                      },
+                      {
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForDean === "Accept"
+                            ? "Trưởng khoa đã duyệt"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "Trưởng khoa đã từ chối"
+                            : "Trưởng khoa duyệt",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForDean === "Accept"
+                            ? "finished"
+                            : dataProcess?.preliminaryReviewProcess
+                                ?.waitingForDean === "Reject"
+                            ? "error"
+                            : "wait",
+                        icon: <FileTextOutlined />,
+                      },
+                      {
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "Staff đã thêm thành viên sơ duyệt"
+                            : "Staff thêm thành viên sơ duyệt",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilFormation === "Done"
+                            ? "finished"
+                            : "wait",
+                        icon: <CalendarOutlined />,
+                      },
+                      {
+                        title:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "Thông qua"
+                            : "Thành viên sơ duyệt đánh giá",
+                        status:
+                          dataProcess?.preliminaryReviewProcess
+                            ?.waitingForCouncilDecision === "Accept"
+                            ? "finished"
+                            : "wait",
+                        icon: <UploadOutlined />,
+                      }
+                    ]}
+                  />
+                </>
+              ),
               extra: renderExtra(2),
             },
           ]}
@@ -161,7 +262,6 @@ const TrackProjectStaff = () => {
             {
               key: "3",
               label: "Báo cáo cuối kì",
-
               extra: renderExtra(3),
             },
           ]}
@@ -182,7 +282,7 @@ const TrackProjectStaff = () => {
         shape="round"
         type="primary"
         danger
-        onClick={() => navigate("/staff/track")}
+        onClick={() => navigate(-1)}
         style={{ margin: "10px 0" }}
       >
         Quay về

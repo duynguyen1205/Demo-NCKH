@@ -7,19 +7,17 @@ import qs from "query-string";
 
 //register email
 export const registerEmail = (email) => {
-  return axios.post(
-    `/api/authentication/register-email?${qs.stringify(email)}`
-  );
+  return axios.post("/api/account/register-email", email);
 };
 
 //register account
 export const registerAccount = (account) => {
-  return axios.post("/api/authentication/register-account", account);
+  return axios.post("/api/account/register-account", account);
 };
 
 //login account
 export const loginAccount = (account) => {
-  return axios.post("/api/authentication/login", account);
+  return axios.post("/api/account/login", account);
 };
 
 // get all user except dean
@@ -40,8 +38,8 @@ export const getAllCategory = () => {
 };
 
 // get file type
-export const getFileType = () => {
-  return axios.get("api/filetype");
+export const getFileType = (param) => {
+  return axios.get(`api/filetype?${qs.stringify(param)}`);
 };
 
 // register project
@@ -94,10 +92,8 @@ export const viewDeanDecesion = (param) => {
 };
 
 // get topic waiting for member approval
-export const getTopicForMemberApproval = (param) => {
-  return axios.get(
-    `/api/topic/pre-topic-waiting-review-formation?${qs.stringify(param)}`
-  );
+export const getTopicForMemberApproval = () => {
+  return axios.get("/api/topic/pre-topic-waiting-review-formation");
 };
 
 // MemberReview topic
@@ -106,10 +102,8 @@ export const memberReviewAPI = (data) => {
 };
 
 // get topic waiting for member approval
-export const getTopicForCouncil = (param) => {
-  return axios.get(
-    `api/topic/early-topic-waiting-council-formation?${qs.stringify(param)}`
-  );
+export const getTopicForCouncil = () => {
+  return axios.get("api/topic/early-topic-waiting-council-formation");
 };
 
 //get topic member has already reviewed
@@ -137,17 +131,13 @@ export const getTopicDetailAPI = (param) => {
 };
 
 // get topic waiting for member review approval
-export const getTopicWaitingMember = (param) => {
-  return axios.get(
-    `api/topic/pre-topic-waiting-review-for-staff?${qs.stringify(param)}`
-  );
+export const getTopicWaitingMember = () => {
+  return axios.get("api/topic/pre-topic-waiting-review-for-staff");
 };
 
 //get topic waiting for upload results after meeting
-export const getTopicUploadDoc = (param) => {
-  return axios.get(
-    `api/topic/all-topic-waiting-upload-meeting-minutes?${qs.stringify(param)}`
-  );
+export const getTopicUploadDoc = () => {
+  return axios.get("api/topic/all-topic-waiting-upload-meeting-minutes");
 };
 
 //get topic waiting for upload contract
@@ -159,7 +149,7 @@ export const getTopicUploadContract = (param) => {
 
 // upload contract result for topic
 export const uploadResult = (data) => {
-  return axios.post("/api/review/update-meeting-result", data);
+  return axios.post("/api/review/update-early-meeting-result", data);
 };
 
 // upload contract contract for topic
@@ -185,10 +175,8 @@ export const getTopicForCouncilMeeting = (param) => {
 };
 
 // get topic waiting for resubmit
-export const getTopicWaitingResubmit = (param) => {
-  return axios.get(
-    `api/topic/early-topic-waiting-resubmit?${qs.stringify(param)}`
-  );
+export const getTopicWaitingResubmit = () => {
+  return axios.get("api/topic/early-topic-waiting-resubmit");
 };
 
 // reset deadline for resubmit
@@ -213,7 +201,7 @@ export const getReviewDocuments = (param) => {
 
 // upload Resubmit Document For Leader
 export const uploadResubmit = (data) => {
-  return axios.post("/api/attachment/create", data);
+  return axios.post("/api/document/resubmit-early-document", data);
 };
 
 // chairman approve
@@ -244,7 +232,7 @@ export const getReviewDocumentsDone = (param) => {
 // mid-term report
 
 // get topic mid-term report
-export const getMidTermReport = (param) => {
+export const getMidTermReport = () => {
   return axios.get("api/topic/middle-topic-waiting-configure-conference");
 };
 
@@ -258,9 +246,9 @@ export const makeDeadlineSubmit = (data) => {
   return axios.post("api/review/make-middle-review-schedule", data);
 };
 
-// submit documents
+// submit documents mid-term
 export const submitDocumentsMidterm = (data) => {
-  return axios.post("api/document/create-middle-document", data);
+  return axios.post("api/document/supplementation-middle-document", data);
 };
 
 // create mid-term council
@@ -287,10 +275,64 @@ export const getAllDepartment = () => {
 export const uploadInforUser = (data) => {
   return axios.post("api/user/register-user-infor", data);
 };
-//move to final term 
+
+//move to final term
 export const moveToFinalTerm = (param) => {
   return axios.post(`api/topic/move-to-final-term?${qs.stringify(param)}`);
-}
+};
 
+// get topic final term
 
+export const getFinalTerm = () => {
+  return axios.get("api/topic/final-topic-waiting-make-schedule");
+};
 
+// get topic final term waiting council
+export const getFinalTermReport = () => {
+  return axios.get("api/topic/final-topic-waiting-configure-conference");
+};
+
+// make deadline submit documents
+export const makeDeadlineFinalSubmit = (data) => {
+  return axios.post("api/review/make-final-review-schedule", data);
+};
+
+// submit documents final-term
+export const submitDocumentsFinalterm = (data) => {
+  return axios.post("api/document/supplementation-final-document", data);
+};
+
+// create final-term council
+export const councilConfigFinalterm = (data) => {
+  return axios.post("api/review/config-final", data);
+};
+
+// upload final-term contract
+export const uploadResultFinal = (data) => {
+  return axios.post("/api/review/update-final-meeting-result", data);
+};
+
+// resubmit final-term document
+export const resubmitFinalDocument = (data) => {
+  return axios.post("/api/review/resubmit-final-document", data);
+};
+
+// get topics has submit file money
+export const getTopicHasSubmitFileMoney = () => {
+  return axios.get("/api/topic/final-topic-waiting-censorship-remuneration");
+};
+
+//get topic has submit file money detais
+export const getTopicHasSubmitFileMoneyDetail = (data) => {
+  return axios.post("/api/remuneration", data);
+};
+
+// leader submit file
+export const postLeaderSubmitFile = (data) => {
+  return axios.post("/api/remuneration/submit", data);
+};
+
+// staff submit decision file
+export const staffSubmitDecisionFile = (data) => {
+  return axios.post("/api/remuneration/censorship", data);
+};

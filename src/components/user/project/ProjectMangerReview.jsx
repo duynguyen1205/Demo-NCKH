@@ -23,6 +23,7 @@ const ProjectManagerUserReview = () => {
   const [status, setStatus] = useState(false);
   const [dataTopicForDean, setdataTopicForDean] = useState([]);
   const [currentTab, setCurrentTab] = useState("notpassyet");
+  const userId = localStorage.getItem("userId");
   const items = [
     {
       key: "notpassyet",
@@ -193,7 +194,7 @@ const ProjectManagerUserReview = () => {
   ];
   const getTopicForDeanAPI = async () => {
     const res = await getTopicForDean({
-      deanId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87", // Nguyen Van A
+      deanId: userId,
     });
     if (res && res?.data) {
       setdataTopicForDean(res.data);
@@ -201,7 +202,7 @@ const ProjectManagerUserReview = () => {
   };
   const getTopicHadReviewed = async () => {
     const res = await viewDeanDecesion({
-      deanId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87", // Nguyen Van A
+      deanId: userId,
     });
     if (res && res?.data) {
       setdataTopicForDean(res.data);

@@ -35,7 +35,7 @@ input {
   z-index: 5;
 }
 
-form {
+form.sign-up-form, form.sign-in-form {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,7 +64,7 @@ form.sign-in-form {
 
 /* Trong file CSS của bạn */
 .input-container {
-  width: 50%; /* Đảm bảo rằng input sẽ đầy đủ chiều rộng của container */
+  width: 65%; /* Đảm bảo rằng input sẽ đầy đủ chiều rộng của container */
   margin-bottom: 20px; /* Khoảng cách giữa các input */
 }
 

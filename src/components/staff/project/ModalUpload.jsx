@@ -12,7 +12,7 @@ import {
   Upload,
   message,
   Radio,
-  Space 
+  Space,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
@@ -21,6 +21,7 @@ import {
   uploadFile,
   uploadReportMidTerm,
   uploadResult,
+  uploadResultFinal,
 } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "antd";
@@ -41,6 +42,7 @@ const ModalUpload = (props) => {
   const [review, setReview] = useState();
   const [reviewMidtearm, setReviewMidtearm] = useState();
   const [meetingDate, setMeetingDate] = useState(today);
+  const [errorMessage, setError] = useState("");
   const data = props.data;
   const state = data.state === "MidtermReport" ? true : false;
   const navigate = useNavigate();
@@ -76,7 +78,7 @@ const ModalUpload = (props) => {
           if (reviewMidtearm === "1") {
             const timeMidterm = {
               topicId: data.topicId,
-              deadline: dayjs(meetingDate).utc().format(),
+              documentSupplementationDeadline: dayjs(meetingDate).local().format(),
             };
             const res = await makeDeadlineSubmit(timeMidterm);
             if (res && res.isSuccess) {
@@ -102,10 +104,16 @@ const ModalUpload = (props) => {
         topicId: data.topicId,
         decisionOfCouncil: Number(values.decisionOfCouncil),
         resultFileLink: newTopicFiles.fileLink,
-        deadline: dayjs(meetingDate).utc().format(),
+        deadline: dayjs(meetingDate).local().format(),
       };
+
       try {
-        const res = await uploadResult(param);
+        let res;
+        if (data.state === "FinaltermReport") {
+          res = await uploadResultFinal(param)
+        } else {
+          res = await uploadResult(param);
+        }
         console.log(res);
         setIsSubmit(true);
         if (res && res.isSuccess) {
@@ -154,11 +162,12 @@ const ModalUpload = (props) => {
         // Gọi onError để thông báo lỗi nếu có vấn đề khi tải lên
         onError(error);
         // Hiển thị thông báo lỗi
-        message.error(`${file.name} file upload failed.`);
+        message.error(`${file.name} file tải lên thất bại.`);
       }
     },
     onRemove: (file) => {
       setFileList({});
+      setError("")
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -286,12 +295,12 @@ const ModalUpload = (props) => {
                 <Radio.Group
                   onChange={handleRadioChange}
                   value={reviewMidtearm}
+                  disabled={Object.values(newTopicFiles).length === 0 ? true : false}
                 >
                   <Space direction="vertical">
-<Radio value="1">Tiếp tục báo cáo</Radio>
-                  <Radio value="0">Kết thúc báo cáo</Radio>
+                    <Radio value="1">Tiếp tục báo cáo</Radio>
+                    <Radio value="0">Kết thúc báo cáo</Radio>
                   </Space>
-                  
                 </Radio.Group>
               </Form.Item>
             </Col>
@@ -322,6 +331,7 @@ const ModalUpload = (props) => {
                 <Upload {...propsUpload}>
                   <Button icon={<UploadOutlined />}>Tải tài liệu lên</Button>
                 </Upload>
+                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
               </Form.Item>
             </Col>
           </Row>

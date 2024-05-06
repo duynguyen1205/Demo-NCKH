@@ -243,6 +243,9 @@ const ProjectManagerMidTerm = () => {
   const getTopicWaitCouncil = async () => {
     try {
       const res = await getMidTermReport();
+      console.log('====================================');
+      console.log(res);
+      console.log('====================================');
       if (res && res?.data) {
         setData(res.data);
         setIsLoading(false);

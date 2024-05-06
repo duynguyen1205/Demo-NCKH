@@ -6,7 +6,6 @@ import {
   ConfigProvider,
   Divider,
   Form,
-  Input,
   Modal,
   Row,
   Upload,
@@ -74,8 +73,7 @@ const ModalUploadContract = (props) => {
       setIsSubmit(true);
       if (res && res.message) {
         setIsSubmit(false);
-        message.success("Tải hợp đồng lên thành công");
-        navigate("/staff");
+        props.confirm(data.topicId);
       }
     } catch (error) {
       console.log("====================================");
@@ -138,7 +136,6 @@ const ModalUploadContract = (props) => {
     <>
       <Modal
         title="Hợp đồng"
-        className="modalStyle"
         centered
         open={isModalOpen}
         onOk={handleOk}
@@ -160,7 +157,9 @@ const ModalUploadContract = (props) => {
               key="send"
               type="primary"
               onClick={handleOk}
-              disabled={Object.values(newTopicFiles).length === 0}
+              disabled={
+                plainOptions.length === checkedList.length ? false : true
+              }
             >
               Gửi
             </Button>
@@ -168,7 +167,7 @@ const ModalUploadContract = (props) => {
         ]}
       >
         <Divider />
-        <Form form={form} name="basic1" onFinish={onSubmit}>
+        <Form form={form} name="basic12" onFinish={onSubmit} className="fomr">
           <Row gutter={20}>
             <Col span={24}>
               <h3>Hợp đồng đính kèm:</h3>
@@ -176,6 +175,7 @@ const ModalUploadContract = (props) => {
                 style={{ display: "flex", flexDirection: "column" }}
                 value={checkedList}
                 onChange={onChange}
+                disabled={Object.values(newTopicFiles).length === 0 ? true : false}
               >
                 {plainOptions.map((option) => (
                   <Checkbox key={option.value} value={option.value}>
@@ -187,9 +187,6 @@ const ModalUploadContract = (props) => {
               <p>Chỉ hỗ trợ cái file như zip hoặc rar</p>
               <Upload {...propsUpload}>
                 <Button
-                  disabled={
-                    plainOptions.length === checkedList.length ? false : true
-                  }
                   icon={<UploadOutlined />}
                 >
                   Tải hợp đồng lên

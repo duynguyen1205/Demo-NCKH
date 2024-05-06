@@ -10,6 +10,9 @@ import {
 import ReCAPTCHA from "react-google-recaptcha";
 import { createTopicAPI, getFileType } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 const ModalConfirm = (props) => {
   const recaptchaRef = useRef(null);
   const [checkCapcha, setCheckCapcha] = useState(true);
@@ -23,6 +26,7 @@ const ModalConfirm = (props) => {
     const data = props.data;
     try {
       const res = await createTopicAPI(data);
+
       if (res && res.statusCode === 200) {
         message.success("Tạo topic thành công");
         props.setFileList([]);
@@ -79,7 +83,9 @@ const ModalConfirm = (props) => {
   );
   const listFileType = async () => {
     try {
-      const res = await getFileType();
+      const res = await getFileType({
+        stateNumber: 0,
+      });
       if (res && res.isSuccess) {
         setFileType(res.data);
       }
@@ -103,7 +109,7 @@ const ModalConfirm = (props) => {
         forceRender
         footer={renderFooter}
       >
-        <Divider/>
+        <Divider />
         <h3>Hợp đồng đính kèm:</h3>
         <Checkbox.Group
           style={{ display: "flex", flexDirection: "column" }}

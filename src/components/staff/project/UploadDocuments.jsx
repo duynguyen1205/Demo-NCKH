@@ -7,13 +7,10 @@ import {
 } from "@ant-design/icons";
 import {
   Button,
-  ConfigProvider,
   Input,
-  Popconfirm,
   Space,
   Table,
   Tabs,
-  Tag,
   Tooltip,
   message,
 } from "antd";
@@ -277,17 +274,6 @@ const UploadDocument = () => {
                     setIsModalContractOpen(true);
                   }}
                 />
-                <Popconfirm
-                  placement="topRight"
-                  title="Xác nhận"
-                  description="Xác nhận kết thúc giai đoạn này ?"
-                  onConfirm={() => confirm(record.topicId)}
-                  onCancel={cancel}
-                  okText="Đồng ý"
-                  cancelText="Không"
-                >
-                  <CheckOutlined style={{ fontSize: "20px", color: "blue" }} />
-                </Popconfirm>
               </>
             )}
           </div>
@@ -387,6 +373,7 @@ const UploadDocument = () => {
         setDataUser={setDataUser}
         isModalContractOpen={isModalContractOpen}
         setIsModalContractOpen={setIsModalContractOpen}
+        confirm = {confirm}
       />
     </div>
   );

@@ -17,7 +17,6 @@ import {  UploadOutlined } from "@ant-design/icons";
 // import { uploadFileSingle, uploadResult } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 import {  uploadFile, chairmanReject } from "../../../services/api";
-import { useForm } from "antd/es/form/Form";
 
 const ModalChairmanReject = (props) => {
   const isModalOpen = props.isModalOpen;
@@ -94,13 +93,13 @@ const ModalChairmanReject = (props) => {
           // Gọi onSuccess để xác nhận rằng tải lên đã thành công
           onSuccess(response, file);
           // Hiển thị thông báo thành công
-          message.success(`${file.name} file uploaded successfully.`);
+          message.success(`${file.name} file tải lên thành công.`);
         }
       } catch (error) {
         // Gọi onError để thông báo lỗi nếu có vấn đề khi tải lên
         onError(error);
         // Hiển thị thông báo lỗi
-        message.error(`${file.name} file upload failed.`);
+        message.error(`${file.name} file tải lên thất bại.`);
       }
     },
     onRemove: (file) => {

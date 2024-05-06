@@ -25,8 +25,11 @@ const ModalInfor = (props) => {
   const [checked, setChecked] = useState(true);
   const [reason, setReason] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [plainText, setPlainText] = useState("");
   const [state, setState] = useState();
   const topicId = props.data.topicId;
+  const userId = localStorage.getItem("userId");
+  const { TextArea } = Input;
   let checkEnd;
   const location = useLocation();
   const handleCancel = () => {
@@ -44,6 +47,7 @@ const ModalInfor = (props) => {
           topicFileName: res.data.topicFileName,
           topicFileLink: res.data.topicFileLink,
         });
+        setPlainText(res.data.description);
         form.setFieldsValue(res.data);
         checkEnd = res.data.topicFileLink.endsWith(".docx");
       }
@@ -55,7 +59,7 @@ const ModalInfor = (props) => {
   const handleOnClickApprove = async () => {
     if (location.pathname === "/user/manager") {
       const param = {
-        memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
+        memberReviewId: userId,
         topicId: topicId,
         isApproved: true,
         reasonOfDecision: reason,
@@ -74,7 +78,7 @@ const ModalInfor = (props) => {
         });
     } else {
       const param = {
-        diciderId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87",
+        diciderId: userId,
         topicId: topicId,
         deanDecision: true,
         reasonOfDecision: reason,
@@ -101,7 +105,7 @@ const ModalInfor = (props) => {
     } else {
       if (location.pathname === "/user/manager") {
         const param = {
-          memberReviewId: "31c63d57-eeb2-4e03-bc8d-1689d5fb3d87",
+          memberReviewId: userId,
           topicId: topicId,
           isApproved: false,
           reasonOfDecision: reason,
@@ -121,7 +125,7 @@ const ModalInfor = (props) => {
           });
       } else {
         const param = {
-          diciderId: "31C63D57-EEB2-4E03-BC8D-1689D5FB3D87",
+          diciderId: userId,
           topicId: topicId,
           deanDecision: false,
           reasonOfDecision: reason,
@@ -250,7 +254,7 @@ const ModalInfor = (props) => {
                 label="Mô tả chi tiết"
                 labelCol={{ span: 24 }}
               >
-                <Input disabled />
+                <div dangerouslySetInnerHTML={{ __html: plainText }} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -283,7 +287,13 @@ const ModalInfor = (props) => {
                   label="Ghi chú"
                   labelCol={{ span: 24 }}
                 >
-                  <Input onChange={(event) => setReason(event.target.value)} />
+                  <TextArea
+                    autoSize={{
+                      minRows: 2,
+                      maxRows: 5,
+                    }}
+                    onChange={(event) => setReason(event.target.value)}
+                  />
                 </Form.Item>
               </Col>
             )}

@@ -22,6 +22,7 @@ import React, { useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import "./staff.scss";
 import logo from "../../assets/logoBV.png";
+import { jwtDecode } from "jwt-decode";
 const { Header, Content, Sider } = Layout;
 const items = [
   {
@@ -78,8 +79,9 @@ const LayoutStaff = () => {
     message.success("Đăng xuất thành công");
     navigate("/login");
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
   };
-
+  const name = jwtDecode(localStorage.getItem("token")).role;
   const itemDropdown = [
     {
       label: <label>Account Manager</label>,
@@ -151,7 +153,7 @@ const LayoutStaff = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <p>Duy Nguyễn</p>
+                  <p>{name}</p>
                   <Avatar />
                 </Space>
               </a>

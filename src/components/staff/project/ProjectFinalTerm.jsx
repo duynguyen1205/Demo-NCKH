@@ -1,76 +1,68 @@
 import {
+  CalendarOutlined,
   InfoCircleOutlined,
   SearchOutlined,
+  UploadOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Space, Table, Tabs, Tag, ConfigProvider  } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  Input,
+  Space,
+  Table,
+  Tabs,
+  Tooltip,
+} from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import "../../staff/project/project.scss";
-import ModalInfor from "./ModalInfor";
-import "./table.scss";
-// sơ duyệt
-import {
-  getTopicReviewerAPI,
-  getReviewedByMember,
-} from "../../../services/api";
-import viVN from 'antd/lib/locale/vi_VN';
+import "./project.scss";
+import ModalInfor from "../../user/project/ModalInfor";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
-// import ModalInfor from "../../modalInfor.jsx";
-const ProjectManagerUser = () => {
+import {
+  getFinalTerm,
+  getFinalTermReport,
+  getTopicHasSubmitFileMoney,
+} from "../../../services/api";
+import ModalMidTerm from "./ModalMidterm";
+import { useNavigate } from "react-router-dom";
+import ModalFinal from "./modalFinal";
+const ProjectManagerFinalTerm = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const [isLoading, setIsLoading] = useState(false);
+  const [checkTab, setCheckTab] = useState("notyet");
+  const [dataSource, setData] = useState([]);
+  const [dataPro, setDataPro] = useState({});
+  const [isModalInforOpen, setIsModalInforOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [data, setDataUser] = useState({});
-  const [status, setStatus] = useState(false);
-  const [activeTab, setActiveTab] = useState("notpassyet");
-  const [dataTopicForMember, setdataTopicForMember] = useState([]);
-  const userId = localStorage.getItem("userId");
-  useEffect(() => {
-    getTopicReviewer();
-  }, [status]);
+  const [isModalFinalOpen, setIsModalFinalOpen] = useState(false);
+  const navigate = useNavigate();
   const items = [
     {
-      key: "notpassyet",
-      label: `Chưa duyệt`,
+      key: "notyet",
+      label: `Chưa tạo lịch báo cáo`,
       children: <></>,
     },
     {
-      key: "done",
-      label: `Đã duyệt`,
+      key: "dabaocao",
+      label: `Đã tạo lịch báo cáo`,
+      children: <></>,
+    },
+    {
+      key: "taohoidong",
+      label: `Thêm thành viên hội đồng`,
+      children: <></>,
+    },
+    {
+      key: "tongket",
+      label: `Tổng kết đề tài`,
       children: <></>,
     },
   ];
-  const getTopicReviewer = async () => {
-    try {
-      const res = await getTopicReviewerAPI({
-        memberId: userId, // Nguyen Van A
-      });
-      if (res && res?.data) {
-        setdataTopicForMember(res.data);
-      } else {
-        console.log("ko load dc api");
-      }
-    } catch (error) {
-      console.log("có lỗi tại getTopicReviewe: ", error);
-    }
-  };
-  const getTopicHadReviwed = async () => {
-    try {
-      const res = await getReviewedByMember({
-        memberId: userId, // Nguyen Van A
-      });
-      if (res && res?.data) {
-        setdataTopicForMember(res.data);
-      } else {
-        console.log("ko load dc api");
-      }
-    } catch (error) {
-      console.log("có lỗi tại getTopicReviewe: ", error);
-    }
-  };
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -160,20 +152,21 @@ const ProjectManagerUser = () => {
         text
       ),
   });
+
   const columns = [
     {
-      title: "STT",
+      title: "Mã Đề Tài",
       key: "index",
-      render: (text, record, index) => index + 1,
-      color: "red",
+      dataIndex: "topicId",
       width: "10%",
+      hidden: true,
     },
     {
       title: "Tên Đề Tài",
       dataIndex: "topicName",
-      key: "topicName",
-      ...getColumnSearchProps("topicName"),
+      key: "name",
       width: "30%",
+      ...getColumnSearchProps("topicName"),
     },
     {
       title: "Lĩnh Vực",
@@ -190,36 +183,73 @@ const ProjectManagerUser = () => {
     {
       title: "Hành động",
       render: (text, record, index) => {
-        const style1 = {
-          color: "blue",
-          fontSize: "1.5em",
-          cursor: "pointer",
-        };
-        const color = record.memberDecision ? "green" : "red";
-        const status = record.memberDecision ? "Đồng ý" : "Từ chối";
         return (
           <div style={{ textAlign: "center" }}>
-            <InfoCircleOutlined
-              style={style1}
-              onClick={() => {
-                setIsModalOpen(true);
-                setDataUser(record);
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorPrimary: "#55E6A0",
+                },
               }}
-            />
-            {activeTab === "done" && (
-              <>
-                <Tag
-                  style={{
-                    marginLeft: "10px",
-                    fontSize: "13px",
-                    padding: "5px 8px",
-                  }}
-                  color={color}
-                >
-                  {status}
-                </Tag>
-              </>
-            )}
+            >
+              <InfoCircleOutlined
+                style={{ fontSize: "20px", color: "blue" }}
+                onClick={() => {
+                  setIsModalInforOpen(true);
+                  setDataPro(record);
+                }}
+              />{" "}
+              {checkTab === "notyet" && (
+                <Tooltip placement="top" title={"Tạo thời gian báo cáo"}>
+                  <CalendarOutlined
+                    style={{
+                      fontSize: "20px",
+                      color: "black",
+                      margin: "0 10px",
+                    }}
+                    type="primary"
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setDataPro(record);
+                    }}
+                  />
+                </Tooltip>
+              )}
+              {checkTab === "taohoidong" && (
+                <Tooltip placement="top" title={"Gửi hội đồng"}>
+                  <UsergroupAddOutlined
+                    style={{
+                      fontSize: "20px",
+                      color: "blue",
+                      margin: "0 10px",
+                    }}
+                    type="primary"
+                    onClick={() => {
+                      navigate(
+                        `/staff/finalterm/add-council/${record.topicId}`
+                      );
+                    }}
+                  >
+                    Gửi hội đồng
+                  </UsergroupAddOutlined>
+                </Tooltip>
+              )}
+              {checkTab === "tongket" && (
+                <>
+                  <UploadOutlined
+                    style={{
+                      fontSize: "20px",
+                      color: "green",
+                      margin: "0 20px",
+                    }}
+                    onClick={() => {
+                      setDataPro(record);
+                      setIsModalFinalOpen(true);
+                    }}
+                  />
+                </>
+              )}
+            </ConfigProvider>
           </div>
         );
       },
@@ -227,17 +257,58 @@ const ProjectManagerUser = () => {
     },
   ];
 
+  const getTopicFinalTerm = async () => {
+    try {
+      const res = await getFinalTerm();
+      setIsLoading(true);
+      if (res && res?.data) {
+        setData(res.data);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log("có lỗi tại getTopicFinalTerm: " + error);
+    }
+  };
+  const getTopicWaitCouncil = async () => {
+    try {
+      const res = await getFinalTermReport();
+      if (res && res?.data) {
+        setData(res.data);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log("có lỗi tại getTopicWaitCouncil: " + error);
+    }
+  };
+  const getTopicSumarizeTerm = async () => {
+    try {
+      const res = await getTopicHasSubmitFileMoney();
+      setIsLoading(true);
+      if (res && res?.data) {
+        setData(res.data);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log("có lỗi tại getTopicFinalTerm: " + error);
+    }
+  };
+  useEffect(() => {
+    getTopicFinalTerm();
+  }, [isModalOpen]);
   const renderHeader = () => (
     <div>
       <Tabs
         defaultActiveKey="notyet"
         items={items}
         onChange={(value) => {
-          setActiveTab(value);
-          if (value === "done") {
-            getTopicHadReviwed();
+          setCheckTab(value);
+          if (value === "notyet") {
+            getTopicFinalTerm();
+          } else if (value === "wait") {
+          } else if (value === "tongket") {
+            getTopicSumarizeTerm();
           } else {
-            getTopicReviewer();
+            getTopicWaitCouncil();
           }
         }}
         style={{ overflowX: "auto", marginLeft: "30px" }}
@@ -267,25 +338,20 @@ const ProjectManagerUser = () => {
     }
     console.log("parms: ", pagination, filters, sorter, extra);
   };
-  const customLocale = {
-    emptyText: 'Không có dữ liệu',
-  };
   return (
     <div>
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
-        Danh sách đề tài chờ sơ duyệt
+        Danh sách đề tài cuối kì
       </h2>
-      <ConfigProvider locale={viVN}>
       <Table
         rowClassName={(record, index) =>
           index % 2 === 0 ? "table-row-light" : "table-row-dark"
         }
         bordered={true}
         columns={columns}
-        dataSource={dataTopicForMember}
+        dataSource={dataSource}
         onChange={onChange}
-        rowKey={"_id"}
-        {...customLocale}
+        rowKey={"key"}
         pagination={{
           current: current,
           pageSize: pageSize,
@@ -300,18 +366,27 @@ const ProjectManagerUser = () => {
           },
         }}
         title={renderHeader}
+        loading={isLoading}
       />
-      </ConfigProvider>
+
       <ModalInfor
-        currentTab={activeTab}
-        data={data}
+        data={dataPro}
+        isModalOpen={isModalInforOpen}
+        setIsModalOpen={setIsModalInforOpen}
+      />
+
+      <ModalMidTerm
+        data={dataPro}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        status={status}
-        setStatus={setStatus}
+      />
+      <ModalFinal
+        data={dataPro}
+        isModalOpen={isModalFinalOpen}
+        setIsModalOpen={setIsModalFinalOpen}
       />
     </div>
   );
 };
 
-export default ProjectManagerUser;
+export default ProjectManagerFinalTerm;

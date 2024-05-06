@@ -4,6 +4,7 @@ import "./login.css";
 import Img from "./img/log.svg";
 import Re from "./img/register.svg";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { jwtDecode } from "jwt-decode";
 import {
   loginAccount,
   registerAccount,
@@ -31,7 +32,22 @@ const Login = () => {
         const res = await loginAccount(data);
         if (res && res.isSuccess) {
           localStorage.setItem("token", res.data.token);
-          navigation("/user");
+          const decoded = jwtDecode(res.data.token);
+          if (decoded?.userid === undefined && decoded.role !== "Staff") {
+            message.info("Vui lòng đăng kí thông tin trước khi tiếp tục");
+            navigation("/registerInfor");
+          } else {
+            localStorage.setItem("userId", decoded?.userid);
+            if (decoded.role === "Dean") {
+              navigation("/user/manager");
+            } else if (decoded.role === "User") {
+              navigation("/user");
+            } else if (decoded.role === "Staff") {
+              navigation("/staff");
+            }
+          }
+        } else {
+          message.error("Vui lòng kiểm tra lại thông tin");
         }
       } else if (action === "register") {
         const data = {
@@ -56,9 +72,7 @@ const Login = () => {
     } else {
       setWaiting(true);
       try {
-        const res = await registerEmail({
-          email: email,
-        });
+        const res = await registerEmail(email);
         if (res && res.isSuccess) {
           message.success("Vui lòng check mail để lấy mã otp");
         }
@@ -69,9 +83,9 @@ const Login = () => {
   };
   useEffect(() => {
     const token = localStorage.getItem("token") !== null ? true : false;
-    if (token) {
-      navigation(-1);
-    }
+    // if (token) {
+    //   // navigation(-1);
+    // }
   }, []);
   return (
     <>
@@ -126,8 +140,8 @@ const Login = () => {
                     >
                       {waiting ? (
                         <Countdown
-                          value={Date.now() + 2 * 60 * 1000} 
-                          onFinish={() => setWaiting(false)} 
+                          value={Date.now() + 2 * 60 * 1000}
+                          onFinish={() => setWaiting(false)}
                           format="mm:ss"
                         />
                       ) : (

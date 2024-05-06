@@ -21,6 +21,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   councilConfigEarly,
+  councilConfigFinalterm,
   councilConfigMidterm,
 } from "../../../services/api";
 import utc from "dayjs/plugin/utc";
@@ -59,6 +60,10 @@ const ModalPickTimeLeader = (props) => {
   };
   // set up initial value for the form
   const maxDate = dayjs().add(7, "day");
+  const disabledDate = (current) => {
+    // Disable Saturdays (6) and Sundays (0)
+    return current && (current.day() === 6 || current.day() === 0);
+  };
   const steps = [
     {
       title: "Lựa chọn chủ tịch hội đồng",
@@ -102,6 +107,7 @@ const ModalPickTimeLeader = (props) => {
                     minDate={today}
                     maxDate={maxDate}
                     onChange={handleDateChange}
+                    disabledDate={disabledDate}
                   />
                 </Form.Item>
               </Col>
@@ -193,7 +199,7 @@ const ModalPickTimeLeader = (props) => {
 
     const data = {
       topicId: topicId,
-      meetingTime: dayjs(meetingDate).utc().format(),
+      meetingTime: dayjs(meetingDate).local().format(),
       councils: councilArray,
       meetingDetail: meetingDetails,
     };
@@ -209,10 +215,15 @@ const ModalPickTimeLeader = (props) => {
           console.error("Lỗi trong councilConfigMidterm:", error);
           throw error;
         });
+      } else if (checkTerm === "finalterm") {
+        res = await councilConfigFinalterm(data).catch((error) => {
+          console.error("Lỗi trong councilConfigFinalterm:", error);
+          throw error;
+        });
       }
-      if (res && res.isSuccess) {
+      if (res && res.statusCode === 200) {
         message.success("Tạo hội đồng đánh giá thành công");
-        navigate("/staff");
+        navigate("/staff/upload-document");
       } else {
         console.log("====================================");
         console.log(res);
@@ -244,7 +255,7 @@ const ModalPickTimeLeader = (props) => {
             )}
             {current < steps.length - 1 && (
               <Button type="primary" onClick={() => next()}>
-                Tiêp tục
+                Tiếp tục
               </Button>
             )}
 

@@ -248,7 +248,7 @@ export const makeDeadlineSubmit = (data) => {
 
 // submit documents mid-term
 export const submitDocumentsMidterm = (data) => {
-  return axios.post("api/document/supplemention-middle-document", data);
+  return axios.post("api/document/supplementation-middle-document", data);
 };
 
 // create mid-term council
@@ -299,7 +299,7 @@ export const makeDeadlineFinalSubmit = (data) => {
 
 // submit documents final-term
 export const submitDocumentsFinalterm = (data) => {
-  return axios.post("api/document/supplemention-final-document", data);
+  return axios.post("api/document/supplementation-final-document", data);
 };
 
 // create final-term council
@@ -323,8 +323,8 @@ export const getTopicHasSubmitFileMoney = () => {
 };
 
 //get topic has submit file money detais
-export const getTopicHasSubmitFileMoneyDetail = (param) => {
-  return axios.get(`/api/remuneration?${qs.stringify(param)}`);
+export const getTopicHasSubmitFileMoneyDetail = (data) => {
+  return axios.post("/api/remuneration", data);
 };
 
 // leader submit file

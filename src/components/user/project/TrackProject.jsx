@@ -30,6 +30,8 @@ const TrackProject = () => {
   const [status, setStatus] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalFinalOpen, setIsModalFinalOpen] = useState(false);
+  const [isLeader, setIsLeader] = useState(false);
+  const userId = localStorage.getItem("userId");
   const renderExtra = (step) => {
     if (step === currentStep) {
       return <SyncOutlined spin style={{ color: "blue" }} />;
@@ -56,6 +58,9 @@ const TrackProject = () => {
       console.log("====================================");
       if (res && res.isSuccess) {
         setDataProcess(res.data);
+        if (userId === res.data.creatorId) {
+          setIsLeader(true);
+        }
         if (
           res.data?.state === "PreliminaryReview" ||
           res.data?.state === "EarlyTermReport"
@@ -65,6 +70,8 @@ const TrackProject = () => {
           setCurrentStep("2");
         } else if (res.data?.state === "FinaltermReport") {
           setCurrentStep("3");
+        } else if (res.data?.state === "EndingPhase") {
+          setCurrentStep("4");
         }
       }
     } catch (error) {
@@ -231,23 +238,27 @@ const TrackProject = () => {
                                         item.deadlineForDocumentSupplementation
                                       ).format(dateFormat)}
                                     </p>
-                                    <ConfigProvider
-                                      theme={{
-                                        token: {
-                                          colorPrimary: "#55E6A0",
-                                        },
-                                      }}
-                                    >
-                                      <Button
-                                        type="primary"
-                                        style={{
-                                          marginBottom: "10px",
+                                    {isLeader ? (
+                                      <ConfigProvider
+                                        theme={{
+                                          token: {
+                                            colorPrimary: "#55E6A0",
+                                          },
                                         }}
-                                        onClick={() => setIsModalOpen(true)}
                                       >
-                                        Nộp tài liệu
-                                      </Button>
-                                    </ConfigProvider>
+                                        <Button
+                                          type="primary"
+                                          style={{
+                                            marginBottom: "10px",
+                                          }}
+                                          onClick={() => setIsModalOpen(true)}
+                                        >
+                                          Nộp tài liệu
+                                        </Button>
+                                      </ConfigProvider>
+                                    ) : (
+                                      ""
+                                    )}
                                   </>
                                 ) : (
                                   <p>Trạng thái: </p>
@@ -332,23 +343,27 @@ const TrackProject = () => {
                                   .deadlineForDocumentSupplementation
                               ).format(dateFormat)}{" "}
                             </p>
-                            <ConfigProvider
-                              theme={{
-                                token: {
-                                  colorPrimary: "#55E6A0",
-                                },
-                              }}
-                            >
-                              <Button
-                                type="primary"
-                                style={{
-                                  marginBottom: "10px",
+                            {isLeader ? (
+                              <ConfigProvider
+                                theme={{
+                                  token: {
+                                    colorPrimary: "#55E6A0",
+                                  },
                                 }}
-                                onClick={() => setIsModalOpen(true)}
                               >
-                                Nộp tài liệu
-                              </Button>
-                            </ConfigProvider>
+                                <Button
+                                  type="primary"
+                                  style={{
+                                    marginBottom: "10px",
+                                  }}
+                                  onClick={() => setIsModalOpen(true)}
+                                >
+                                  Nộp tài liệu
+                                </Button>
+                              </ConfigProvider>
+                            ) : (
+                              ""
+                            )}
                           </>
                         ) : (
                           <p>Trạng thái: </p>
@@ -419,7 +434,7 @@ const TrackProject = () => {
               ]}
             />
             <Collapse
-              collapsible={isCollapseDisabled(3)}
+              collapsible={isCollapseDisabled(4)}
               defaultActiveKey={currentStep === "4" ? ["4"] : ""}
               items={[
                 {
@@ -427,42 +442,37 @@ const TrackProject = () => {
                   label: "Tổng kết",
                   children: (
                     <>
-                      {dataProcess.finalTermReportProcess
-                        .deadlineForDocumentSupplementation ? (
+                      {dataProcess.progress ===
+                      "WaitingForSubmitRemuneration" ? (
                         <>
                           <p>
                             {" "}
                             Trạng thái: Trưởng nhóm nộp file tính ngày công
                           </p>
-                          <ConfigProvider
-                            theme={{
-                              token: {
-                                colorPrimary: "#55E6A0",
-                              },
-                            }}
-                          >
-                            <Button
-                              type="primary"
-                              style={{
-                                marginBottom: "10px",
+                          {isLeader ? (
+                            <ConfigProvider
+                              theme={{
+                                token: {
+                                  colorPrimary: "#55E6A0",
+                                },
                               }}
-                              onClick={() => setIsModalOpen(true)}
                             >
-                              Nộp tài liệu
-                            </Button>
-                          </ConfigProvider>
+                              <Button
+                                type="primary"
+                                style={{
+                                  marginBottom: "10px",
+                                }}
+                                onClick={() => setIsModalFinalOpen(true)}
+                              >
+                                Nộp tài liệu
+                              </Button>
+                            </ConfigProvider>
+                          ) : (
+                            ""
+                          )}
                         </>
                       ) : (
-                        // <p>Trạng thái: </p>
-                        <Button
-                              type="primary"
-                              style={{
-                                marginBottom: "10px",
-                              }}
-                              onClick={() => setIsModalFinalOpen(true)}
-                            >
-                              Nộp tài liệu
-                            </Button>
+                        <p>Trạng thái: </p>
                       )}
                       <Steps
                         size="small"
@@ -470,26 +480,21 @@ const TrackProject = () => {
                         items={[
                           {
                             title:
-                              dataProcess.finalTermReportProcess
-                                .waitingForDocumentSupplementation === "Done"
-                                ? "Đã nộp tài liệu cuối kì"
-                                : "Nộp tài liệu cuối kì",
+                              dataProcess.progress ===
+                              "WaitingForCensorshipRemuneration"
+                                ? "Đã nộp file tính ngày công"
+                                : "Nộp file tính ngày công",
                             status:
-                              dataProcess.finalTermReportProcess
-                                .waitingForDocumentSupplementation === "Done"
+                              dataProcess.progress ===
+                              "WaitingForCensorshipRemuneration"
                                 ? "finished"
                                 : "wait",
                             icon: <FileProtectOutlined />,
                           },
                           {
-                            title:
-                              dataProcess.finalTermReportProcess
-                                .waitingForConfigureConference === "Done"
-                                ? "Staff đã tải lên quyết định"
-                                : "Staff tải lên quyết định",
+                            title: "Staff tải lên quyết định",
                             status:
-                              dataProcess.finalTermReportProcess
-                                .waitingForConfigureConference === "Done"
+                              dataProcess.progress === "WaitingForCensorshipRemuneration"
                                 ? "finished"
                                 : "wait",
                             icon: <CloudUploadOutlined />,

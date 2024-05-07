@@ -47,7 +47,7 @@ const BasicProfile = () => {
               </Col>
               <Col span={12}>
                 <Form.Item name="birth" label="Ngày tháng năm sinh">
-                  <DatePicker placeholder="Chọn ngày" />
+                  <DatePicker className="datePickProfile" placeholder="Chọn ngày" />
                 </Form.Item>
               </Col>
               <Col span={12}>

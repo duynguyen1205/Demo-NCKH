@@ -2,6 +2,7 @@ import {
   CalendarOutlined,
   InfoCircleOutlined,
   SearchOutlined,
+  UploadOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import {
@@ -21,9 +22,14 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
-import { getFinalTerm, getFinalTermReport, getTopicHasSubmitFileMoney } from "../../../services/api";
+import {
+  getFinalTerm,
+  getFinalTermReport,
+  getTopicHasSubmitFileMoney,
+} from "../../../services/api";
 import ModalMidTerm from "./ModalMidterm";
 import { useNavigate } from "react-router-dom";
+import ModalFinal from "./modalFinal";
 const ProjectManagerFinalTerm = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -33,6 +39,7 @@ const ProjectManagerFinalTerm = () => {
   const [dataPro, setDataPro] = useState({});
   const [isModalInforOpen, setIsModalInforOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalFinalOpen, setIsModalFinalOpen] = useState(false);
   const navigate = useNavigate();
   const items = [
     {
@@ -227,6 +234,21 @@ const ProjectManagerFinalTerm = () => {
                   </UsergroupAddOutlined>
                 </Tooltip>
               )}
+              {checkTab === "tongket" && (
+                <>
+                  <UploadOutlined
+                    style={{
+                      fontSize: "20px",
+                      color: "green",
+                      margin: "0 20px",
+                    }}
+                    onClick={() => {
+                      setDataPro(record);
+                      setIsModalFinalOpen(true);
+                    }}
+                  />
+                </>
+              )}
             </ConfigProvider>
           </div>
         );
@@ -357,6 +379,11 @@ const ProjectManagerFinalTerm = () => {
         data={dataPro}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
+      />
+      <ModalFinal
+        data={dataPro}
+        isModalOpen={isModalFinalOpen}
+        setIsModalOpen={setIsModalFinalOpen}
       />
     </div>
   );

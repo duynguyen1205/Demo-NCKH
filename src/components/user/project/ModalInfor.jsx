@@ -25,10 +25,11 @@ const ModalInfor = (props) => {
   const [checked, setChecked] = useState(true);
   const [reason, setReason] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [plainText, setPlainText] = useState("")
+  const [plainText, setPlainText] = useState("");
   const [state, setState] = useState();
   const topicId = props.data.topicId;
   const userId = localStorage.getItem("userId");
+  const { TextArea } = Input;
   let checkEnd;
   const location = useLocation();
   const handleCancel = () => {
@@ -76,7 +77,6 @@ const ModalInfor = (props) => {
           console.log(error);
         });
     } else {
-      
       const param = {
         diciderId: userId,
         topicId: topicId,
@@ -287,7 +287,13 @@ const ModalInfor = (props) => {
                   label="Ghi chú"
                   labelCol={{ span: 24 }}
                 >
-                  <Input onChange={(event) => setReason(event.target.value)} />
+                  <TextArea
+                    autoSize={{
+                      minRows: 2,
+                      maxRows: 5,
+                    }}
+                    onChange={(event) => setReason(event.target.value)}
+                  />
                 </Form.Item>
               </Col>
             )}

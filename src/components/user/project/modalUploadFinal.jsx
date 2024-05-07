@@ -14,14 +14,11 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
-  getFileType,
-  submitDocumentsFinalterm,
-  submitDocumentsMidterm,
+  postLeaderSubmitFile,
   uploadFile,
 } from "../../../services/api";
 
 const UploadFileFinal = (props) => {
-  console.log(props);
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
@@ -41,9 +38,22 @@ const UploadFileFinal = (props) => {
     }
     const data = {
       topicId: props.topicId,
-      newFile: newTopicFiles,
+      remunerationName: newTopicFiles.fileName,
+      remunerationLink: newTopicFiles.fileLink,
     };
     try {
+      const res = await postLeaderSubmitFile(data);
+      setIsSubmit(true);
+      if (res && res.statusCode === 200) {
+        setIsSubmit(false);
+        message.success("Tải file lên thành công");
+        handleCancel();
+        if (props.status) {
+          props.setStatus(false);
+        } else {
+          props.setStatus(true);
+        }
+      }
     } catch (error) {
       console.log("====================================");
       console.log("có lỗi tại upload result", error);

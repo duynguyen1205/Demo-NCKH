@@ -157,7 +157,9 @@ const ModalUploadContract = (props) => {
               key="send"
               type="primary"
               onClick={handleOk}
-              disabled={Object.values(newTopicFiles).length === 0}
+              disabled={
+                plainOptions.length === checkedList.length ? false : true
+              }
             >
               Gửi
             </Button>
@@ -185,9 +187,6 @@ const ModalUploadContract = (props) => {
               <p>Chỉ hỗ trợ cái file như zip hoặc rar</p>
               <Upload {...propsUpload}>
                 <Button
-                  disabled={
-                    plainOptions.length === checkedList.length ? false : true
-                  }
                   icon={<UploadOutlined />}
                 >
                   Tải hợp đồng lên

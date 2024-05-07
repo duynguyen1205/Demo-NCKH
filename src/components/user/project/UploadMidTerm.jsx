@@ -60,16 +60,16 @@ const UploadMidTerm = (props) => {
       topicId: props.topicId,
       newFile: newTopicFiles,
     };
+
     try {
       let res;
       if (props.state === "2") {
         res = await submitDocumentsMidterm(data);
-      }
-      else {
+      } else {
         res = await submitDocumentsFinalterm(data);
       }
       setIsSubmit(true);
-      if (res && res.isSuccess) {
+      if (res && res.statusCode === 200) {
         setIsSubmit(false);
         message.success("Tải file lên thành công");
         handleCancel();
@@ -138,7 +138,9 @@ const UploadMidTerm = (props) => {
     <>
       <Modal
         title={
-          props.state === "2" ? "Đăng kí báo cáo giữa kì" : "Nộp tài liệu cuối kì"
+          props.state === "2"
+            ? "Đăng kí báo cáo giữa kì"
+            : "Nộp tài liệu cuối kì"
         }
         centered
         open={isModalOpen}
@@ -188,7 +190,9 @@ const UploadMidTerm = (props) => {
               style={{ display: "flex", flexDirection: "column" }}
               value={checkedList}
               onChange={onChange}
-              disabled={Object.values(newTopicFiles).length === 0 ? true : false}
+              disabled={
+                Object.values(newTopicFiles).length === 0 ? true : false
+              }
             >
               {fileType.map((option) => (
                 <Checkbox key={option.typeName} value={option.typeName}>

@@ -10,6 +10,16 @@ export const registerEmail = (email) => {
   return axios.post("/api/account/register-email", email);
 };
 
+//get all nation
+export const getAllNational = () => {
+  return axios.get("/api/nation");
+};
+
+// get all province
+export const getAllProvince = () => {
+  return axios.get("/api/province");
+};
+
 //register account
 export const registerAccount = (account) => {
   return axios.post("/api/account/register-account", account);
@@ -30,6 +40,11 @@ export const getAllUserWithoutCreator = (param) => {
   return axios.get(
     `/api/user/users-not-participating-topic?${qs.stringify(param)}`
   );
+};
+
+// get all user for admin
+export const getAllUserAdmin = () => {
+  return axios.get("api/user/all");
 };
 
 // get category
@@ -323,8 +338,8 @@ export const getTopicHasSubmitFileMoney = () => {
 };
 
 //get topic has submit file money detais
-export const getTopicHasSubmitFileMoneyDetail = (data) => {
-  return axios.post("/api/remuneration", data);
+export const getTopicHasSubmitFileMoneyDetail = (param) => {
+  return axios.get(`/api/remuneration?${qs.stringify(param)}`);
 };
 
 // leader submit file
@@ -335,4 +350,29 @@ export const postLeaderSubmitFile = (data) => {
 // staff submit decision file
 export const staffSubmitDecisionFile = (data) => {
   return axios.post("/api/remuneration/censorship", data);
+};
+
+//upload final contract file
+export const uploadFinalContract = (data) => {
+  return axios.post("api/contract/upload-ending-contract", data);
+};
+
+//admin assign dean
+export const assignDeanByAdmin = (data) => {
+  return axios.post("/api/user/assign-dean", data);
+};
+
+//admin create department
+export const assignDepartmentByAdmin = (data) => {
+  return axios.post("/api/Department/create", data);
+};
+
+//admin add holiday 
+export const assignHoliday = (data) => {
+  return axios.post("/api/holiday", data);
+};
+
+// get all holiday 
+export const getAllHoliday = (data) => {
+  return axios.get("/api/holiday", data);
 };

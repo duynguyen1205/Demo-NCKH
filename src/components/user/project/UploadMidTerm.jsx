@@ -186,21 +186,6 @@ const UploadMidTerm = (props) => {
               <></>
             )}
 
-            <Checkbox.Group
-              style={{ display: "flex", flexDirection: "column" }}
-              value={checkedList}
-              onChange={onChange}
-              disabled={
-                Object.values(newTopicFiles).length === 0 ? true : false
-              }
-            >
-              {fileType.map((option) => (
-                <Checkbox key={option.typeName} value={option.typeName}>
-                  {option.typeName}
-                </Checkbox>
-              ))}
-            </Checkbox.Group>
-            <Divider />
             <Col span={24}>
               <Form.Item
                 name="file"
@@ -211,6 +196,27 @@ const UploadMidTerm = (props) => {
                   <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
+            </Col>
+            <Divider />
+            <Col>
+              <p>
+                Xác nhận các file đã nộp: <br />
+              </p>
+
+              <Checkbox.Group
+                style={{ display: "flex", flexDirection: "column" }}
+                value={checkedList}
+                onChange={onChange}
+                disabled={
+                  Object.values(newTopicFiles).length === 0 ? true : false
+                }
+              >
+                {fileType.map((option) => (
+                  <Checkbox key={option.typeName} value={option.typeName}>
+                    {option.typeName}
+                  </Checkbox>
+                ))}
+              </Checkbox.Group>
             </Col>
           </Row>
         </Form>

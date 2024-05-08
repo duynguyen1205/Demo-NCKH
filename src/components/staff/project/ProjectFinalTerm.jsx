@@ -373,6 +373,7 @@ const ProjectManagerFinalTerm = () => {
         data={dataPro}
         isModalOpen={isModalInforOpen}
         setIsModalOpen={setIsModalInforOpen}
+        checkTab={checkTab}
       />
 
       <ModalMidTerm

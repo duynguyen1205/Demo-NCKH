@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Calendar,
   theme,
-  Divider,
   message,
   Upload,
   Button,
@@ -12,26 +11,27 @@ import {
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import {
+  getAllHoliday,
   makeDeadlineFinalSubmit,
   makeDeadlineSubmit,
   uploadFile,
 } from "../../../services/api";
 import { useLocation } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
-import locale from 'antd/locale/vi_VN';
+import locale from "antd/locale/vi_VN";
 dayjs.extend(utc);
 const ModalMidTerm = (props) => {
   const today = dayjs();
   const { token } = theme.useToken();
   const [directiveMinutes, setDirectiveMinutes] = useState("");
   const [selectedTime, setSelectedTime] = useState(today);
+  const [holiday, setholiday] = useState([]);
   const location = useLocation();
   const path = location.pathname.split("/");
   const check = path[2];
   const closeModal = () => {
     props.setIsModalOpen(false);
   };
-
   const wrapperStyle = {
     width: 300,
     border: `1px solid ${token.colorBorderSecondary}`,
@@ -50,8 +50,6 @@ const ModalMidTerm = (props) => {
           documentSupplementationDeadline: dayjs(selectedTime).local().format(),
           directiveMinutes: directiveMinutes,
         };
-        console.log(check === "finalterm");
-
         let res;
         if (check === "finalterm") {
           res = await makeDeadlineFinalSubmit(data);
@@ -112,6 +110,18 @@ const ModalMidTerm = (props) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
+  const getHoliday = async () => {
+    try {
+      const res = await getAllHoliday(today);
+      if (res && res.statusCode === 200) {
+        setholiday(res.data);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("Error: ", error);
+      console.log("====================================");
+    }
+  };
   const disabledDate = (current) => {
     // Get current day of the week (0 is Sunday, 6 is Saturday)
     const dayOfWeek = current.day();
@@ -124,6 +134,9 @@ const ModalMidTerm = (props) => {
     const holidays = ["2024-04-30", "2024-05-01", "2024-04-29"];
     return holidays.some((holiday) => current.isSame(holiday, "day"));
   };
+  useEffect(() => {
+    getHoliday();
+  }, []);
   return (
     <div style={wrapperStyle}>
       <Modal

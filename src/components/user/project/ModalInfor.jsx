@@ -14,11 +14,13 @@ import {
   createDeanMakeDecesion,
   createMemberDecision,
   getTopicDetailAPI,
+  getTopicHasSubmitFileMoneyDetail,
 } from "../../../services/api";
 import { useLocation } from "react-router-dom";
 import ModalConfirm from "./ModalConfirm";
 
 const ModalInfor = (props) => {
+  const tab = props.checkTab;
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
   const [topicLink, setTopicLink] = useState({});
@@ -37,19 +39,37 @@ const ModalInfor = (props) => {
     setChecked(true);
     props.setIsModalOpen(false);
   };
+  const getFinalFile = async () => {
+    try {
+      const res = await getTopicHasSubmitFileMoneyDetail({
+        TopicId: topicId,
+      });
+      if (res && res.isSuccess) {
+        setTopicLink({
+          topicFileName: res.data.remunerationName,
+          topicFileLink: res.data.remunerationLink,
+        });
+        checkEnd = res.data.remunerationLink.endsWith(".xlsx");
+      }
+    } catch (error) {
+      console.log("Error getting topic detail: ", error);
+    }
+  };
   const getTopicDetail = async () => {
     try {
       const res = await getTopicDetailAPI({
         topicId: topicId,
       });
       if (res && res.isSuccess) {
-        setTopicLink({
-          topicFileName: res.data.topicFileName,
-          topicFileLink: res.data.topicFileLink,
-        });
+        if (!tab === "tongket") {
+          setTopicLink({
+            topicFileName: res.data.topicFileName,
+            topicFileLink: res.data.topicFileLink,
+          });
+          form.setFieldsValue(res.data);
+          checkEnd = res.data.topicFileLink.endsWith(".docx");
+        }
         setPlainText(res.data.description);
-        form.setFieldsValue(res.data);
-        checkEnd = res.data.topicFileLink.endsWith(".docx");
       }
     } catch (error) {
       console.log("Error getting topic detail: ", error);
@@ -196,6 +216,7 @@ const ModalInfor = (props) => {
   // set up initial value for the form
   useEffect(() => {
     getTopicDetail();
+    getFinalFile();
   }, [isModalOpen === true]);
 
   return (
@@ -258,27 +279,57 @@ const ModalInfor = (props) => {
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item
-                name="document"
-                label="Tài liệu đính kèm"
-                labelCol={{ span: 24 }}
-              >
-                <span>
-                  <a
-                    href={
-                      checkEnd
-                        ? `https://view.officeapps.live.com/op/view.aspx?src=` +
-                          topicLink.topicFileLink
-                        : topicLink.topicFileLink
-                    }
-                    target="_blank"
-                    rel={topicLink.topicFileName}
-                    onClick={() => setChecked(false)}
+              {tab === "tongket" ? (
+                <>
+                  {" "}
+                  <Form.Item
+                    name="document"
+                    label="File tính ngày công đính kèm"
+                    labelCol={{ span: 24 }}
                   >
-                    {topicLink.topicFileName}
-                  </a>
-                </span>
-              </Form.Item>
+                    <span>
+                      <a
+                        href={
+                          checkEnd
+                            ? `https://view.officeapps.live.com/op/view.aspx?src=` +
+                              topicLink.topicFileLink
+                            : topicLink.topicFileLink
+                        }
+                        target="_blank"
+                        rel={topicLink.topicFileName}
+                        onClick={() => setChecked(false)}
+                      >
+                        {topicLink.topicFileName}
+                      </a>
+                    </span>
+                  </Form.Item>
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Form.Item
+                    name="document"
+                    label="Tài liệu đính kèm"
+                    labelCol={{ span: 24 }}
+                  >
+                    <span>
+                      <a
+                        href={
+                          checkEnd
+                            ? `https://view.officeapps.live.com/op/view.aspx?src=` +
+                              topicLink.topicFileLink
+                            : topicLink.topicFileLink
+                        }
+                        target="_blank"
+                        rel={topicLink.topicFileName}
+                        onClick={() => setChecked(false)}
+                      >
+                        {topicLink.topicFileName}
+                      </a>
+                    </span>
+                  </Form.Item>
+                </>
+              )}
             </Col>
             {props.currentTab === "notpassyet" && (
               <Col span={24}>

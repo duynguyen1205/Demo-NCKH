@@ -13,7 +13,12 @@ import {
 import React, { useEffect, useState } from "react";
 import "./basicProfile.scss";
 import { EditOutlined } from "@ant-design/icons";
-import { getAllDepartment, uploadInforUser } from "../../../services/api";
+import {
+  getAllDepartment,
+  getAllNational,
+  getAllProvince,
+  uploadInforUser,
+} from "../../../services/api";
 import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +27,8 @@ const BasicProfile = () => {
   const [form] = Form.useForm();
   const [componentDisabled, setComponentDisabled] = useState(true);
   const [departMent, setDepartMent] = useState([]);
+  const [nationName, setNationName] = useState([]);
+  const [provinceName, setProvinceName] = useState([]);
   const token = localStorage.getItem("token");
   const decoded = jwtDecode(token);
   const navigate = useNavigate();
@@ -31,10 +38,30 @@ const BasicProfile = () => {
       setDepartMent(res.data);
     }
   };
+  const getNation = async () => {
+    const res = await getAllNational();
+    if (res && res?.data) {
+      setNationName(res.data);
+    }
+  };
+  const getProvince = async () => {
+    const res = await getAllProvince();
+    if (res && res?.data) {
+      setProvinceName(res.data);
+    }
+  };
   useEffect(() => {
     form.setFieldValue("accountEmail", decoded?.email);
     getDepartment();
+    getNation();
+    getProvince();
   }, []);
+  const disabledDate = (current) => {
+    const today = dayjs();
+    const birthday = dayjs(current);
+    const age = today.diff(birthday, "year");
+    return age < 18;
+  };
   const onFinish = async (values) => {
     try {
       const res = await uploadInforUser({
@@ -60,9 +87,9 @@ const BasicProfile = () => {
         localStorage.setItem("token", res.data.token);
         navigate("/user");
       }
-      console.log('====================================');
+      console.log("====================================");
       console.log(res);
-      console.log('====================================');
+      console.log("====================================");
     } catch (err) {
       console.log("====================================");
       console.log("Có lỗi tại phần đăng kí thông tin cá nhân: ", err);
@@ -117,17 +144,36 @@ const BasicProfile = () => {
                   <DatePicker
                     className="datePickProfile"
                     placeholder="Chọn ngày"
+                    disabledDate={disabledDate}
                   />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item name="birthPlace" label="Nơi sinh">
-                  <Input />
+                <Form.Item
+                  name="birthPlace"
+                  label="Nơi sinh"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    options={provinceName.map((item) => ({
+                      value: item.provinceName,
+                      label: item.provinceName,
+                    }))}
+                  />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item name="homeTown" label="Quê Quán">
-                  <Input />
+                  <Select
+                    options={provinceName.map((item) => ({
+                      value: item.provinceName,
+                      label: item.provinceName,
+                    }))}
+                  />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -140,7 +186,12 @@ const BasicProfile = () => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Select
+                    options={nationName.map((item) => ({
+                      value: item.nationName,
+                      label: item.nationName,
+                    }))}
+                  />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -260,6 +311,7 @@ const BasicProfile = () => {
                   <DatePicker
                     className="datePickProfile"
                     placeholder="Chọn ngày"
+                    maxDate={dayjs()}
                   />
                 </Form.Item>
               </Col>

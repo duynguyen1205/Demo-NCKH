@@ -33,17 +33,20 @@ const Login = () => {
         if (res && res.isSuccess) {
           localStorage.setItem("token", res.data.token);
           const decoded = jwtDecode(res.data.token);
-          if (decoded?.userid === undefined && decoded.role !== "Staff") {
+          if (decoded?.userid === undefined && decoded.role !== "Staff" && decoded.role !== "Admin") {
             message.info("Vui lòng đăng kí thông tin trước khi tiếp tục");
             navigation("/user/profile");
           } else {
             localStorage.setItem("userId", decoded?.userid);
+            
             if (decoded.role === "Dean") {
               navigation("/user/manager");
             } else if (decoded.role === "User") {
               navigation("/user");
             } else if (decoded.role === "Staff") {
               navigation("/staff");
+            } else if (decoded.role === "Admin") {
+              navigation("/admin");
             }
           }
         } else {
@@ -102,7 +105,7 @@ const Login = () => {
               onFinish={onFinish}
               className={toggle ? "sign-up-form" : "sign-in-form"}
             >
-              <h2 className="title">SRSS</h2>
+              <h2 className="title">SRMS</h2>
               <Form.Item
                 name="email"
                 rules={[
@@ -180,7 +183,7 @@ const Login = () => {
             <div className="content">
               <h3>Chưa có tài khoản ?</h3>
               <p>
-                Hệ thống SRSS là hệ thống đăng ký đề tài và lưu trữ thông tin.
+                Hệ thống SRMS là hệ thống đăng ký đề tài và lưu trữ thông tin.
                 Vui lòng đăng ký tài khoản trước khi sử dụng !
               </p>
               <Button
@@ -197,7 +200,7 @@ const Login = () => {
             <div className="content">
               <h3>Bạn đã có tài khoản ?</h3>
               <p>
-                Nếu đã có tài khoản của hệ thống SRSS, vui lòng đăng nhập để
+                Nếu đã có tài khoản của hệ thống SRMS, vui lòng đăng nhập để
                 trải nghiệm !
               </p>
               <Button

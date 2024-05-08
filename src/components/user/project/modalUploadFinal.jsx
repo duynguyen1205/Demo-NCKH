@@ -13,10 +13,7 @@ import {
   message,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import {
-  postLeaderSubmitFile,
-  uploadFile,
-} from "../../../services/api";
+import { postLeaderSubmitFile, uploadFile } from "../../../services/api";
 
 const UploadFileFinal = (props) => {
   const isModalOpen = props.isModalOpen;
@@ -124,7 +121,11 @@ const UploadFileFinal = (props) => {
               },
             }}
           >
-            <Button type="primary" onClick={handleOk}>
+            <Button
+              type="primary"
+              onClick={handleOk}
+              disabled={Object.values(newTopicFiles).length === 0}
+            >
               Gửi
             </Button>
           </ConfigProvider>,

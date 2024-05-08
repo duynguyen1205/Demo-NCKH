@@ -1,4 +1,6 @@
 import {
+  BellOutlined,
+  DownOutlined,
   FileDoneOutlined,
   FileProtectOutlined,
   FileSearchOutlined,
@@ -97,6 +99,8 @@ const LayoutUser = () => {
   if (path === undefined) {
     path = "dashboard";
   }
+  const url =
+    "https://cdn1.vectorstock.com/i/1000x1000/14/80/doctor-web-icon-therapist-avatar-vector-18531480.jpg";
   return (
     <Layout className="layout-staff">
       <ConfigProvider
@@ -140,13 +144,17 @@ const LayoutUser = () => {
         </Sider>
       </ConfigProvider>
       <Layout className="site-layout">
-        <Header
+        <div
           style={{
             padding: 0,
             background: colorBgContainer,
           }}
         >
           <div className="staff-header">
+            <BellOutlined
+              style={{ marginRight: "20px", fontSize: "18px" }}
+              onClick={() => {}}
+            />
             <Dropdown
               menu={{
                 items: itemDropdown,
@@ -155,13 +163,14 @@ const LayoutUser = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <p>{name} </p>
-                  <Avatar />
+                  <Avatar src={url} />
+                  {name}
+                  <DownOutlined />
                 </Space>
               </a>
             </Dropdown>
           </div>
-        </Header>
+        </div>
 
         <Content className="layout-content">
           <Outlet />

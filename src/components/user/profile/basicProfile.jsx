@@ -98,15 +98,15 @@ const BasicProfile = () => {
   };
   return (
     <>
-      <div className="header">
+      <div
+        className="header"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          textAlign: "center",
+        }}
+      >
         <h3>Thông tin cá nhân</h3>
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => setComponentDisabled(!componentDisabled)}
-        >
-          {componentDisabled ? "Chỉnh sửa " : "Hủy bỏ"}
-        </Button>
       </div>
 
       <Divider />

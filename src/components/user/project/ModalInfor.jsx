@@ -61,14 +61,14 @@ const ModalInfor = (props) => {
         topicId: topicId,
       });
       if (res && res.isSuccess) {
-        if (!tab === "tongket") {
+        if (tab !== "tongket") {
           setTopicLink({
             topicFileName: res.data.topicFileName,
             topicFileLink: res.data.topicFileLink,
           });
-          form.setFieldsValue(res.data);
           checkEnd = res.data.topicFileLink.endsWith(".docx");
         }
+        form.setFieldsValue(res.data);
         setPlainText(res.data.description);
       }
     } catch (error) {
@@ -216,7 +216,9 @@ const ModalInfor = (props) => {
   // set up initial value for the form
   useEffect(() => {
     getTopicDetail();
-    getFinalFile();
+    if (tab === "tongket") {
+      getFinalFile();
+    }
   }, [isModalOpen === true]);
 
   return (

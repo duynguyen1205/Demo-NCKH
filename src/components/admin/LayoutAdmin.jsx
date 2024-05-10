@@ -45,7 +45,7 @@ const items = [
   },
   {
     label: <Link to="/admin/add-department">Quản lý các khoa</Link>,
-    key: "profile",
+    key: "add-department",
     icon: <SolutionOutlined />,
   },
 ];

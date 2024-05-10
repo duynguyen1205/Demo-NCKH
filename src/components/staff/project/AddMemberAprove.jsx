@@ -429,7 +429,7 @@ const AddMemberApprove = () => {
           <p style={{ color: "red" }}>
             Lưu ý khi chọn thành viên đánh giá là số lẻ vd 3, 5, 7
             <br />
-            Chỉ chọn 1 người đã từng tham gia
+            {path === "add-council" ? " Chỉ chọn 1 người đã từng tham gia" : ""}
           </p>
           {hasSelected ? (
             <div>

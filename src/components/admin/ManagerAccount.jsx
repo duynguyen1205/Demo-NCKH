@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tooltip, message } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { Button, Space, Table, Tooltip, message } from "antd";
+import {
+  CloudDownloadOutlined,
+  EditOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import { assignDeanByAdmin, getAllUserAdmin } from "../../services/api";
 
 const ManagerAccount = () => {
@@ -83,16 +88,38 @@ const ManagerAccount = () => {
       align: "center",
     },
   ];
-
+  const renderHeader = () => (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      {" "}
+      <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
+        Danh sách tài khoản
+      </h2>
+      <Button
+        type="primary"
+        icon={<CloudDownloadOutlined />}
+        onClick={() => {}}
+      >
+        Nhập người dùng
+      </Button>
+    </div>
+  );
   useEffect(() => {
     getUser();
   }, []);
   return (
     <div>
-      <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
-        Danh sách tài khoản
-      </h2>
-      <Table columns={columns} dataSource={listUser} loading={loading} />
+      <Table
+        title={renderHeader}
+        columns={columns}
+        dataSource={listUser}
+        loading={loading}
+      />
     </div>
   );
 };

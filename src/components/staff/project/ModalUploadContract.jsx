@@ -170,12 +170,22 @@ const ModalUploadContract = (props) => {
         <Form form={form} name="basic12" onFinish={onSubmit} className="fomr">
           <Row gutter={20}>
             <Col span={24}>
-              <h3>Hợp đồng đính kèm:</h3>
+              <p>Chỉ hỗ trợ cái file như zip hoặc rar</p>
+              <Upload {...propsUpload}>
+                <Button icon={<UploadOutlined />}>Tải hợp đồng lên</Button>
+              </Upload>
+            </Col>
+            <Divider />
+
+            <Col>
+              <h4>Hợp đồng đính kèm:</h4>
               <Checkbox.Group
                 style={{ display: "flex", flexDirection: "column" }}
                 value={checkedList}
                 onChange={onChange}
-                disabled={Object.values(newTopicFiles).length === 0 ? true : false}
+                disabled={
+                  Object.values(newTopicFiles).length === 0 ? true : false
+                }
               >
                 {plainOptions.map((option) => (
                   <Checkbox key={option.value} value={option.value}>
@@ -183,15 +193,6 @@ const ModalUploadContract = (props) => {
                   </Checkbox>
                 ))}
               </Checkbox.Group>
-              <Divider />
-              <p>Chỉ hỗ trợ cái file như zip hoặc rar</p>
-              <Upload {...propsUpload}>
-                <Button
-                  icon={<UploadOutlined />}
-                >
-                  Tải hợp đồng lên
-                </Button>
-              </Upload>
             </Col>
           </Row>
         </Form>

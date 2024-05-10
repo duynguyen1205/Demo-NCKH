@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, Tooltip, message } from "antd";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Space, Table, Tooltip, message } from "antd";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { assignDepartmentByAdmin, getAllDepartment } from "../../services/api";
 import DepartmentModal from "./departmentModal";
 
@@ -42,26 +42,8 @@ const ManagerDepartment = () => {
   const handleDelete = () => {};
   const columns = [
     {
-      title: "Email",
-      dataIndex: "accountEmail",
-    },
-    {
       title: "Khoa",
       dataIndex: "departmentName",
-    },
-    {
-      title: "Họ và tên",
-      dataIndex: "fullName",
-    },
-    {
-      title: "Số điện thoại",
-      dataIndex: "phoneNumber",
-    },
-    {
-      title: "Vai trò",
-      render: (text, record, index) => {
-        return <>{record.isDean ? "Dean" : "User"}</>;
-      },
     },
     {
       title: "Hành động",
@@ -80,12 +62,12 @@ const ManagerDepartment = () => {
         };
         return (
           <div>
-            <Tooltip placement="top" title="Chỉnh sửa vai trò">
+            <Tooltip placement="top" title="Chỉnh sửa khoa">
               <EditOutlined
                 onClick={() => handleEdit(record.accountEmail)}
                 style={style1}
               />{" "}
-              <Tooltip placement="top" title="Xóa quá chứng chỉ">
+              <Tooltip placement="top" title="Xóa khoa">
                 <DeleteOutlined onClick={() => handleDelete()} style={style2} />
               </Tooltip>
             </Tooltip>
@@ -99,25 +81,35 @@ const ManagerDepartment = () => {
   useEffect(() => {
     getDepartment();
   }, []);
-  return (
-    <div>
+  const renderHeader = () => (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
         Danh sách các khoa
       </h2>
-      <div
-        style={{
-          marginBottom: 16,
-        }}
+
+      <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        onClick={() => setOpenModal(true)}
       >
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setOpenModal(true)}
-        >
-          Thêm mới
-        </Button>
-      </div>
-      <Table columns={columns} dataSource={listUser} loading={loading} />
+        Thêm mới
+      </Button>
+    </div>
+  );
+  return (
+    <div>
+      <Table
+        title={renderHeader}
+        columns={columns}
+        dataSource={listUser}
+        loading={loading}
+      />
       <DepartmentModal
         openModal={openModal}
         setOpenModal={setOpenModal}

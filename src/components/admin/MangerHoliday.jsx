@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Button, DatePicker, message } from "antd";
 import { assignHoliday } from "../../services/api";
-import dayjs from "dayjs-ext";
+import dayjs from "dayjs";
 const ManagerHoliday = () => {
   const [listDate, setListDate] = useState([]);
   const onChange = (date, dateString) => {
     console.log(dateString);
     setListDate(dateString);
   };
-  const today = dayjs();
+  const today = dayjs().add(1, "day");
   const handleSubmit = async () => {
     try {
       const data = {
@@ -26,7 +26,7 @@ const ManagerHoliday = () => {
   return (
     <>
       <h2>Quản lí ngày nghỉ lễ</h2>
-      <DatePicker multiple minDate={today} onChange={onChange} />
+      <DatePicker multiple minDate={today} onChange={onChange}/>
       <Button
         onClick={() => handleSubmit()}
         type="primary"

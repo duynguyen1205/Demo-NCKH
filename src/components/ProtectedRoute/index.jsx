@@ -11,7 +11,7 @@ const RoleBaseRouter = (props) => {
   if (
     (isStaffRoute && role === "Staff") ||
     (isAdminRoute && role === "Admin") ||
-    (isUserRoute && role === "User")
+    (isUserRoute && role === "User" || role === "Dean")
   ) {
     return <>{props.children}</>;
   } else {

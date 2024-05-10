@@ -494,7 +494,7 @@ const TrackProject = () => {
                           {
                             title: "Staff tải lên quyết định",
                             status:
-                              dataProcess.progress === "WaitingForCensorshipRemuneration"
+                              dataProcess.progress === "Completed"
                                 ? "finished"
                                 : "wait",
                             icon: <CloudUploadOutlined />,

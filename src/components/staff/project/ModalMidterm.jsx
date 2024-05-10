@@ -67,6 +67,7 @@ const ModalMidTerm = (props) => {
       console.log("====================================");
     }
   };
+  const mindate = dayjs().add(1, "day")
   const propsUpload = {
     name: "file",
     multiple: false,
@@ -152,6 +153,7 @@ const ModalMidTerm = (props) => {
           <ConfigProvider locale={locale}>
             <Calendar
               locale={locale}
+              mindate={mindate}
               mode="month"
               fullscreen={false}
               onChange={onChange}

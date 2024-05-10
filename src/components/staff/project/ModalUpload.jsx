@@ -39,8 +39,8 @@ const ModalUpload = (props) => {
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
   const [newTopicFiles, setFileList] = useState({});
-  const [review, setReview] = useState();
-  const [reviewMidtearm, setReviewMidtearm] = useState();
+  const [review, setReview] = useState(null);
+  const [reviewMidtearm, setReviewMidtearm] = useState(null);
   const [meetingDate, setMeetingDate] = useState(today);
   const [errorMessage, setError] = useState("");
   const data = props.data;
@@ -61,14 +61,12 @@ const ModalUpload = (props) => {
       message.error("Xin hãy tải biên bản cuộc họp lên");
       return;
     }
+
     if (data.state === "MidtermReport") {
       const param = {
         topicId: data.topicId,
         newFile: newTopicFiles,
       };
-      console.log("====================================");
-      console.log(param);
-      console.log("====================================");
       try {
         const res = await uploadReportMidTerm(param);
         setIsSubmit(true);
@@ -78,7 +76,9 @@ const ModalUpload = (props) => {
           if (reviewMidtearm === "1") {
             const timeMidterm = {
               topicId: data.topicId,
-              documentSupplementationDeadline: dayjs(meetingDate).local().format(),
+              documentSupplementationDeadline: dayjs(meetingDate)
+                .local()
+                .format(),
             };
             const res = await makeDeadlineSubmit(timeMidterm);
             if (res && res.isSuccess) {
@@ -110,11 +110,11 @@ const ModalUpload = (props) => {
       try {
         let res;
         if (data.state === "FinaltermReport") {
-          res = await uploadResultFinal(param)
+          res = await uploadResultFinal(param);
         } else {
           res = await uploadResult(param);
         }
-        console.log(res);
+        Ư;
         setIsSubmit(true);
         if (res && res.isSuccess) {
           setIsSubmit(false);
@@ -167,7 +167,7 @@ const ModalUpload = (props) => {
     },
     onRemove: (file) => {
       setFileList({});
-      setError("")
+      setError("");
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -204,7 +204,11 @@ const ModalUpload = (props) => {
               },
             }}
           >
-            <Button type="primary" onClick={handleOk}>
+            <Button
+              type="primary"
+              onClick={handleOk}
+              disabled={reviewMidtearm === null || review === null}
+            >
               Gửi
             </Button>
           </ConfigProvider>,
@@ -277,33 +281,7 @@ const ModalUpload = (props) => {
                 </Form.Item>
               </Col>
             )}
-            <Col
-              span={24}
-              hidden={data.state === "MidtermReport" ? false : true}
-            >
-              <Form.Item
-                name="decisionOfCouncil"
-                label="Quyết định của hội đồng"
-                labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: data.state === "MidtermReport" ? true : false,
-                    message: "Xin hãy chọn quyết định của hội đồng!",
-                  },
-                ]}
-              >
-                <Radio.Group
-                  onChange={handleRadioChange}
-                  value={reviewMidtearm}
-                  disabled={Object.values(newTopicFiles).length === 0 ? true : false}
-                >
-                  <Space direction="vertical">
-                    <Radio value="1">Tiếp tục báo cáo</Radio>
-                    <Radio value="0">Kết thúc báo cáo</Radio>
-                  </Space>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
+
             {reviewMidtearm === "1" && (
               <Col span={24}>
                 <Form.Item
@@ -332,6 +310,35 @@ const ModalUpload = (props) => {
                   <Button icon={<UploadOutlined />}>Tải tài liệu lên</Button>
                 </Upload>
                 {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+              </Form.Item>
+            </Col>
+            <Col
+              span={24}
+              hidden={data.state === "MidtermReport" ? false : true}
+            >
+              <Form.Item
+                name="decisionOfCouncil"
+                label="Quyết định của hội đồng"
+                labelCol={{ span: 24 }}
+                rules={[
+                  {
+                    required: data.state === "MidtermReport" ? true : false,
+                    message: "Xin hãy chọn quyết định của hội đồng!",
+                  },
+                ]}
+              >
+                <Radio.Group
+                  onChange={handleRadioChange}
+                  value={reviewMidtearm}
+                  disabled={
+                    Object.values(newTopicFiles).length === 0 ? true : false
+                  }
+                >
+                  <Space direction="vertical">
+                    <Radio value="1">Tiếp tục báo cáo</Radio>
+                    <Radio value="0">Kết thúc báo cáo</Radio>
+                  </Space>
+                </Radio.Group>
               </Form.Item>
             </Col>
           </Row>

@@ -27,16 +27,17 @@ const DepartmentModal = (props) => {
         departmentName: values.name,
       };
         const res = await assignDepartmentByAdmin(data);
-        console.log(data);
+        setLoading(true);
         if (res && res.statusCode === 200) {
           message.success("Thêm mới khoa thành công");
-          props.getDepartment();
+          setLoading(false);
+          props.getAllDepartment();
           form.resetFields();
           handleCancel();
         }
     } catch (error) {
       console.log("====================================");
-      console.log("Có lỗi tại đăng kí department");
+      console.log("Có lỗi tại đăng kí department", error);
       console.log("====================================");
     }
   };

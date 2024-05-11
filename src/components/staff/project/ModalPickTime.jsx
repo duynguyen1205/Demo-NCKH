@@ -15,21 +15,42 @@ const ModalPickTime = ({ visible, onCancel, dataUser }) => {
   const navigate = useNavigate();
   let topicId = location.pathname.split("/");
   topicId = topicId[4];
+  const isHoliday = (startDate, endDate) => {
+    for (
+      let date = startDate;
+      date.isBefore(endDate);
+      date = date.add(1, "day")
+    ) {
+      if (holiday.some((holiday) => dayjs(date).isSame(holiday.date, "day"))) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const handleTimeChange = (value) => {
     let endDate = dayjs().add(value, "day");
-    console.log(dayjs(endDate).format(dateFormat));
-    let weekendDays = 0;
-    for (let i = 0; i <= value; i++) {
-      if (
-        endDate.add(i, "day").day() === 6 ||
-        endDate.add(i, "day").day() === 0
-      ) {
+    let startDate = dayjs();
+
+    let weekendDays = 0; // Số ngày cuối tuần trong khoảng thời gian deadline
+    for (let i = 0; i < value; i++) {
+      if (endDate.add(i, "day").day() === 6) {
         weekendDays++;
+      } else if (endDate.add(i, "day").day() === 0) {
+        weekendDays += 2;
       }
     }
 
-    if (weekendDays > 0) {
-      endDate = endDate.add(weekendDays + 1, "day");
+    for (let i = 0; i < value; i++) {
+      if (isHoliday(startDate, endDate)) {
+        endDate = endDate.add(1, "day");
+      }
+    }
+
+    if (endDate.day() === 6) {
+      endDate = endDate.add(1, "day");
+    } else if (endDate.day() === 0) {
+      endDate = endDate.add(2, "day");
     }
     setDate(endDate);
     setSelectedTime(value);

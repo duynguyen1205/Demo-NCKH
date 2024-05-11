@@ -1,19 +1,77 @@
 import React, { useEffect, useState } from "react";
-import { Button, Space, Table, Tooltip, message } from "antd";
+import {
+  Form,
+  Input,
+  Popconfirm,
+  Table,
+  Typography,
+  Tooltip,
+  Button,
+  message,
+} from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { assignDepartmentByAdmin, getAllDepartment } from "../../services/api";
+import { updateDepartmentByAdmin, getAllDepartment } from "../../services/api";
 import DepartmentModal from "./departmentModal";
-
+import "./department.scss";
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+  const inputNode = <Input />;
+  return (
+    <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: true,
+              message: `Xin hãy điền ${title} muốn cập nhật!`,
+            },
+          ]}
+        >
+          {inputNode}
+        </Form.Item>
+      ) : (
+        children
+      )}
+    </td>
+  );
+};
 const ManagerDepartment = () => {
+  const [form] = Form.useForm();
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
-  const [listUser, setListUser] = useState();
+  const [listDepartment, setListDepartment] = useState();
   const [openModal, setOpenModal] = useState(false);
+  const [editingKey, setEditingKey] = useState("");
+  const isEditing = (record) => record.departmentId === editingKey;
+  const edit = (record) => {
+    form.setFieldsValue({
+      departmentName: "",
+      ...record,
+    });
+    setEditingKey(record.departmentId);
+  };
+  const cancel = () => {
+    setEditingKey("");
+  };
   const getDepartment = async () => {
     try {
       setLoading(true);
       const res = await getAllDepartment();
-      if (res && res?.data) {
-        setListUser(res?.data);
+      if (res && res.statusCode === 200) {
+        setListDepartment(res.data);
         setLoading(false);
       }
     } catch (error) {
@@ -23,19 +81,22 @@ const ManagerDepartment = () => {
     }
   };
   // edit working process
-  const handleEdit = async (departmentName) => {
+  const handleEdit = async (dataIndex) => {
     try {
+      const row = await form.validateFields();
       const data = {
-        departmentName: departmentName,
+        departmentId: dataIndex,
+        departmentName: row.departmentName,
       };
-      //   const res = await assignDepartmentByAdmin(data);
-      //   if (res && res.statusCode === 200) {
-      //     message.success("Chuyển vai trò thành công");
-      //     getDepartment();
-      //   }
+      const res = await updateDepartmentByAdmin(data);
+      if (res && res.statusCode === 200) {
+        message.success("Cập nhật thành công");
+        getDepartment();
+        cancel();
+      }
     } catch (error) {
       console.log("====================================");
-      console.log("Có lỗi tại admin department");
+      console.log("Có lỗi tại update admin department", error);
       console.log("====================================");
     }
   };
@@ -44,10 +105,12 @@ const ManagerDepartment = () => {
     {
       title: "Khoa",
       dataIndex: "departmentName",
+      editable: true,
     },
     {
       title: "Hành động",
-      render: (text, record, index) => {
+      render: (_, record) => {
+        const editable = isEditing(record);
         const style1 = {
           color: "blue",
           fontSize: "18px",
@@ -60,24 +123,37 @@ const ManagerDepartment = () => {
           margin: "0 10px",
           cursor: "pointer",
         };
-        return (
-          <div>
-            <Tooltip placement="top" title="Chỉnh sửa khoa">
-              <EditOutlined
-                onClick={() => handleEdit(record.accountEmail)}
-                style={style1}
-              />{" "}
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => handleEdit(record.departmentId)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Cập nhật
+            </Typography.Link>
+            <a onClick={cancel}>Hủy</a>
+          </span>
+        ) : (
+          <>
+            <Typography.Link
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            >
+              <Tooltip placement="top" title="Chỉnh sửa khoa">
+                <EditOutlined style={style1} />
+              </Tooltip>
               <Tooltip placement="top" title="Xóa khoa">
                 <DeleteOutlined onClick={() => handleDelete()} style={style2} />
               </Tooltip>
-            </Tooltip>
-          </div>
+            </Typography.Link>
+          </>
         );
       },
       align: "center",
     },
   ];
-
   useEffect(() => {
     getDepartment();
   }, []);
@@ -102,14 +178,63 @@ const ManagerDepartment = () => {
       </Button>
     </div>
   );
+  const onChange = (pagination, filters, sorter, extra) => {
+    if (pagination.current !== current) {
+      setCurrent(pagination.current);
+    }
+    if (pagination.pageSize !== pageSize) {
+      setPageSize(pagination.pageSize);
+      setCurrent(1);
+    }
+    console.log("parms: ", pagination, filters, sorter, extra);
+  };
+  const mergedColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        inputType: "text",
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+    };
+  });
   return (
     <div>
-      <Table
-        title={renderHeader}
-        columns={columns}
-        dataSource={listUser}
-        loading={loading}
-      />
+      <Form form={form} component={false}>
+        <Table
+          title={renderHeader}
+          components={{
+            body: {
+              cell: EditableCell,
+            },
+          }}
+          rowClassName="editable-row"
+          columns={mergedColumns}
+          dataSource={listDepartment}
+          loading={loading}
+          bordered={true}
+          rowKey={"key"}
+          onChange={onChange}
+          pagination={{
+            current: current,
+            pageSize: pageSize,
+            showSizeChanger: true,
+            pageSizeOptions: ["5", "10", "15"],
+            showTotal: (total, range) => {
+              return (
+                <div>
+                  {range[0]} - {range[1]} on {total} rows
+                </div>
+              );
+            },
+          }}
+        />
+      </Form>
       <DepartmentModal
         openModal={openModal}
         setOpenModal={setOpenModal}

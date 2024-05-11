@@ -72,7 +72,7 @@ export const uploadFile = (file) => {
   bodyFormData.append("formFile", file);
   return axios({
     method: "post",
-    url: "/api/uploadfile/single-DO",
+    url: "/api/file/single-DO",
     data: bodyFormData,
     headers: {
       "Content-Type": "multipart/form-data",
@@ -365,6 +365,11 @@ export const assignDeanByAdmin = (data) => {
 //admin create department
 export const assignDepartmentByAdmin = (data) => {
   return axios.post("/api/Department/create", data);
+};
+
+//admin create department
+export const updateDepartmentByAdmin = (data) => {
+  return axios.put("/api/Department/update", data);
 };
 
 //admin add holiday 

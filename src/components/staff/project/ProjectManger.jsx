@@ -32,7 +32,6 @@ const ProjectManager = () => {
   const staffId = "2D5E2220-EEEF-4FDC-8C98-1B5C5012319C";
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [checkTab, setCheckTab] = useState("notyet");
   const [dataSource, setData] = useState([]);
@@ -334,7 +333,6 @@ const ProjectManager = () => {
           current: current,
           pageSize: pageSize,
           showSizeChanger: true,
-          total: total,
           pageSizeOptions: ["5", "10", "15"],
           showTotal: (total, range) => {
             return (

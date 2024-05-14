@@ -144,10 +144,10 @@ const ManagerDepartment = () => {
               <Tooltip placement="top" title="Chỉnh sửa khoa">
                 <EditOutlined style={style1} />
               </Tooltip>
-              <Tooltip placement="top" title="Xóa khoa">
-                <DeleteOutlined onClick={() => handleDelete()} style={style2} />
-              </Tooltip>
             </Typography.Link>
+            <Tooltip placement="top" title="Xóa khoa">
+              <DeleteOutlined onClick={() => handleDelete()} style={style2} />
+            </Tooltip>
           </>
         );
       },

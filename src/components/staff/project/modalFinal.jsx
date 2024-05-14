@@ -75,6 +75,7 @@ const ModalFinal = (props) => {
           const endPhase = await uploadFinalContract(dataSrc);
           if (endPhase && endPhase.statusCode === 200) {
             message.success("Tải biên bản lên thành công");
+            props.getTopicSumarizeTerm();
           }
         }
         handleCancel();

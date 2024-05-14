@@ -152,7 +152,9 @@ const ProjectManagerFinalTerm = () => {
         text
       ),
   });
-
+  console.log("====================================");
+  console.log(dataSource);
+  console.log("====================================");
   const columns = [
     {
       title: "Mã Đề Tài",
@@ -174,9 +176,17 @@ const ProjectManagerFinalTerm = () => {
       key: "categoryName",
     },
     {
-      title: "Ngày",
+      title:
+        checkTab === "notyet" ? "Ngày kết thúc giữa kì" : "Hạn nộp tài liệu",
       render: (text, record, index) => {
-        return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
+        if (checkTab === "notyet") {
+          return <div>{dayjs(record.uploadEvaluateAt).format(dateFormat)}</div>;
+        }
+        return (
+          <div>
+            {dayjs(record.documentSupplementationDeadline).format(dateFormat)}
+          </div>
+        );
       },
       key: "createdAt",
     },
@@ -284,7 +294,7 @@ const ProjectManagerFinalTerm = () => {
     try {
       const res = await getTopicHasSubmitFileMoney();
       setIsLoading(true);
-      if (res && res?.data) {
+      if (res && res.statusCode === 200) {
         setData(res.data);
         setIsLoading(false);
       }
@@ -385,6 +395,7 @@ const ProjectManagerFinalTerm = () => {
         data={dataPro}
         isModalOpen={isModalFinalOpen}
         setIsModalOpen={setIsModalFinalOpen}
+        getTopicSumarizeTerm={getTopicSumarizeTerm}
       />
     </div>
   );

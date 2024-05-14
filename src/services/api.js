@@ -32,13 +32,13 @@ export const loginAccount = (account) => {
 
 // get all user except dean
 export const getAllUser = (param) => {
-  return axios.get(`/api/user/users?${qs.stringify(param)}`);
+  return axios.get(`/api/user/add-to-topic?${qs.stringify(param)}`);
 };
 
 // get all user except dean
 export const getAllUserWithoutCreator = (param) => {
   return axios.get(
-    `/api/user/users-not-participating-topic?${qs.stringify(param)}`
+    `/api/user/add-to-council?${qs.stringify(param)}`
   );
 };
 
@@ -118,7 +118,7 @@ export const memberReviewAPI = (data) => {
 
 // get topic waiting for member approval
 export const getTopicForCouncil = () => {
-  return axios.get("api/topic/early-topic-waiting-council-formation");
+  return axios.get("api/topic/early-topic-waiting-configure-conference");
 };
 
 //get topic member has already reviewed
@@ -372,12 +372,51 @@ export const updateDepartmentByAdmin = (data) => {
   return axios.put("/api/Department/update", data);
 };
 
-//admin add holiday 
+//admin add holiday
 export const assignHoliday = (data) => {
   return axios.post("/api/holiday", data);
 };
 
-// get all holiday 
+// get all holiday
 export const getAllHoliday = (data) => {
   return axios.get("/api/holiday", data);
 };
+
+// admin get account inactive
+export const getAccountInactive = () => {
+  return axios.get("/api/account/inactive-emails");
+};
+
+//admin upload file
+export const uploadFileAdmin = (file) => {
+  const bodyFormData = new FormData();
+  bodyFormData.append("formFile", file);
+  return axios({
+    method: "post",
+    url: "/api/file/convert-excel-to-user",
+    data: bodyFormData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+// Admin create account inactive
+export const createAccountAdminEmail = (data) => {
+  return axios.put("/api/account/provide-account", data);
+};
+
+// Admin create account inactive
+export const createAccountAdmin = (data) => {
+  return axios.post("/api/user/create-users", data);
+};
+
+//users change password
+export const changePassword = (data) => {
+  return axios.put("/api/account/change-password", data);
+};
+
+// leader get notifications
+export const getNotifications = (param) => {
+  return axios.get(`/api/notify?${qs.stringify(param)}`)
+}

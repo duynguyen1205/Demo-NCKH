@@ -73,7 +73,6 @@ const ModalMidTerm = (props) => {
     multiple: false,
     maxCount: 1,
     customRequest: async ({ file, onSuccess, onError }) => {
-      console.log(file);
       try {
         const isCompressedFile =
           file.type ===
@@ -86,7 +85,6 @@ const ModalMidTerm = (props) => {
           return;
         }
         const response = await uploadFile(file);
-        console.log(response);
         if (response.data.fileLink === null) {
           onError(response, file);
           message.error(`${file.name} file tải lên không thành công!.`);

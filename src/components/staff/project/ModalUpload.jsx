@@ -104,7 +104,7 @@ const ModalUpload = (props) => {
         topicId: data.topicId,
         decisionOfCouncil: Number(values.decisionOfCouncil),
         resultFileLink: newTopicFiles.fileLink,
-        deadline: dayjs(meetingDate).local().format(),
+        resubmitDeadline: values.decisionOfCouncil === "1" ? null :dayjs(meetingDate).local().format(),
       };
 
       try {
@@ -113,8 +113,10 @@ const ModalUpload = (props) => {
           res = await uploadResultFinal(param);
         } else {
           res = await uploadResult(param);
-        }
-        Ư;
+          console.log('====================================');
+          console.log(res);
+          console.log('====================================');
+        };
         setIsSubmit(true);
         if (res && res.isSuccess) {
           setIsSubmit(false);
@@ -207,7 +209,6 @@ const ModalUpload = (props) => {
             <Button
               type="primary"
               onClick={handleOk}
-              disabled={reviewMidtearm === null || review === null}
             >
               Gửi
             </Button>

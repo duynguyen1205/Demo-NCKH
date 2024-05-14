@@ -1,22 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Button, Space, Table, Tooltip, message } from "antd";
+import { Button, Space, Table, Tabs, Tag, Tooltip, message } from "antd";
+import { CloudDownloadOutlined, EditOutlined } from "@ant-design/icons";
 import {
-  CloudDownloadOutlined,
-  EditOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
-import { assignDeanByAdmin, getAllUserAdmin } from "../../services/api";
+  assignDeanByAdmin,
+  createAccountAdminEmail,
+  getAccountInactive,
+  getAllUserAdmin,
+} from "../../services/api";
+import UploadByFile from "./modalUploadUser";
 
 const ManagerAccount = () => {
   const [loading, setLoading] = useState(false);
   const [listUser, setListUser] = useState();
+  const [isOpen, setIsOpen] = useState(false);
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const mergeArrays = (arr1, arr2) => {
+    // Duyệt qua từng phần tử của mảng 2
+    const resultArray = arr2.map((item2) => {
+      // Kiểm tra xem phần tử có tồn tại trong mảng 1 không
+      const isDuplicate = arr1.some((item1) => item1 === item2.accountEmail);
+      // Trả về phần tử kèm thuộc tính isDuplicate
+      return { ...item2, isDuplicate };
+    });
+
+    return resultArray;
+  };
   const getUser = async () => {
     try {
       setLoading(true);
       const res = await getAllUserAdmin();
-      if (res && res?.data) {
-        setListUser(res?.data);
+      // const res1 = await getAccountInactive();
+      if (res && res.statusCode === 200) {
+        // const mergeArray = mergeArrays(res1.data, res?.data);
+        setListUser(res.data);
         setLoading(false);
       }
     } catch (error) {
@@ -25,6 +42,7 @@ const ManagerAccount = () => {
       console.log("====================================");
     }
   };
+
   // edit working process
   const handleEdit = async (email) => {
     try {
@@ -65,6 +83,29 @@ const ManagerAccount = () => {
         return <>{record.isDean ? "Dean" : "User"}</>;
       },
     },
+    // {
+    //   title: "Trạng thái tài khoản",
+    //   dataIndex: "isDuplicate",
+    //   key: "isDuplicate",
+    //   render: (text, record) => {
+    //     if (record.isDuplicate) {
+    //       return (
+    //         <Button
+    //           type="primary"
+    //           onClick={() => {
+    //             handleActiveAccount(record.accountEmail);
+    //           }}
+    //         >
+    //           Kích hoạt
+    //         </Button>
+    //       );
+    //     }
+    //     const color = "green";
+    //     const status = "Đã kích hoạt";
+    //     return <Tag color={color}>{status}</Tag>;
+    //   },
+    //   align: "center",
+    // },
     {
       title: "Hành động",
       render: (text, record, index) => {
@@ -89,29 +130,44 @@ const ManagerAccount = () => {
     },
   ];
   const renderHeader = () => (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      {" "}
-      <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
-        Danh sách tài khoản
-      </h2>
-      <Button
-        type="primary"
-        icon={<CloudDownloadOutlined />}
-        onClick={() => {}}
+    <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
-        Nhập người dùng
-      </Button>
+        {" "}
+        <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
+          Danh sách tài khoản
+        </h2>
+        <Button
+          type="primary"
+          icon={<CloudDownloadOutlined />}
+          onClick={() => {
+            setIsOpen(true);
+          }}
+        >
+          Nhập người dùng
+        </Button>
+      </div>
     </div>
   );
+
   useEffect(() => {
     getUser();
   }, []);
+  const onChange = (pagination, filters, sorter, extra) => {
+    if (pagination.current !== current) {
+      setCurrent(pagination.current);
+    }
+    if (pagination.pageSize !== pageSize) {
+      setPageSize(pagination.pageSize);
+      setCurrent(1);
+    }
+    console.log("parms: ", pagination, filters, sorter, extra);
+  };
   return (
     <div>
       <Table
@@ -119,7 +175,22 @@ const ManagerAccount = () => {
         columns={columns}
         dataSource={listUser}
         loading={loading}
+        onChange={onChange}
+        pagination={{
+          current: current,
+          pageSize: pageSize,
+          showSizeChanger: true,
+          pageSizeOptions: ["7", "10", "15"],
+          showTotal: (total, range) => {
+            return (
+              <div>
+                {range[0]} - {range[1]} on {total} rows
+              </div>
+            );
+          },
+        }}
       />
+      <UploadByFile isOpen={isOpen} setIsOpen={setIsOpen} getUser={getUser} />
     </div>
   );
 };

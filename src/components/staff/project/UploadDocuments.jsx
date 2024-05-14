@@ -5,15 +5,7 @@ import {
   SearchOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import {
-  Button,
-  Input,
-  Space,
-  Table,
-  Tabs,
-  Tooltip,
-  message,
-} from "antd";
+import { Button, Input, Space, Table, Tabs, Tooltip, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import "./project.scss";
@@ -42,7 +34,10 @@ const UploadDocument = () => {
   const [dataTopic, setDataTopic] = useState([]);
   const [checkTab, setCheckTab] = useState("confirm");
   const staffId = "2D5E2220-EEEF-4FDC-8C98-1B5C5012319C";
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  console.log('====================================');
+  console.log(dataTopic);
+  console.log('====================================');
   const getTopicUpload = async () => {
     try {
       const res = await getTopicUploadDoc({
@@ -231,8 +226,11 @@ const UploadDocument = () => {
       },
     },
     {
-      title: "Ngày tạo",
+      title: checkTab === "submitted" ? "Ngày tải lên biên bản" : "Ngày họp ",
       render: (text, record, index) => {
+        if (checkTab === "confirm") {
+          return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
+        }
         return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
       },
       key: "createdAt",
@@ -373,7 +371,7 @@ const UploadDocument = () => {
         setDataUser={setDataUser}
         isModalContractOpen={isModalContractOpen}
         setIsModalContractOpen={setIsModalContractOpen}
-        confirm = {confirm}
+        confirm={confirm}
       />
     </div>
   );

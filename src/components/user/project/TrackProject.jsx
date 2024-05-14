@@ -488,6 +488,8 @@ const TrackProject = () => {
                               dataProcess.progress ===
                               "WaitingForCensorshipRemuneration"
                                 ? "finished"
+                                : dataProcess.progress === "Completed"
+                                ? "finished"
                                 : "wait",
                             icon: <FileProtectOutlined />,
                           },

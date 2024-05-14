@@ -8,7 +8,7 @@ dayjs.extend(customParseFormat);
 const dateFormat = "DD/MM/YYYY";
 const ModalPickTime = ({ visible, onCancel, dataUser }) => {
   const [selectedTime, setSelectedTime] = useState(1);
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(dayjs().add(1, "day"));
   const [holiday, setholiday] = useState([]);
   const today = dayjs().format(dateFormat);
   const location = useLocation();
@@ -30,22 +30,6 @@ const ModalPickTime = ({ visible, onCancel, dataUser }) => {
 
   const handleTimeChange = (value) => {
     let endDate = dayjs().add(value, "day");
-    let startDate = dayjs();
-
-    let weekendDays = 0; // Số ngày cuối tuần trong khoảng thời gian deadline
-    for (let i = 0; i < value; i++) {
-      if (endDate.add(i, "day").day() === 6) {
-        weekendDays++;
-      } else if (endDate.add(i, "day").day() === 0) {
-        weekendDays += 2;
-      }
-    }
-
-    for (let i = 0; i < value; i++) {
-      if (isHoliday(startDate, endDate)) {
-        endDate = endDate.add(1, "day");
-      }
-    }
 
     if (endDate.day() === 6) {
       endDate = endDate.add(1, "day");

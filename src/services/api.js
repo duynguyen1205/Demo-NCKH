@@ -3,21 +3,15 @@ import qs from "query-string";
 
 // gọi tất cả api ở đây
 
-// authenticated
+
+// get user information
+export const getUserInformation = (params) => {
+  return axios.get(`api/user/infor?${qs.stringify(params)}`);
+};
 
 //register email
 export const registerEmail = (email) => {
   return axios.post("/api/account/register-email", email);
-};
-
-//get all nation
-export const getAllNational = () => {
-  return axios.get("/api/nation");
-};
-
-// get all province
-export const getAllProvince = () => {
-  return axios.get("/api/province");
 };
 
 //register account
@@ -37,9 +31,7 @@ export const getAllUser = (param) => {
 
 // get all user except dean
 export const getAllUserWithoutCreator = (param) => {
-  return axios.get(
-    `/api/user/add-to-council?${qs.stringify(param)}`
-  );
+  return axios.get(`/api/user/add-to-council?${qs.stringify(param)}`);
 };
 
 // get all user for admin
@@ -418,5 +410,13 @@ export const changePassword = (data) => {
 
 // leader get notifications
 export const getNotifications = (param) => {
-  return axios.get(`/api/notify?${qs.stringify(param)}`)
+  return axios.get(`/api/notify?${qs.stringify(param)}`);
+};
+
+// leader get all members
+export const getAllMembersByLeader = (param) => {
+  console.log('====================================');
+  console.log("check parm", param);
+  console.log('====================================');
+  return axios.get(`/api/topic/participant?${qs.stringify(param)}`);
 }

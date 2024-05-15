@@ -104,7 +104,10 @@ const ModalUpload = (props) => {
         topicId: data.topicId,
         decisionOfCouncil: Number(values.decisionOfCouncil),
         resultFileLink: newTopicFiles.fileLink,
-        resubmitDeadline: values.decisionOfCouncil === "1" ? null :dayjs(meetingDate).local().format(),
+        resubmitDeadline:
+          values.decisionOfCouncil === "1"
+            ? null
+            : dayjs(meetingDate).local().format(),
       };
 
       try {
@@ -113,10 +116,7 @@ const ModalUpload = (props) => {
           res = await uploadResultFinal(param);
         } else {
           res = await uploadResult(param);
-          console.log('====================================');
-          console.log(res);
-          console.log('====================================');
-        };
+        }
         setIsSubmit(true);
         if (res && res.isSuccess) {
           setIsSubmit(false);
@@ -206,10 +206,7 @@ const ModalUpload = (props) => {
               },
             }}
           >
-            <Button
-              type="primary"
-              onClick={handleOk}
-            >
+            <Button type="primary" onClick={handleOk}>
               Gửi
             </Button>
           </ConfigProvider>,
@@ -283,23 +280,6 @@ const ModalUpload = (props) => {
               </Col>
             )}
 
-            {reviewMidtearm === "1" && (
-              <Col span={24}>
-                <Form.Item
-                  name="date"
-                  label="Ngày phải nộp lại tài liệu"
-                  labelCol={{ span: 24 }}
-                >
-                  <DatePicker
-                    format={dateFormat}
-                    defaultValue={today}
-                    minDate={today}
-                    maxDate={maxDate}
-                    onChange={handleDateChange}
-                  />
-                </Form.Item>
-              </Col>
-            )}
             <Col span={24}>
               <Form.Item
                 name="comment"
@@ -342,6 +322,24 @@ const ModalUpload = (props) => {
                 </Radio.Group>
               </Form.Item>
             </Col>
+
+            {reviewMidtearm === "1" && (
+              <Col span={24}>
+                <Form.Item
+                  name="date"
+                  label="Ngày phải nộp lại tài liệu"
+                  labelCol={{ span: 24 }}
+                >
+                  <DatePicker
+                    format={dateFormat}
+                    defaultValue={today}
+                    minDate={today}
+                    maxDate={maxDate}
+                    onChange={handleDateChange}
+                  />
+                </Form.Item>
+              </Col>
+            )}
           </Row>
         </Form>
       </Modal>

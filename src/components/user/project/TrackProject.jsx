@@ -31,6 +31,7 @@ const TrackProject = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalFinalOpen, setIsModalFinalOpen] = useState(false);
   const [isLeader, setIsLeader] = useState(false);
+  const [leaderId, setLeaderId] = useState();
   const userId = localStorage.getItem("userId");
   const renderExtra = (step) => {
     if (step === currentStep) {
@@ -53,13 +54,11 @@ const TrackProject = () => {
       const res = await trackReseach({
         topicId: topicId,
       });
-      console.log("====================================");
-      console.log("Track project: ", res.data);
-      console.log("====================================");
       if (res && res.isSuccess) {
         setDataProcess(res.data);
         if (userId === res.data.creatorId) {
           setIsLeader(true);
+          setLeaderId(res.data.creatorId);
         }
         if (
           res.data?.state === "PreliminaryReview" ||
@@ -533,6 +532,7 @@ const TrackProject = () => {
         setStatus={setStatus}
       />
       <UploadFileFinal
+        leaderId={leaderId}
         topicId={topicId}
         isModalOpen={isModalFinalOpen}
         setIsModalOpen={setIsModalFinalOpen}

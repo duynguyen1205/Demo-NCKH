@@ -168,10 +168,10 @@ const ProjectManager = () => {
     {
       title: checkTab === "notyet" ? "Ngày nộp" : "Ngày Kết Thúc Sơ Duyệt ",
       render: (text, record, index) => {
-        if (checkTab === "chohoidong") {
-          return <div>{dayjs(record.reviewEndDate).format(dateFormat)}</div>;
+        if (checkTab === "notyet") {
+          return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
         }
-        return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
+        return <div>{dayjs(record.reviewEndDate).format(dateFormat)}</div>;
       },
       key: "createdAt",
       align: "center",

@@ -33,7 +33,7 @@ const ProjectManagerMidTerm = () => {
   const [dataPro, setDataPro] = useState({});
   const [isModalInforOpen, setIsModalInforOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const items = [
     {
       key: "notyet",
@@ -140,7 +140,9 @@ const ProjectManagerMidTerm = () => {
         text
       ),
   });
-
+  console.log("====================================");
+  console.log(dataSource);
+  console.log("====================================");
   const columns = [
     {
       title: "Mã Đề Tài",
@@ -162,11 +164,19 @@ const ProjectManagerMidTerm = () => {
       key: "categoryName",
     },
     {
-      title: "Ngày",
+      title: checkTab === "notyet" ? "Ngày tải hợp đồng" : "Hạn nộp file",
       render: (text, record, index) => {
-        return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
+        if (checkTab === "notyet") {
+          return <div>{dayjs(record.uploadContractAt).format(dateFormat)}</div>;
+        }
+        return (
+          <div>
+            {dayjs(record.documentSupplementationDeadline).format(dateFormat)}
+          </div>
+        );
       },
       key: "createdAt",
+      align: "center",
     },
     {
       title: "Hành động",
@@ -205,20 +215,20 @@ const ProjectManagerMidTerm = () => {
               )}
               {checkTab === "taohoidong" && (
                 <Tooltip placement="top" title={"Gửi hội đồng"}>
-                <UsergroupAddOutlined
-                  style={{
-                    fontSize: "20px",
-                    color: "blue",
-                    margin: "0 10px",
-                  }}
-                  type="primary"
-                  onClick={() => {
-                    navigate(`/staff/midterm/add-council/${record.topicId}`);
-                  }}
-                >
-                  Gửi hội đồng
-                </UsergroupAddOutlined>
-              </Tooltip>
+                  <UsergroupAddOutlined
+                    style={{
+                      fontSize: "20px",
+                      color: "blue",
+                      margin: "0 10px",
+                    }}
+                    type="primary"
+                    onClick={() => {
+                      navigate(`/staff/midterm/add-council/${record.topicId}`);
+                    }}
+                  >
+                    Gửi hội đồng
+                  </UsergroupAddOutlined>
+                </Tooltip>
               )}
             </ConfigProvider>
           </div>
@@ -243,9 +253,6 @@ const ProjectManagerMidTerm = () => {
   const getTopicWaitCouncil = async () => {
     try {
       const res = await getMidTermReport();
-      console.log('====================================');
-      console.log(res);
-      console.log('====================================');
       if (res && res?.data) {
         setData(res.data);
         setIsLoading(false);

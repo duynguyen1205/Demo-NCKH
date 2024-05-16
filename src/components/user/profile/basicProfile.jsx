@@ -1,123 +1,95 @@
-import {
-  Button,
-  Checkbox,
-  Col,
-  DatePicker,
-  Divider,
-  Form,
-  Input,
-  Row,
-  Select,
-  message,
-} from "antd";
+import { Col, Divider, Form, Input, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import "./basicProfile.scss";
 import { EditOutlined } from "@ant-design/icons";
-import { getAllDepartment, uploadInforUser } from "../../../services/api";
-import { jwtDecode } from "jwt-decode";
+import {
+  getAllDepartment,
+  getUserInformation,
+} from "../../../services/api";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+const dateFormat = "DD/MM/YYYY";
 import { useNavigate } from "react-router-dom";
+
 const BasicProfile = () => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
-  const [componentDisabled, setComponentDisabled] = useState(true);
   const [departMent, setDepartMent] = useState([]);
-  const token = localStorage.getItem("token");
-  const decoded = jwtDecode(token);
+  const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const getDepartment = async () => {
-    const res = await getAllDepartment();
-    if (res && res?.data) {
-      setDepartMent(res.data);
+    try {
+      const res = await getAllDepartment();
+      if (res && res.statusCode === 200) {
+        setDepartMent(res.data);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("có lỗi tại get departMent", error);
+      console.log("====================================");
     }
   };
+  const getAccountInfor = async () => {
+    try {
+      const res = await getUserInformation({
+        UserId: userId,
+      });
+
+      if (res && res.statusCode === 200) {
+        const department = departMent.find(
+          (dep) => dep.departmentId === res.data.departmentId
+        );
+        const departmentName = department
+          ? department.departmentName
+          : "Unknown Department";
+        const customData = {
+          ...res.data,
+          birthday: dayjs(res.data.birthday).format(dateFormat),
+          issue: dayjs(res.data.issue).format(dateFormat),
+          departmentId: departmentName,
+        };
+        form.setFieldsValue(customData);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("Có lỗi tại get account infor", error);
+      console.log("====================================");
+    }
+  };
+
   useEffect(() => {
-    form.setFieldValue("accountEmail", decoded?.email);
     getDepartment();
   }, []);
-  const onFinish = async (values) => {
-    try {
-      const res = await uploadInforUser({
-        fullName: values.fullName,
-        identityNumber: values.identityNumber,
-        issue: dayjs(values.issue).local().format(),
-        placeOfIssue: values.placeOfIssue,
-        accountEmail: values.accountEmail,
-        phoneNumber: values.phoneNumber,
-        departmentId: values.departmentId,
-        birthday: dayjs(values.birthday).local().format(),
-        homeTown: values.homeTown,
-        birthPlace: values.birthPlace,
-        nationName: values.nationName,
-        sex: parseInt(values.sex),
-        officePhoneNumber: values.officePhoneNumber,
-        permanentAddress: values.permanentAddress,
-        currentResidence: values.currentResidence,
-        taxCode: values.taxCode,
-      });
-      if (res && res.statusCode === 200) {
-        message.success("cập nhật thông tin cá nhân thành công");
-        localStorage.setItem("token", res.data.token);
-        navigate("/user");
-      }
-      console.log('====================================');
-      console.log(res);
-      console.log('====================================');
-    } catch (err) {
-      console.log("====================================");
-      console.log("Có lỗi tại phần đăng kí thông tin cá nhân: ", err);
-      console.log("====================================");
-    }
-  };
+  if (departMent.length) {
+    getAccountInfor();
+  }
   return (
     <>
-      <div className="header">
+      <div
+        className="header"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          textAlign: "center",
+        }}
+      >
         <h3>Thông tin cá nhân</h3>
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => setComponentDisabled(!componentDisabled)}
-        >
-          {componentDisabled ? "Chỉnh sửa " : "Hủy bỏ"}
-        </Button>
       </div>
 
       <Divider />
       <div className="parent-container">
         <div className="form-container">
-          <Form
-            form={form}
-            name="basic"
-            layout="vertical"
-            onFinish={onFinish}
-            disabled={componentDisabled}
-            style={{ maxWidth: "700px" }}
-          >
+          <Form form={form} name="basic" layout="vertical" disabled={true}>
             <Row gutter={10}>
               <Col span={12}>
-                <Form.Item
-                  name="fullName"
-                  label="Họ và Tên"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập họ và tên.",
-                    },
-                    {
-                      min: 2,
-                      message: "Bạn phải nhập ít nhất 2 kí tự.",
-                    },
-                  ]}
-                >
+                <Form.Item name="fullName" label="Họ và Tên">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item name="birthday" label="Ngày tháng năm sinh">
-                  <DatePicker
-                    className="datePickProfile"
-                    placeholder="Chọn ngày"
-                  />
+                  <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -131,55 +103,22 @@ const BasicProfile = () => {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item
-                  name="nationName"
-                  label="Dân tộc"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
+                <Form.Item name="nationName" label="Dân tộc">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item
-                  name="sex"
-                  label="Giới tính"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Xin hãy chọn giới tính!",
-                    },
-                  ]}
-                >
-                  <Select placeholder="Xin hãy lựa chọn giới tính">
-                    <Option value="1">Nam</Option>
-                    <Option value="2">Nữ</Option>
-                  </Select>
+                <Form.Item name="sex" label="Giới tính">
+                  <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item name="accountEmail" label="Email">
-                  <Input disabled />
+                  <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item
-                  name="phoneNumber"
-                  label="Số điện thoại"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập số điện thoại.",
-                    },
-                    {
-                      min: 9,
-                      message: "Số điện thoại của bạn không hợp lệ.",
-                    },
-                  ]}
-                >
+                <Form.Item name="phoneNumber" label="Số điện thoại">
                   <Input />
                 </Form.Item>
               </Col>
@@ -187,80 +126,31 @@ const BasicProfile = () => {
                 <Form.Item
                   name="officePhoneNumber"
                   label="Số điện thoại cơ quan"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập số điện thoại.",
-                    },
-                    {
-                      min: 9,
-                      message: "Số điện thoại của bạn không hợp lệ.",
-                    },
-                  ]}
                 >
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item
-                  name="departmentId"
-                  label="Bộ phận làm việc"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <Select
-                    options={departMent.map((item) => ({
-                      value: item.departmentId,
-                      label: item.departmentName,
-                    }))}
-                  />
+                <Form.Item name="departmentId" label="Bộ phận làm việc">
+                  <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
                   name="identityNumber"
                   label="Chứng minh nhân dân hoặc căn cước"
-                  rules={[
-                    {
-                      required: true,
-                      min: 12,
-                      message: "CCCD phải có 12 kí tự.",
-                    },
-                  ]}
                 >
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item
-                  name="placeOfIssue"
-                  label="Nơi cấp"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
+                <Form.Item name="placeOfIssue" label="Nơi cấp">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item
-                  name="issue"
-                  label="Ngày cấp"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <DatePicker
-                    className="datePickProfile"
-                    placeholder="Chọn ngày"
-                  />
+                <Form.Item name="issue" label="Ngày cấp">
+                  <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -288,9 +178,6 @@ const BasicProfile = () => {
                   />
                 </Form.Item>
               </Col>
-              <Button type="primary" htmlType="submit">
-                Cập nhật thông tin
-              </Button>
             </Row>
           </Form>
         </div>

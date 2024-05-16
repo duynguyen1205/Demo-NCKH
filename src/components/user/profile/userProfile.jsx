@@ -1,9 +1,6 @@
 import React from "react";
 import { Tabs } from "antd";
 import BasicProfile from "./basicProfile";
-import QualicationTable from "./qualification";
-import ProcessWorkTable from "./workProcess";
-import CertificateTable from "./certificateTable"
 import ProductPage from "./productSci";
 const items = [
   {
@@ -13,21 +10,6 @@ const items = [
   },
   {
     key: "2",
-    label: "Trình độ chuyên môn",
-    children: <QualicationTable/>,
-  },
-  {
-    key: "3",
-    label: "Quá trình công tác",
-    children: <ProcessWorkTable/>,
-  },
-  {
-    key: "4",
-    label: "Chứng chỉ ngoại ngữ",
-    children: <CertificateTable/>,
-  },
-  {
-    key: "5",
     label: "Sản phẩm khoa học",
     children: <ProductPage/>,
   },

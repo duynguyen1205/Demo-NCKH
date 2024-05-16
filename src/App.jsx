@@ -22,6 +22,11 @@ import MidtermProject from "./pages/projectMangerStaff/midterm.jsx";
 import ProtectedRoute from "./components/ProtectedRoute/index.jsx";
 import FinaltermProject from "./pages/projectMangerStaff/finalterm.jsx";
 import UserProfile from "./components/user/profile/userProfile.jsx";
+import LayoutAdmin from "./components/admin/LayoutAdmin.jsx";
+import AdminPage from "./pages/admin/index.jsx";
+import ManagerAccount from "./components/admin/ManagerAccount.jsx";
+import ManagerHoliday from "./components/admin/MangerHoliday.jsx";
+import ManagerDepartment from "./components/admin/ManagerDepartment.jsx";
 
 const Layout = () => {
   return <LoginPage />;
@@ -182,8 +187,38 @@ function App() {
         },
         {
           path: "profile",
-          element: <UserProfile/>,
+          element: <UserProfile />,
         },
+      ],
+    },
+    {
+      path: "/admin",
+      element: (
+        <ProtectedRoute>
+          <LayoutAdmin />
+        </ProtectedRoute>
+      ),
+      children: [
+        {
+          index: true,
+          element: <AdminPage />,
+        },
+        {
+          path: "accounts",
+          element: <ManagerAccount />,
+        },
+        {
+          path: "export-file",
+          element: <>Quản lý file</>,
+        },
+        {
+          path: "add-holiday",
+          element: <ManagerHoliday/>,
+        },
+        {
+          path: "add-department",
+          element: <ManagerDepartment/>
+        }
       ],
     },
   ]);

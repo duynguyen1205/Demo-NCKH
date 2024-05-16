@@ -14,16 +14,18 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
+  getAllMembersByLeader,
   postLeaderSubmitFile,
   uploadFile,
 } from "../../../services/api";
-
+import * as XLSX from "xlsx";
+import sample from "./sample.xlsx?url";
 const UploadFileFinal = (props) => {
   const isModalOpen = props.isModalOpen;
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
   const [newTopicFiles, setFileList] = useState({});
-
+  const [listMember, setListMember] = useState([]);
   const handleOk = () => {
     form.submit();
   };
@@ -31,6 +33,86 @@ const UploadFileFinal = (props) => {
     props.setIsModalOpen(false);
     setFileList({});
   };
+  const getAllMenber = async () => {
+    try {
+      const res = await getAllMembersByLeader({
+        TopicId: props.topicId,
+        LeaderId: props.leaderId,
+      });
+      if (res && res.statusCode === 200) {
+        const newList = res.data.map((item) => {
+          if (item.id === props.leaderId) {
+            return { ...item, role: "Chủ nhiệm nhiệm vụ" };
+          } else {
+            return { ...item, role: "Thành viên" };
+          }
+        });
+        setListMember(newList);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("có lỗi tại get all member:", error);
+      console.log("====================================");
+    }
+  };
+  const handleExport = async () => {
+    try {
+      // Đọc file Excel mẫu
+      const response = await fetch(sample);
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+      listMember.forEach((list, index) => {
+        const rowIndex = index + 2; 
+        worksheet[`B${rowIndex}`] = { v: list.fullName }; // Cột B
+        worksheet[`C${rowIndex}`] = { v: list.role }; // Cột B
+
+      });
+
+      // Lấy thông tin về kích thước cột và hàng từ file gốc
+      const originalSheet = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      const cols = [];
+      originalSheet[0].forEach((_, colIndex) => {
+        let width = 20; // Đặt mặc định là 20 nếu không có thông tin về kích thước cột
+        if (worksheet["!cols"] && worksheet["!cols"][colIndex]) {
+          width = worksheet["!cols"][colIndex].w;
+        }
+        cols.push({ wch: width });
+      });
+      const range = XLSX.utils.decode_range(worksheet["!ref"]);
+      const rows = range.e.r - range.s.r + 1;
+
+      // Áp dụng kích thước cột và hàng vào worksheet mới
+      worksheet["!cols"] = cols;
+      worksheet["!ref"] = XLSX.utils.encode_range({
+        s: { c: 0, r: 0 },
+        e: { c: cols.length - 1, r: rows - 1 },
+      });
+
+      // Chuyển đổi lại workbook thành file Excel
+      const updatedArrayBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+
+      // Tạo link để tải file
+      const blob = new Blob([updatedArrayBuffer], {
+        type: "application/octet-stream",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "thulao.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+    }
+  };
+
   const onSubmit = async () => {
     if (Object.values(newTopicFiles).length === 0) {
       message.error("Xin hãy tải file lên");
@@ -103,6 +185,9 @@ const UploadFileFinal = (props) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
+  useEffect(() => {
+    getAllMenber();
+  }, []);
   return (
     <>
       <Modal
@@ -124,7 +209,11 @@ const UploadFileFinal = (props) => {
               },
             }}
           >
-            <Button type="primary" onClick={handleOk}>
+            <Button
+              type="primary"
+              onClick={handleOk}
+              disabled={Object.values(newTopicFiles).length === 0}
+            >
               Gửi
             </Button>
           </ConfigProvider>,
@@ -136,9 +225,10 @@ const UploadFileFinal = (props) => {
             <>
               <Col span={24}>
                 <p>File mẫu tham khảo (file đã tích hợp công thức tính):</p>
-                <a href="https://srms1.sgp1.cdn.digitaloceanspaces.com/thu_lao_NCKH-20240504000432756.xlsx">
+                {/* <a href="https://srms1.sgp1.cdn.digitaloceanspaces.com/thu_lao_NCKH-20240504000432756.xlsx">
                   Ấn để tải
-                </a>
+                </a> */}
+                <Button onClick={handleExport}>Xuất file thành viên</Button>
               </Col>
             </>
 

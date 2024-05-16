@@ -1,0 +1,26 @@
+.popover-carts {
+  .popover-cart-body {
+    overflow-y: scroll;
+    .popover-cart-content {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      min-width: 300px;
+      max-height: 400px;
+      .content {
+        display: block;
+        background-color: rgb(240, 243, 245);
+        p {
+          font-size: large;
+        }
+      }
+     
+    }
+    .popover-cart-footer {
+      .header1 {
+        font-size: large;
+      }
+    }
+  }
+  
+}

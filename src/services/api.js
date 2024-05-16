@@ -3,7 +3,11 @@ import qs from "query-string";
 
 // gọi tất cả api ở đây
 
-// authenticated
+
+// get user information
+export const getUserInformation = (params) => {
+  return axios.get(`api/user/infor?${qs.stringify(params)}`);
+};
 
 //register email
 export const registerEmail = (email) => {
@@ -22,14 +26,17 @@ export const loginAccount = (account) => {
 
 // get all user except dean
 export const getAllUser = (param) => {
-  return axios.get(`/api/user/users?${qs.stringify(param)}`);
+  return axios.get(`/api/user/add-to-topic?${qs.stringify(param)}`);
 };
 
 // get all user except dean
 export const getAllUserWithoutCreator = (param) => {
-  return axios.get(
-    `/api/user/users-not-participating-topic?${qs.stringify(param)}`
-  );
+  return axios.get(`/api/user/add-to-council?${qs.stringify(param)}`);
+};
+
+// get all user for admin
+export const getAllUserAdmin = () => {
+  return axios.get("api/user/all");
 };
 
 // get category
@@ -57,7 +64,7 @@ export const uploadFile = (file) => {
   bodyFormData.append("formFile", file);
   return axios({
     method: "post",
-    url: "/api/uploadfile/single-DO",
+    url: "/api/file/single-DO",
     data: bodyFormData,
     headers: {
       "Content-Type": "multipart/form-data",
@@ -103,7 +110,7 @@ export const memberReviewAPI = (data) => {
 
 // get topic waiting for member approval
 export const getTopicForCouncil = () => {
-  return axios.get("api/topic/early-topic-waiting-council-formation");
+  return axios.get("api/topic/early-topic-waiting-configure-conference");
 };
 
 //get topic member has already reviewed
@@ -323,8 +330,8 @@ export const getTopicHasSubmitFileMoney = () => {
 };
 
 //get topic has submit file money detais
-export const getTopicHasSubmitFileMoneyDetail = (data) => {
-  return axios.post("/api/remuneration", data);
+export const getTopicHasSubmitFileMoneyDetail = (param) => {
+  return axios.get(`/api/remuneration?${qs.stringify(param)}`);
 };
 
 // leader submit file
@@ -336,3 +343,77 @@ export const postLeaderSubmitFile = (data) => {
 export const staffSubmitDecisionFile = (data) => {
   return axios.post("/api/remuneration/censorship", data);
 };
+
+//upload final contract file
+export const uploadFinalContract = (data) => {
+  return axios.post("api/contract/upload-ending-contract", data);
+};
+
+//admin assign dean
+export const assignDeanByAdmin = (data) => {
+  return axios.post("/api/user/assign-dean", data);
+};
+
+//admin create department
+export const assignDepartmentByAdmin = (data) => {
+  return axios.post("/api/Department/create", data);
+};
+
+//admin create department
+export const updateDepartmentByAdmin = (data) => {
+  return axios.put("/api/Department/update", data);
+};
+
+//admin add holiday
+export const assignHoliday = (data) => {
+  return axios.post("/api/holiday", data);
+};
+
+// get all holiday
+export const getAllHoliday = (data) => {
+  return axios.get("/api/holiday", data);
+};
+
+// admin get account inactive
+export const getAccountInactive = () => {
+  return axios.get("/api/account/inactive-emails");
+};
+
+//admin upload file
+export const uploadFileAdmin = (file) => {
+  const bodyFormData = new FormData();
+  bodyFormData.append("formFile", file);
+  return axios({
+    method: "post",
+    url: "/api/file/convert-excel-to-user",
+    data: bodyFormData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+// Admin create account inactive
+export const createAccountAdminEmail = (data) => {
+  return axios.put("/api/account/provide-account", data);
+};
+
+// Admin create account inactive
+export const createAccountAdmin = (data) => {
+  return axios.post("/api/user/create-users", data);
+};
+
+//users change password
+export const changePassword = (data) => {
+  return axios.put("/api/account/change-password", data);
+};
+
+// leader get notifications
+export const getNotifications = (param) => {
+  return axios.get(`/api/notify?${qs.stringify(param)}`);
+};
+
+// leader get all members
+export const getAllMembersByLeader = (param) => {
+  return axios.get(`/api/topic/participant?${qs.stringify(param)}`);
+}

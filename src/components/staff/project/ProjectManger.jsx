@@ -32,7 +32,6 @@ const ProjectManager = () => {
   const staffId = "2D5E2220-EEEF-4FDC-8C98-1B5C5012319C";
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [checkTab, setCheckTab] = useState("notyet");
   const [dataSource, setData] = useState([]);
@@ -167,11 +166,15 @@ const ProjectManager = () => {
       key: "categoryName",
     },
     {
-      title: "Ngày",
+      title: checkTab === "notyet" ? "Ngày nộp" : "Ngày Kết Thúc Sơ Duyệt ",
       render: (text, record, index) => {
-        return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
+        if (checkTab === "notyet") {
+          return <div>{dayjs(record.createdAt).format(dateFormat)}</div>;
+        }
+        return <div>{dayjs(record.reviewEndDate).format(dateFormat)}</div>;
       },
       key: "createdAt",
+      align: "center",
     },
     {
       title: "Hành động",
@@ -217,7 +220,9 @@ const ProjectManager = () => {
                     }}
                     type="primary"
                     onClick={() => {
-                      navigate(`/staff/earlyterm/add-council/${record.topicId}`);
+                      navigate(
+                        `/staff/earlyterm/add-council/${record.topicId}`
+                      );
                     }}
                   >
                     Gửi hội đồng
@@ -334,7 +339,6 @@ const ProjectManager = () => {
           current: current,
           pageSize: pageSize,
           showSizeChanger: true,
-          total: total,
           pageSizeOptions: ["5", "10", "15"],
           showTotal: (total, range) => {
             return (

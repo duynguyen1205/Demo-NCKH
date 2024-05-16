@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { AutoComplete, Modal, Select, Button, Form, Input, Space } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
   const [form] = Form.useForm();
+  const [open1, setOpen] = useState(false);
   const options = data.map((user) => ({
     value: user.accountEmail,
     label: user.accountEmail, // Hiển thị tên người dùng
   }));
-
+  const [searchText, setSearchText] = useState("");
+  const filteredOptions = searchText
+    ? options.filter((option) =>
+        option.value.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : [];
   const onOk = () => {
     form.submit();
   };
@@ -56,7 +62,11 @@ const ModalAddMember = ({ open, onCancel, data, setAddMember }) => {
                       },
                     ]}
                   >
-                    <AutoComplete options={options} filterOption={true}>
+                    <AutoComplete
+                      options={filteredOptions}
+                      onSearch={setSearchText}
+                      filterOption={true}
+                    >
                       <Input
                         style={{ width: 220 }}
                         placeholder="Tìm thành viên"

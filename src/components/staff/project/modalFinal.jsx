@@ -15,7 +15,11 @@ import {
   Space,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { staffSubmitDecisionFile, uploadFile } from "../../../services/api";
+import {
+  staffSubmitDecisionFile,
+  uploadFile,
+  uploadFinalContract,
+} from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -31,6 +35,9 @@ const ModalFinal = (props) => {
   const [review, setReviewTerm] = useState();
   const [errorMessage, setError] = useState("");
   const data = props.data;
+  if (data !== null) {
+    form.setFieldsValue(data);
+  }
   const navigate = useNavigate();
   const handleOk = () => {
     form.submit();
@@ -59,7 +66,17 @@ const ModalFinal = (props) => {
       if (res && res.isSuccess) {
         setIsSubmit(false);
         if (res && res.statusCode === 200) {
-          message.success("Tải biên bản lên thành công");
+          const dataSrc = {
+            topicId: data.topicId,
+            contractName: newTopicFiles.fileName,
+            contractLink: newTopicFiles.fileLink,
+          };
+
+          const endPhase = await uploadFinalContract(dataSrc);
+          if (endPhase && endPhase.statusCode === 200) {
+            message.success("Tải biên bản lên thành công");
+            props.getTopicSumarizeTerm();
+          }
         }
         handleCancel();
       }
@@ -163,10 +180,24 @@ const ModalFinal = (props) => {
                 <Input disabled />
               </Form.Item>
             </Col>
+
+            <Col span={24}>
+              <Form.Item
+                name="comment"
+                label="Hợp đồng kết thúc đề tài"
+                labelCol={{ span: 24 }}
+              >
+                <p>Chỉ hỗ trợ cái file như docx hoặc pdf</p>
+                <Upload {...propsUpload}>
+                  <Button icon={<UploadOutlined />}>Tải tài liệu lên</Button>
+                </Upload>
+                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+              </Form.Item>
+            </Col>
             <Col span={24}>
               <Form.Item
                 name="decisionOfCouncil"
-                label="Quyết định của giám dốc"
+                label="Quyết định của giám đốc"
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -187,19 +218,6 @@ const ModalFinal = (props) => {
                     <Radio value="0">Nộp Lại</Radio>
                   </Space>
                 </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="comment"
-                label="Biên bản góp ý"
-                labelCol={{ span: 24 }}
-              >
-                <p>Chỉ hỗ trợ cái file như docx hoặc pdf</p>
-                <Upload {...propsUpload}>
-                  <Button icon={<UploadOutlined />}>Tải tài liệu lên</Button>
-                </Upload>
-                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
               </Form.Item>
             </Col>
           </Row>

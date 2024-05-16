@@ -26,7 +26,7 @@ const Login = () => {
         } else if (decoded.role === "Staff") {
           navigation("/staff");
         } else if (decoded.role === "Admin") {
-          navigation("admin/accounts");
+          navigation("/admin/accounts");
         }
       } else {
         message.error("Vui lòng kiểm tra lại thông tin");

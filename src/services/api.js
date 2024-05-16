@@ -417,3 +417,18 @@ export const getNotifications = (param) => {
 export const getAllMembersByLeader = (param) => {
   return axios.get(`/api/topic/participant?${qs.stringify(param)}`);
 }
+
+//user get all articles 
+export const getAllArticle = (param) => {
+  return axios.get(`/api/article?${qs.stringify(param)}`);
+}
+
+//user create a new article 
+export const createArticle = (data) => {
+  return axios.post("/api/article/create",data);
+}
+
+//user update a article 
+export const updateArticle = (data) => {
+  return axios.put("/api/article/update",data);
+}

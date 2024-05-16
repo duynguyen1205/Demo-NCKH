@@ -1,44 +1,114 @@
-import { Col, Divider, InputNumber, Row, Empty, Button, Steps } from "antd";
+import { Col, Row, Empty, Button, Pagination } from "antd";
 import { useEffect, useState } from "react";
-import { DeleteTwoTone } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { EditOutlined } from "@ant-design/icons";
+import { getAllArticle } from "../../../services/api";
+import ArticalModal from "./modalArticle";
+import ArticalEditModal from "./modalEditArtical";
+import "./scientific.scss";
+const ScientificArticle = () => {
+  const [listProduct, setListProduct] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const UserId = localStorage.getItem("userId");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [product, setProduct] = useState();
+  const itemsPerPage = 3;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = listProduct.slice(indexOfFirstItem, indexOfLastItem);
 
-const ScientificArticle = (props) => {
-  const products = props.products;
-  const navigate = useNavigate();
-  useEffect(() => {}, []);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+  const getArtical = async () => {
+    try {
+      const res = await getAllArticle({
+        UserId: UserId,
+      });
+      if (res && res?.data) {
+        setListProduct(res.data);
+      }
+    } catch (error) {
+      console.log("Có lỗi tại getArtical", error);
+    }
+  };
+  useEffect(() => {
+    getArtical();
+  }, []);
   return (
     <>
-      {products?.length === 0 ? (
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setIsOpen(true);
+          }}
+        >
+          Thêm mới
+        </Button>
+      </div>
+      {listProduct?.length === 0 ? (
         <Empty
           style={{ marginTop: 100 }}
           description={<span>Chưa có bài báo khoa học</span>}
         />
       ) : (
-        <Row>
-          <Col md={18} xs={24}>
-            {/* {products.map((papper, index) => {
-              return ( */}
-                <div className="papper">
-                  <div className="papper-content">
-                    <div className="title">
-                      <div>Đây là title</div>
-                    </div>
-                    <div className="description">
-                      <div>Đây là description</div>
-                    </div>
-                    <DeleteTwoTone
-                      style={{ cursor: "pointer" }}
-                      twoToneColor="#eb2f96"
-                      onClick={() => {}}
-                    />
-                  </div>
+        <Col md={18} xs={24}>
+          {currentItems.map((product, index) => (
+            <div className="papper" key={index}>
+              <div className="papper-content">
+                <EditOutlined
+                  className="edit-icon"
+                  style={{ cursor: "pointer" }}
+                  twoToneColor="#eb2f96"
+                  onClick={() => {
+                    setIsOpenEdit(true), setProduct(product);
+                  }}
+                />
+                <div className="title">
+                  <div>{product.articleName}</div>
                 </div>
-              {/* );
-            })} */}
-          </Col>
-        </Row>
+                <div className="description">
+                  <div className="info-row">
+                    <div>Tác giả: {product.authorName}</div>
+                    <div>Số trang: {product.numberOfPages}</div>
+                    <div>Năm xuất bản: {product.publishYear}</div>
+                  </div>
+                  <a
+                    href={product.fileLink}
+                    className="file-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Link: {product.fileLink}
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div className="pagination">
+            <Pagination
+              current={currentPage}
+              pageSize={itemsPerPage}
+              total={listProduct.length}
+              onChange={handlePageChange}
+            />
+          </div>
+        </Col>
       )}
+      <ArticalModal
+        openModal={isOpen}
+        setOpenModal={setIsOpen}
+        userId={UserId}
+        getArtical={getArtical}
+      />
+      <ArticalEditModal
+        openModal={isOpenEdit}
+        setOpenModal={setIsOpenEdit}
+        product={product}
+        getArtical={getArtical}
+        setProduct={setProduct}
+      />
     </>
   );
 };

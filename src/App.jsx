@@ -26,7 +26,7 @@ import LayoutAdmin from "./components/admin/LayoutAdmin.jsx";
 import AdminPage from "./pages/admin/index.jsx";
 import ManagerAccount from "./components/admin/ManagerAccount.jsx";
 import ManagerHoliday from "./components/admin/MangerHoliday.jsx";
-import ManagerDepartment from "./components/admin/ManagerDepartment.jsx";
+import ManagerDepartment from "./components/admin/ManagerDepart.jsx";
 
 const Layout = () => {
   return <LoginPage />;

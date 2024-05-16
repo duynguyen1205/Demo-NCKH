@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, ConfigProvider, Input, List, Space, Table, Tag, message } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  Input,
+  List,
+  Space,
+  Table,
+  Tag,
+  message,
+} from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import "../../user/project/table.scss";
@@ -31,6 +40,7 @@ const AddMemberApprove = () => {
   const [maxSelectedMembers, setMaxSelectedMembers] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [newData, setNewData] = useState([]);
+  const userId = localStorage.getItem("userId");
   const isRowDisabled = (record) => {
     // Check if the row should be disabled based on the number of selected members
     return (
@@ -368,12 +378,13 @@ const AddMemberApprove = () => {
               shape="round"
               type="primary"
               onClick={() => {
-                const hasJoinedParticipant = selectedUser.some(
+                const countDuplicates = selectedUser.filter(
                   (row) => row.isDuplicate
-                );
-                if (!hasJoinedParticipant ) {
+                ).length;
+                const hasJoinedParticipant = countDuplicates < 2;
+                if (!hasJoinedParticipant) {
                   message.error(
-                    "Vui lòng chọn một người đã từng phê duyệt đề tài."
+                    "Vui lòng chỉ chọn một người đã từng phê duyệt đề tài."
                   );
                   return;
                 } else {
@@ -417,6 +428,8 @@ const AddMemberApprove = () => {
           </h2>
           <p style={{ color: "red" }}>
             Lưu ý khi chọn thành viên đánh giá là số lẻ vd 3, 5, 7
+            <br />
+            {path === "add-council" ? " Chỉ chọn 1 người đã từng tham gia" : ""}
           </p>
           {hasSelected ? (
             <div>

@@ -17,12 +17,13 @@ import {
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   councilConfigEarly,
   councilConfigFinalterm,
   councilConfigMidterm,
+  getAllHoliday,
 } from "../../../services/api";
 import utc from "dayjs/plugin/utc";
 
@@ -38,6 +39,7 @@ const ModalPickTimeLeader = (props) => {
   const [meetingDate, setMeetingDate] = useState(today);
   const [meetingDetails, setMeetingDetails] = useState("");
   const [council, setCouncil] = useState([]);
+  const [holiday, setholiday] = useState([]);
   const location = useLocation();
   let path = location.pathname.split("/");
   let topicId = path[4];
@@ -58,11 +60,21 @@ const ModalPickTimeLeader = (props) => {
   const handleDetailsChange = (e) => {
     setMeetingDetails(e.target.value);
   };
-  // set up initial value for the form
-  const maxDate = dayjs().add(7, "day");
+  const maxDate = dayjs()
+  .add(1, "day")
+  .startOf("day")
+  .add(7, "day")
+  .add(holiday.length, "day")
+  .add(dayjs().day() === 6 ? 1 : 0, "day")
+  .add(dayjs().day() === 0 ? 1 : 0, "day");
   const disabledDate = (current) => {
-    // Disable Saturdays (6) and Sundays (0)
-    return current && (current.day() === 6 || current.day() === 0);
+    if (current && (current.day() === 6 || current.day() === 0)) {
+      return true;
+    }
+    const formattedCurrent = current.format("YYYY-MM-DD");
+    return holiday.some(
+      (holiday) => formattedCurrent === dayjs(holiday.date).format("YYYY-MM-DD")
+    );
   };
   const steps = [
     {
@@ -234,6 +246,21 @@ const ModalPickTimeLeader = (props) => {
       console.log("Lỗi tại tạo hội đồng: ", error.message);
     }
   };
+  const getHoliday = async () => {
+    try {
+      const res = await getAllHoliday(today);
+      if (res && res.statusCode === 200) {
+        setholiday(res.data);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("Error: ", error);
+      console.log("====================================");
+    }
+  };
+  useEffect(() => {
+    getHoliday();
+  }, []);
   return (
     <>
       <Modal

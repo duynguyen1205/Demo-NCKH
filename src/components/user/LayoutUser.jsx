@@ -1,4 +1,6 @@
 import {
+  BellOutlined,
+  DownOutlined,
   FileDoneOutlined,
   FileProtectOutlined,
   FileSearchOutlined,
@@ -16,32 +18,179 @@ import {
   Avatar,
   theme,
   ConfigProvider,
+  Button,
+  Popover,
+  Badge,
+  Divider,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import "./user.scss";
+import "./global.scss";
 import logo from "../../assets/logoBV.png";
 import { jwtDecode } from "jwt-decode";
+import ChangePassword from "./modalChangePass";
+import { getNotifications } from "../../services/api";
 const { Header, Content, Sider } = Layout;
 
 const LayoutUser = () => {
   const token = localStorage.getItem("token");
+  const [isOpen, setIsOpen] = useState(false);
   let decoded;
   if (token !== null) {
     decoded = jwtDecode(token);
   }
   const role = decoded?.role;
   const name = decoded?.fullname;
+  const email = decoded?.email;
+  const userId = localStorage.getItem("userId");
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const [activeMenu, setActiveMenu] = useState("dashboard");
+  const [listNotify, setListNotify] = useState([]);
+  const conditions = [
+    {
+      state: "PreliminaryReview",
+      progress: "WaitingForCouncilFormation",
+      isReject: true,
+      message: "Đã được trưởng phòng duyệt",
+    },
+    {
+      state: "PreliminaryReview",
+      progress: "WaitingForDean",
+      isReject: false,
+      message: "Đề tài không được phê duyệt",
+    },
+    {
+      state: "EarlyTermReport",
+      progress: "WaitingForConfigureConference",
+      isReject: true,
+      message: "Đã được các thành viên thông qua",
+    },
+    {
+      state: "EarlyTermReport",
+      progress: "WaitingForCouncilDecision",
+      isReject: false,
+      message: "Không được các thành viên thông qua",
+    },
+    {
+      state: "EarlyTermReport",
+      progress: "WaitingForUploadMeetingMinutes",
+      isReject: true,
+      message: "Đã tạo lịch meeting",
+    },
+    {
+      state: "EarlyTermReport",
+      progress: "WaitingForUploadMeetingMinutes",
+      isReject: false,
+      message: 'Đã có kết quả của hội đồng: "Đề tài không được phê duyệt"',
+    },
+    {
+      state: "EarlyTermReport",
+      progress: "WaitingForDocumentEditing",
+      isReject: true,
+      message: "Chỉnh sửa tài liệu theo yêu cầu",
+    },
+    {
+      state: "EarlyTermReport",
+      progress: "WaitingForUploadContract",
+      isReject: true,
+      message: 'Đã có kết quả của hội đồng: "Đề tài được thông qua"',
+    },
+    {
+      state: "EarlyTermReport",
+      progress: "Completed",
+      isReject: true,
+      message: "Hoàn thành giai đoạn đầu kì",
+    },
+    {
+      state: "MidtermReport",
+      progress: "WaitingForMakeReviewSchedule",
+      isReject: true,
+      message: "Đề tài chuyển sang giai đoạn giữa kì",
+    },
+    {
+      state: "MidtermReport",
+      progress: "WaitingForDocumentSupplementation",
+      isReject: true,
+      message: "Bổ sung tài liệu theo yêu cầu",
+    },
+    {
+      state: "MidtermReport",
+      progress: "WaitingForUploadMeetingMinutes",
+      isReject: true,
+      message: "Kiểm tra thời gian để tham gia meeting",
+    },
+    {
+      state: "MidtermReport",
+      progress: "Completed",
+      isReject: true,
+      message: "Hoàn thành giai đoạn giữa kì",
+    },
+    {
+      state: "FinaltermReport",
+      progress: "WaitingForDocumentSupplementation",
+      isReject: true,
+      message: "Bổ sung tài liệu theo yêu cầu",
+    },
+    {
+      state: "FinaltermReport",
+      progress: "WaitingForUploadMeetingMinutes",
+      isReject: true,
+      message: "Kiểm tra thời gian để tham gia meeting",
+    },
+    {
+      state: "FinaltermReport",
+      progress: "WaitingForUploadMeetingMinutes",
+      isReject: false,
+      message: 'Đã có kết quả của hội đồng: "Đề tài không được phê duyệt"',
+    },
+    {
+      state: "FinaltermReport",
+      progress: "WaitingForDocumentEditing",
+      isReject: true,
+      message: "Chỉnh sửa tài liệu theo yêu cầu",
+    },
+    {
+      state: "EndingPhase",
+      progress: "WaitingForSubmitRemuneration",
+      isReject: true,
+      message: "Nộp file tính thù lao",
+    },
+    {
+      state: "EndingPhase",
+      progress: "WaitingForUploadContract",
+      isReject: true,
+      message: "File tính thù lao đã được duyệt",
+    },
+    {
+      state: "EndingPhase",
+      progress: "Completed",
+      isReject: true,
+      message: "Đề tài đã hoàn tất",
+    },
+  ];
   const navigate = useNavigate();
   const handleLogout = async () => {
     message.success("Đăng xuất thành công");
     navigate("/login");
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+  };
+  const getNotify = async () => {
+    try {
+      const res = await getNotifications({
+        UserId: userId,
+      });
+      if (res && res.statusCode === 200) {
+        setListNotify(res.data.notifies);
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("Có lối tại getNotify: ", error);
+      console.log("====================================");
+    }
   };
   const items = [
     {
@@ -79,7 +228,11 @@ const LayoutUser = () => {
   ];
   const itemDropdown = [
     {
-      label: <label>Quản lí tài khoản</label>,
+      label: (
+        <label style={{ cursor: "pointer" }} onClick={() => setIsOpen(true)}>
+          Đổi mật khẩu
+        </label>
+      ),
       key: "account",
     },
     {
@@ -97,6 +250,54 @@ const LayoutUser = () => {
   if (path === undefined) {
     path = "dashboard";
   }
+  const url =
+    "https://cdn1.vectorstock.com/i/1000x1000/14/80/doctor-web-icon-therapist-avatar-vector-18531480.jpg";
+
+  const notifyIsEmpty = listNotify.length === 0;
+  const getMessage = (notifi) => {
+    for (const condition of conditions) {
+      if (
+        notifi.state === condition.state &&
+        notifi.progress === condition.progress &&
+        notifi.isReject === condition.isReject
+      ) {
+        return condition.message;
+      }
+    }
+  };
+  const content = (
+    <div className="popover-cart-body">
+      {notifyIsEmpty ? (
+        <div className="image-cart">
+          <p>Hiện chưa có thông báo </p>
+        </div>
+      ) : (
+        <div className="popover-cart-content">
+          {listNotify?.map((notifi, index) => {
+            const message = getMessage(notifi);
+            if (message) {
+              return (
+                <div key={`notifi-${index}`}>
+                  <div className="content">
+                    <p style={{ color: "blue" }}>Đề tài: {notifi?.topicName}</p>
+                    <p>{message}</p>
+                  </div>
+                </div>
+              );
+            }
+          })}
+        </div>
+      )}
+    </div>
+  );
+  const CustomTitle = (
+    <div>
+      <h3 style={{ color: "red" }}>Thông báo</h3>
+    </div>
+  );
+  useEffect(() => {
+    getNotify();
+  }, []);
   return (
     <Layout className="layout-staff">
       <ConfigProvider
@@ -140,13 +341,35 @@ const LayoutUser = () => {
         </Sider>
       </ConfigProvider>
       <Layout className="site-layout">
-        <Header
+        <div
           style={{
             padding: 0,
             background: colorBgContainer,
           }}
         >
           <div className="staff-header">
+            <Popover
+              content={content}
+              title={CustomTitle}
+              placement="topRight"
+              arrow={true}
+              className="popover-carts"
+              rootClassName="popover-carts"
+            >
+              <Badge
+                count={listNotify?.length ?? 0}
+                showZero
+                size={"small"}
+                style={{ marginRight: "20px" }}
+              >
+                <BellOutlined
+                  className="icon-cart"
+                  style={{ fontSize: "18px", marginRight: "20px" }}
+                  onClick={() => {}}
+                />
+              </Badge>
+            </Popover>
+
             <Dropdown
               menu={{
                 items: itemDropdown,
@@ -155,18 +378,31 @@ const LayoutUser = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <p>{name} </p>
-                  <Avatar />
+                  <Avatar src={url} />
+                  <div style={{ marginTop: "15px" }}>
+                    {name}
+                    <p style={{ display: "flex", justifyContent: "center" }}>
+                      {role === "User" ? "Bác sĩ" : "Trưởng Khoa"}
+                    </p>
+                  </div>
+
+                  <DownOutlined />
                 </Space>
               </a>
             </Dropdown>
           </div>
-        </Header>
+        </div>
 
         <Content className="layout-content">
           <Outlet />
         </Content>
       </Layout>
+      <ChangePassword
+        openModal={isOpen}
+        setOpenModal={setIsOpen}
+        handleLogout={handleLogout}
+        email={email}
+      />
     </Layout>
   );
 };

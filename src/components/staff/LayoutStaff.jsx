@@ -1,5 +1,7 @@
 import {
+  BellOutlined,
   CalendarOutlined,
+  DownOutlined,
   FileDoneOutlined,
   FlagOutlined,
   HomeOutlined,
@@ -106,6 +108,8 @@ const LayoutStaff = () => {
   if (path === undefined) {
     path = "dashboard";
   }
+  const url =
+    "https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg";
   return (
     <Layout className="layout-staff">
       <ConfigProvider
@@ -139,12 +143,17 @@ const LayoutStaff = () => {
       </ConfigProvider>
       <Layout className="site-layout">
         <Header
+          className="staff-header"
           style={{
             padding: 0,
             background: colorBgContainer,
           }}
         >
           <div className="staff-header">
+            <BellOutlined
+              style={{ marginRight: "20px", fontSize: "18px" }}
+              onClick={() => {}}
+            />
             <Dropdown
               menu={{
                 items: itemDropdown,
@@ -153,12 +162,13 @@ const LayoutStaff = () => {
             >
               <a className="staff-href" onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <p>{name}</p>
-                  <Avatar />
+                  <Avatar src={url} />
+                  {name}
+                  <DownOutlined />
                 </Space>
               </a>
             </Dropdown>
-          </div>
+          </div>{" "}
         </Header>
 
         <Content className="layout-content">

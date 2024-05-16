@@ -415,8 +415,5 @@ export const getNotifications = (param) => {
 
 // leader get all members
 export const getAllMembersByLeader = (param) => {
-  console.log('====================================');
-  console.log("check parm", param);
-  console.log('====================================');
   return axios.get(`/api/topic/participant?${qs.stringify(param)}`);
 }

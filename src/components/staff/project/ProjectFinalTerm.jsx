@@ -152,9 +152,6 @@ const ProjectManagerFinalTerm = () => {
         text
       ),
   });
-  console.log("====================================");
-  console.log(dataSource);
-  console.log("====================================");
   const columns = [
     {
       title: "Mã Đề Tài",

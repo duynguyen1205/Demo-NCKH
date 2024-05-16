@@ -39,11 +39,15 @@ const UploadFileFinal = (props) => {
         TopicId: props.topicId,
         LeaderId: props.leaderId,
       });
-      console.log("====================================");
-      console.log(res);
-      console.log("====================================");
       if (res && res.statusCode === 200) {
-        setListMember(res.data);
+        const newList = res.data.map((item) => {
+          if (item.id === props.leaderId) {
+            return { ...item, role: "Chủ nhiệm nhiệm vụ" };
+          } else {
+            return { ...item, role: "Thành viên" };
+          }
+        });
+        setListMember(newList);
       }
     } catch (error) {
       console.log("====================================");
@@ -57,42 +61,42 @@ const UploadFileFinal = (props) => {
       const response = await fetch(sample);
       const arrayBuffer = await response.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: "array" });
-  
-      // Giả sử bạn muốn ghi dữ liệu vào sheet đầu tiên
+
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-  
-      // Chèn dữ liệu vào worksheet
+
       listMember.forEach((list, index) => {
-        const rowIndex = index + 2; // Bắt đầu từ hàng thứ 2 (bỏ qua tiêu đề)
+        const rowIndex = index + 2; 
         worksheet[`B${rowIndex}`] = { v: list.fullName }; // Cột B
+        worksheet[`C${rowIndex}`] = { v: list.role }; // Cột B
+
       });
-  
+
       // Lấy thông tin về kích thước cột và hàng từ file gốc
       const originalSheet = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       const cols = [];
       originalSheet[0].forEach((_, colIndex) => {
         let width = 20; // Đặt mặc định là 20 nếu không có thông tin về kích thước cột
-        if (worksheet['!cols'] && worksheet['!cols'][colIndex]) {
-          width = worksheet['!cols'][colIndex].w;
+        if (worksheet["!cols"] && worksheet["!cols"][colIndex]) {
+          width = worksheet["!cols"][colIndex].w;
         }
         cols.push({ wch: width });
       });
-      const range = XLSX.utils.decode_range(worksheet['!ref']);
+      const range = XLSX.utils.decode_range(worksheet["!ref"]);
       const rows = range.e.r - range.s.r + 1;
-  
+
       // Áp dụng kích thước cột và hàng vào worksheet mới
-      worksheet['!cols'] = cols;
-      worksheet['!ref'] = XLSX.utils.encode_range({
+      worksheet["!cols"] = cols;
+      worksheet["!ref"] = XLSX.utils.encode_range({
         s: { c: 0, r: 0 },
-        e: { c: cols.length - 1, r: rows - 1 }
+        e: { c: cols.length - 1, r: rows - 1 },
       });
-  
+
       // Chuyển đổi lại workbook thành file Excel
       const updatedArrayBuffer = XLSX.write(workbook, {
         bookType: "xlsx",
         type: "array",
       });
-  
+
       // Tạo link để tải file
       const blob = new Blob([updatedArrayBuffer], {
         type: "application/octet-stream",
@@ -100,7 +104,7 @@ const UploadFileFinal = (props) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "updated-file.xlsx";
+      a.download = "thulao.xlsx";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -108,8 +112,6 @@ const UploadFileFinal = (props) => {
       console.error("Error exporting to Excel:", error);
     }
   };
-  
-  
 
   const onSubmit = async () => {
     if (Object.values(newTopicFiles).length === 0) {
@@ -223,12 +225,13 @@ const UploadFileFinal = (props) => {
             <>
               <Col span={24}>
                 <p>File mẫu tham khảo (file đã tích hợp công thức tính):</p>
-                <a href="https://srms1.sgp1.cdn.digitaloceanspaces.com/thu_lao_NCKH-20240504000432756.xlsx">
+                {/* <a href="https://srms1.sgp1.cdn.digitaloceanspaces.com/thu_lao_NCKH-20240504000432756.xlsx">
                   Ấn để tải
-                </a>
+                </a> */}
+                <Button onClick={handleExport}>Xuất file thành viên</Button>
               </Col>
             </>
-            <button onClick={handleExport}>Export to Excel</button>
+
             <Divider />
             <Col span={24}>
               <Form.Item

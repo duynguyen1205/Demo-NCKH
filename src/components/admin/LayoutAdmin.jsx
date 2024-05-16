@@ -23,30 +23,30 @@ import logo from "../../assets/logoBV.png";
 import { jwtDecode } from "jwt-decode";
 const { Header, Content, Sider } = Layout;
 const items = [
-  {
-    label: <Link to="/admin">Bảng điều khiển</Link>,
-    key: "dashboard",
-    icon: <HomeOutlined />,
-  },
+  // {
+  //   label: <Link to="/admin">Bảng điều khiển</Link>,
+  //   key: "dashboard",
+  //   icon: <HomeOutlined />,
+  // },
   {
     label: <Link to="/admin/accounts">Quản lý tài khoản</Link>,
     key: "accounts",
     icon: <UnorderedListOutlined />,
   },
-  {
-    label: <Link to="/admin/export-file">Xuất file báo cáo</Link>,
-    key: "export-file",
-    icon: <FolderAddOutlined />,
-  },
-  {
-    label: <Link to="/admin/add-holiday">Thêm ngày nghỉ lễ</Link>,
-    key: "add-holiday",
-    icon: <CalendarOutlined />,
-  },
+  // {
+  //   label: <Link to="/admin/add-holiday">Thêm ngày nghỉ lễ</Link>,
+  //   key: "add-holiday",
+  //   icon: <CalendarOutlined />,
+  // },
   {
     label: <Link to="/admin/add-department">Quản lý các khoa</Link>,
     key: "add-department",
     icon: <SolutionOutlined />,
+  },
+  {
+    label: <Link to="/admin/export-file">Xuất file báo cáo</Link>,
+    key: "export-file",
+    icon: <FolderAddOutlined />,
   },
 ];
 

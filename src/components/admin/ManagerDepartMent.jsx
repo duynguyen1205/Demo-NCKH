@@ -8,11 +8,18 @@ import {
   Tooltip,
   Button,
   message,
+  Space,
 } from "antd";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CloudUploadOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { updateDepartmentByAdmin, getAllDepartment } from "../../services/api";
 import DepartmentModal from "./departmentModal";
 import "./department.scss";
+import * as XLSX from "xlsx";
 const EditableCell = ({
   editing,
   dataIndex,
@@ -52,7 +59,7 @@ const ManagerDepartment = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
-  const [listDepartment, setListDepartment] = useState();
+  const [listDepartment, setListDepartment] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [editingKey, setEditingKey] = useState("");
   const isEditing = (record) => record.departmentId === editingKey;
@@ -101,7 +108,24 @@ const ManagerDepartment = () => {
     }
   };
   const handleDelete = () => {};
+  const exportFile = () => {
+    if (listDepartment.length > 0) {
+      const worksheet = XLSX.utils.json_to_sheet(listDepartment);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+      //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+      XLSX.writeFile(workbook, "Department.xlsx");
+    } else {
+      message.error("Không có dữ liệu để xuất");
+    }
+  };
   const columns = [
+    {
+      title: "Mã Khoa",
+      dataIndex: "departmentId",
+      width: "30%",
+    },
     {
       title: "Khoa",
       dataIndex: "departmentName",
@@ -168,14 +192,24 @@ const ManagerDepartment = () => {
       <h2 style={{ fontWeight: "bold", fontSize: "30px", color: "#303972" }}>
         Danh sách các khoa
       </h2>
-
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={() => setOpenModal(true)}
-      >
-        Thêm mới
-      </Button>
+      <div>
+        <Space>
+          <Button
+            type="primary"
+            icon={<CloudUploadOutlined />}
+            onClick={() => exportFile()}
+          >
+            Xuất file
+          </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setOpenModal(true)}
+          >
+            Thêm mới
+          </Button>
+        </Space>
+      </div>
     </div>
   );
   const onChange = (pagination, filters, sorter, extra) => {
